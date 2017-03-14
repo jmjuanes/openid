@@ -1,0 +1,52 @@
+<!-- Styles -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/siimple/2.0.1/siimple.min.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/login.css">
+
+<!-- Scripts -->
+<script src="https://www.google.com/recaptcha/api.js?hl=en"></script>
+
+<!-- Send the login form -->
+<script type="text/javascript">
+  //Send the form
+  function send_form_login(){ return document.getElementById('login-submit').click(); }
+</script>
+
+<!-- Title -->
+<title>Sign in - MGviz Account</title>
+
+<!-- Content -->
+<div class="login-content">
+  <!-- Title -->
+  <div class="siimple-h2" align="center">Sign in</div>
+  <form id="login-form" method="POST" enctype="application/x-www-form-urlencoded">
+    {% if error %}
+      <!-- display the alert mesage -->
+      <div class="siimple-alert siimple-alert--error" align="center">{{ error }}</div>
+    {% endif %}
+    <!-- Email -->
+    <div>
+      <label class="siimple-label">Email</label><br>
+      <input type="email" class="siimple-input login-input" id="email" name="email" required>
+    </div>
+    <!-- Password input -->
+    <div>
+      <label class="siimple-label">Password</label><br>
+      <input type="password" class="siimple-input login-input" id="pwd" name="pwd" required>
+    </div>
+    <!-- Hidden values -->
+    <input type="hidden" name="app_id" value="{{ app_id }}" required>
+    <input type="hidden" name="app_state" value="{{ app_state }}" required>
+    <!-- Captcha -->
+    <div class="login-captcha" align="center">
+      <div class="g-recaptcha" data-sitekey="6Le46hgUAAAAAHmfNYVmAMK0zR0sOTQU0rtg8dXf"></div>
+    </div>
+    <!-- Sign in -->
+    <div class="siimple-btn siimple-btn--blue login-submit" onclick="send_form_login();">Sign in</div>
+    <input id="login-submit" type="submit" value="Sign in" style="display:none;">
+  </form>
+  <!-- New account -->
+  <div class="login-register" align="center">
+    New to MGviz Accounts? <br><a href="/register" class="siimple-link">Create an account</a>
+  </div>
+</div>
