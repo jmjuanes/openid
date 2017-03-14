@@ -3,7 +3,3 @@ indexes:
   properties:
   - name: email
     direction: asc
-- kind: Applications
-  properties:
-  - name: id
-    direction: asc
