@@ -39,7 +39,7 @@
     <input type="hidden" name="app_state" value="{{ app_state }}" required>
     <!-- Captcha -->
     <div class="login-captcha" align="center">
-      <div class="g-recaptcha" data-sitekey="6Le46hgUAAAAAHmfNYVmAMK0zR0sOTQU0rtg8dXf"></div>
+      <div class="g-recaptcha" data-sitekey="{{ captcha_key }}"></div>
     </div>
     <!-- Sign in -->
     <div class="siimple-btn siimple-btn--blue login-submit" onclick="send_form_login();">Sign in</div>
