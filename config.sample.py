@@ -18,3 +18,12 @@ captcha_key = 'YOUR_CAPTCHA_KEY'
 # Captcha secret key
 # Enter your captcha secret key value
 captcha_secret = 'YOUR_CAPTCHA_SECRET_KEY'
+
+
+# Token configuration
+# ======================
+# Read more about JSON web tokens: https://en.wikipedia.org/wiki/JSON_Web_Token
+
+# Token expiration days
+# Number of days where the token is valid
+token_expiration = 7 * (24 * 60 * 60)
