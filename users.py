@@ -8,7 +8,7 @@ class User(ndb.Model):
     name = ndb.StringProperty()
     pwd = ndb.StringProperty()
     institution = ndb.StringProperty()
-    role = ndb.IntegerProperty()
+    is_admin = ndb.BooleanProperty()
 
 
 # Perform a query and get the users with the provided email
