@@ -1,0 +1,56 @@
+/* Login content div */
+.login-content
+{
+  display: block;
+  width: 304px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 120px;
+  margin-bottom: 180px;
+}
+
+/* Login detail */
+.login-detail
+{
+  margin-bottom: 15px;
+}
+
+/* Login input */
+.login-input
+{
+  width: 100%;
+}
+
+/* Login captcha */
+.login-captcha
+{
+  margin-top: 15px;
+}
+
+/* Login submit button */
+.login-submit
+{
+  width: 100%;
+  margin-top: 10px !important;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
+/* Login register box */
+.login-register
+{
+  font-size: 15px;
+  margin-top: 30px;
+}
+
+/* Login reset password */
+.login-forgot
+{
+  margin-top: 10px;
+}
+
+/* Login privacy box */
+.login-privacy
+{
+  margin-top: 25px;
+}
