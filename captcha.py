@@ -12,8 +12,12 @@ import config
 
 # Verify captcha
 def verify(captcha_response):
+    # Check if captcha is enabled
+    if config.captcha_enabled is False:
+        return True
+
     # Build the form fields
-    form_fields = { 'secret': config.captcha_secret, 'response': captcha_response }
+    form_fields = {'secret': config.captcha_secret, 'response': captcha_response}
 
     # Display in logs
     logging.info('Checking captcha...')
