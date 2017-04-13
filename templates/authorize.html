@@ -38,8 +38,8 @@
       <label class="siimple-label">Password</label><br>
       <input type="password" class="siimple-input login-input" name="pwd" pattern=".{6,}" title="6 characters minimum" required><br>
     </div>
-    <input type="hidden" name="app_id" value="{{ app_id }}" required>
-    <input type="hidden" name="app_state" value="{{ app_state }}" required>
+    <input type="hidden" name="client" value="{{ app_id }}" required>
+    <input type="hidden" name="state" value="{{ app_state }}" required>
     <!-- Captcha
     <div class="login-captcha" align="center">
       <div class="g-recaptcha" data-sitekey="{{ captcha_key }}"></div>
