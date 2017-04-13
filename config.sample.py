@@ -7,6 +7,9 @@
 # ======================
 # Visit the ReCaptcha documentation at https://developers.google.com/recaptcha/intro
 
+# Captcha enabled
+captcha_enabled = True
+
 # Captcha verification url
 # You must not change this url
 captcha_url = 'https://www.google.com/recaptcha/api/siteverify'
