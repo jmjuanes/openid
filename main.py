@@ -69,6 +69,9 @@ def authorize_get():
     # Get the application id
     application_id = request.args.get('client', '')
 
+    # Get if signup is allowed
+    application_signup = request.args.get('allow_signup', 'false')
+
     # Check for undefined application id
     if application_id == '':
         return render_template('error.html', error='No application id provided'), 404
@@ -87,6 +90,7 @@ def authorize_get():
     return render_template('authorize.html',
                            app_id=application_id,
                            app_state=application_state,
+                           app_signup=application_signup,
                            app_name=application.name)
 
 
@@ -104,6 +108,7 @@ def authorize_post():
     # Get the application id and state
     application_id = request.form.get('client', '')
     application_state = request.form.get('state', '')
+    application_signup = request.form.get('signup', '')
 
     # Check for empty application id or state
     if application_id == '' or application_state == '':
@@ -130,6 +135,7 @@ def authorize_post():
             return render_template('authorize.html',
                                    app_id=application_id,
                                    app_state=application_state,
+                                   app_signup=application_signup,
                                    app_name=application.name,
                                    error='Invalid captcha')
 
@@ -138,6 +144,7 @@ def authorize_post():
             return render_template('authorize.html',
                                    app_id=application_id,
                                    app_state=application_state,
+                                   app_signup=application_signup,
                                    app_name=application.name,
                                    error='Invalid captcha')
 
@@ -151,6 +158,7 @@ def authorize_post():
         return render_template('authorize.html',
                                app_id=application_id,
                                app_state=application_state,
+                               app_signup=application_signup,
                                app_name=application.name,
                                error='Email not found')
     else:
@@ -159,6 +167,7 @@ def authorize_post():
             return render_template('authorize.html',
                                    app_id=application_id,
                                    app_state=application_state,
+                                   app_signup=application_signup,
                                    app_name=application.name,
                                    error='Invalid email or password')
         else:
