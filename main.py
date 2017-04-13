@@ -15,6 +15,7 @@ from passlib.hash import pbkdf2_sha256
 import applications
 import users
 import config
+import captcha
 
 # Create the instance
 app = Flask(__name__)
@@ -65,7 +66,7 @@ def login_post():
 @app.route('/authorize', methods=['GET'])
 def authorize_get():
     # Get the application id
-    application_id = request.args.get('app_id', '')
+    application_id = request.args.get('client', '')
 
     # Check for undefined application id
     if application_id == '':
@@ -82,7 +83,10 @@ def authorize_get():
     application_state = pbkdf2_sha256.hash(application_id)
 
     # Render the login template
-    return render_template('authorize.html', app_id=application_id, app_state=application_state, app_name=application.name)
+    return render_template('authorize.html',
+                           app_id=application_id,
+                           app_state=application_state,
+                           app_name=application.name)
 
 
 # Authorize post route
@@ -97,8 +101,8 @@ def authorize_post():
         return render_template('error.html', error='Invalid user request'), 400
 
     # Get the application id and state
-    application_id = request.form.get('app_id', '')
-    application_state = request.form.get('app_state', '')
+    application_id = request.form.get('client', '')
+    application_state = request.form.get('state', '')
 
     # Check for empty application id or state
     if application_id == '' or application_state == '':
@@ -108,16 +112,24 @@ def authorize_post():
     if pbkdf2_sha256.verify(application_id, application_state) is False:
         return render_template('error.html', error='Invalid request state'), 400
 
-    # Get the captcha value
-    # captcha_value = request.form.get('g-recaptcha-response', '')
+    # Check if the captcha is enabled
+    if config.captcha_enabled is True:
+        # Get the captcha value
+        captcha_value = request.form.get('g-recaptcha-response', '')
 
-    # Check for empty captcha
-    # if captcha_value == '':
-    #     return render_template('authorize.html', app_id=application_id, app_state=application_state, error='Invalid captcha')
+        # Check for empty captcha
+        if captcha_value == '':
+            return render_template('authorize.html',
+                                   app_id=application_id,
+                                   app_state=application_state,
+                                   error='Invalid captcha')
 
-    # Check the captcha value
-    # if captcha.verify(captcha_value) is False:
-    #     return render_template('authorize.html', app_id=application_id, app_state=application_state, error='Invalid captcha')
+        # Check the captcha value
+        if captcha.verify(captcha_value) is False:
+            return render_template('authorize.html',
+                                   app_id=application_id,
+                                   app_state=application_state,
+                                   error='Invalid captcha')
 
     # Get the application
     application = applications.get_application(application_id)
@@ -133,11 +145,17 @@ def authorize_post():
 
     # Check for non user
     if user is None:
-        return render_template('authorize.html', app_id=application_id, app_state=application_state, error='Email not found')
+        return render_template('authorize.html',
+                               app_id=application_id,
+                               app_state=application_state,
+                               error='Email not found')
     else:
         # Check the password
         if pbkdf2_sha256.verify(user_pwd, user.pwd) is False:
-            return render_template('authorize.html', app_id=application_id, app_state=application_state, error='Invalid email or password')
+            return render_template('authorize.html',
+                                   app_id=application_id,
+                                   app_state=application_state,
+                                   error='Invalid email or password')
         else:
             # Initialize the token payload
             payload = {'email': user.email, 'name': user.name, 'institution': user.institution, 'is_admin': user.is_admin}
