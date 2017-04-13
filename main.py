@@ -21,6 +21,7 @@ import captcha
 app = Flask(__name__)
 
 # Add the global variables
+app.jinja_env.globals['captcha_enabled'] = config.captcha_enabled
 app.jinja_env.globals['captcha_key'] = config.captcha_key
 
 
