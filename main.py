@@ -113,6 +113,13 @@ def authorize_post():
     if pbkdf2_sha256.verify(application_id, application_state) is False:
         return render_template('error.html', error='Invalid request state'), 400
 
+    # Get the application
+    application = applications.get_application(application_id)
+
+    # Check for application not found
+    if application is None:
+        return render_template('error.html', error='Application not found'), 404
+
     # Check if the captcha is enabled
     if config.captcha_enabled is True:
         # Get the captcha value
@@ -123,6 +130,7 @@ def authorize_post():
             return render_template('authorize.html',
                                    app_id=application_id,
                                    app_state=application_state,
+                                   app_name=application.name,
                                    error='Invalid captcha')
 
         # Check the captcha value
@@ -130,14 +138,8 @@ def authorize_post():
             return render_template('authorize.html',
                                    app_id=application_id,
                                    app_state=application_state,
+                                   app_name=application.name,
                                    error='Invalid captcha')
-
-    # Get the application
-    application = applications.get_application(application_id)
-
-    # Check for application not found
-    if application is None:
-        return render_template('error.html', error='Application not found'), 404
 
     # Get the user
     user = users.get_user(user_email)
@@ -149,6 +151,7 @@ def authorize_post():
         return render_template('authorize.html',
                                app_id=application_id,
                                app_state=application_state,
+                               app_name=application.name,
                                error='Email not found')
     else:
         # Check the password
@@ -156,6 +159,7 @@ def authorize_post():
             return render_template('authorize.html',
                                    app_id=application_id,
                                    app_state=application_state,
+                                   app_name=application.name,
                                    error='Invalid email or password')
         else:
             # Initialize the token payload
