@@ -57,8 +57,10 @@
     <input id="login-submit" type="submit" value="Sign in" style="display:none;">
   </form>
   <!-- New account -->
+  {% if app_signup == "true" %}
   <div class="login-register" align="center">
     New to MGviz Accounts?
     <a href="/register" class="siimple-btn siimple-btn--green login-submit" target="_blank">Create an account</a>
   </div>
+  {% endif %}
 </div>
