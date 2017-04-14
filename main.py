@@ -217,7 +217,7 @@ def register_post():
         # Check the captcha value
         if captcha.verify(captcha_value) is False:
             return render_template('login.html',  error='Invalid captcha')
-    
+
     # Initialize the user
     user = users.User()
 
@@ -243,10 +243,10 @@ def register_post():
     user_key = user.put()
 
     # Get the contine argument
-    continue_url = request.args.get('continue', '')
+    # continue_url = request.args.get('continue', '')
 
     # Render the registration completed page
-    return render_template('register-completed.html', continue_url=continue_url)
+    return render_template('register-completed.html')
 
 
 # Register a new application
