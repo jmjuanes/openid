@@ -150,8 +150,6 @@ def authorize_post():
 
     # Get the user
     user = users.get_user(user_email)
-    print user_email
-    print user
 
     # Check for non user
     if user is None:
@@ -172,13 +170,15 @@ def authorize_post():
                                    error='Invalid email or password')
         else:
             # Initialize the token payload
-            payload = {'email': user.email, 'name': user.name, 'institution': user.institution, 'is_admin': user.is_admin}
-            payload['iat'] = int(time.time())
+            payload = {'email': user.email, 'name': user.name, 'institution': user.institution,
+                       'is_admin': user.is_admin, 'iat': int(time.time())}
             payload['exp'] = payload['iat'] + config.token_expiration
-            # Build the token and redirect to the site
+
+            # Build the token
             token = jwt.encode(payload, application.secret, algorithm='HS256')
-            url = urlparse.urljoin(application.redirect, '?token=' + token)
-            return redirect(url)
+
+            # Redirect to the site
+            return redirect(urlparse.urljoin(application.redirect, '?token=' + token))
 
 
 # Register a new user page
