@@ -3,6 +3,13 @@
 # your own configuration.
 # Check the documentation at https://github.com/mgviz/openid
 
+# OpenID configuration
+# ======================
+
+# OpenID secret key
+openid_secret = 'YOUR_SECRET_KEY'
+
+
 # Captcha configuration
 # ======================
 # Visit the ReCaptcha documentation at https://developers.google.com/recaptcha/intro
