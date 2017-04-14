@@ -53,7 +53,8 @@
     </div>
     <!-- Captcha -->
     {% if captcha_enabled %}
-    <div class="login-captcha" align="center">
+    <div class="login-captcha">
+      <label class="siimple-label">Are you human?</label><br>
       <div class="g-recaptcha" data-sitekey="{{ captcha_key }}"></div>
     </div>
     {%  endif %}
