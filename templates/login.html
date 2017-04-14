@@ -37,10 +37,12 @@
       <label class="siimple-label">Password</label><br>
       <input type="password" class="siimple-input login-input" name="pwd" pattern=".{6,}" title="6 characters minimum" required><br>
     </div>
-    <!-- Captcha
+    <!-- Captcha -->
+    {% if captcha_enabled %}
     <div class="login-captcha" align="center">
       <div class="g-recaptcha" data-sitekey="{{ captcha_key }}"></div>
-    </div> -->
+    </div>
+    {% endif %}
     <!-- Forgot password -->
     <div class="login-forgot siimple-small" align="center">
       Forgot password?
