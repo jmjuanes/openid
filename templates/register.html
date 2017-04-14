@@ -51,10 +51,12 @@
       <input type="password" class="siimple-input login-input" name="pwd" pattern=".{6,}" title="6 characters minimum" required><br>
       <small class="siimple-small">Use at least six characters.</small>
     </div>
-    <!-- Captcha
+    <!-- Captcha -->
+    {% if captcha_enabled %}
     <div class="login-captcha" align="center">
       <div class="g-recaptcha" data-sitekey="{{ captcha_key }}"></div>
-    </div> -->
+    </div>
+    {%  endif %}
     <!-- Privacy -->
     <div class="login-privacy siimple-small" align="center">
       By clicking on <b>"Create account"</b> below, you are agreeing to our Privacy Policy.
