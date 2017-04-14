@@ -42,7 +42,8 @@
     <input type="hidden" name="state" value="{{ app_state }}" required>
     <!-- Captcha -->
     {% if captcha_enabled %}
-    <div class="login-captcha" align="center">
+    <div class="login-captcha">
+      <label class="siimple-label">Are you human?</label><br>
       <div class="g-recaptcha" data-sitekey="{{ captcha_key }}"></div>
     </div>
     {% endif %}
@@ -52,6 +53,10 @@
       <a href="/password_reset" class="siimple-link">Click here</a>
     </div>
     -->
+    <!-- Notice -->
+    <div class="login-privacy siimple-small" align="center">
+      Please, check if all the information is correct and click on <b>"Sign in"</b>.
+    </div>
     <!-- Sign in -->
     <div class="siimple-btn siimple-btn--blue login-submit" onclick="send_form_login();">Sign in</div>
     <input id="login-submit" type="submit" value="Sign in" style="display:none;">
