@@ -3,8 +3,8 @@
 <link rel="stylesheet" href="/css/style.css">
 <link rel="stylesheet" href="/css/login.css">
 
-<!-- Scripts
-<script src="https://www.google.com/recaptcha/api.js?hl=en"></script> -->
+<!-- Scripts -->
+<script src="https://www.google.com/recaptcha/api.js?hl=en"></script>
 
 <!-- Send the login form -->
 <script type="text/javascript">
@@ -43,11 +43,11 @@
       <div class="g-recaptcha" data-sitekey="{{ captcha_key }}"></div>
     </div>
     {% endif %}
-    <!-- Forgot password -->
+    <!-- Forgot password
     <div class="login-forgot siimple-small" align="center">
       Forgot password?
       <a href="/password_reset" class="siimple-link">Click here</a>
-    </div>
+    </div> -->
     <!-- Sign in -->
     <div class="siimple-btn siimple-btn--blue login-submit" onclick="send_form_login();">Sign in</div>
     <input id="login-submit" type="submit" value="Sign in" style="display:none;">
