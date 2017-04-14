@@ -2,6 +2,7 @@
 import json
 import time
 import urlparse
+import urllib
 
 # Import lib modules
 import jwt
@@ -44,6 +45,19 @@ def login_post():
     # Get the user email and password
     user_email = request.form.get('email', '')
     user_pwd = request.form.get('pwd', '')
+
+    # Check if the captcha is enabled
+    if config.captcha_enabled is True:
+        # Get the captcha value
+        captcha_value = request.form.get('g-recaptcha-response', '')
+
+        # Check for empty captcha
+        if captcha_value == '':
+            return render_template('login.html', error='Invalid captcha')
+
+        # Check the captcha value
+        if captcha.verify(captcha_value) is False:
+            return render_template('login.html',  error='Invalid captcha')
 
     # Check for empty email or password
     if user_email == '' or user_pwd == '':
@@ -191,6 +205,19 @@ def register_get():
 # Register a new user page
 @app.route('/register', methods=['POST'])
 def register_post():
+    # Check if the captcha is enabled
+    if config.captcha_enabled is True:
+        # Get the captcha value
+        captcha_value = request.form.get('g-recaptcha-response', '')
+
+        # Check for empty captcha
+        if captcha_value == '':
+            return render_template('login.html', error='Invalid captcha')
+
+        # Check the captcha value
+        if captcha.verify(captcha_value) is False:
+            return render_template('login.html',  error='Invalid captcha')
+    
     # Initialize the user
     user = users.User()
 
@@ -215,8 +242,11 @@ def register_post():
     # Register the user
     user_key = user.put()
 
-    # Display done
-    return 'Register OK'
+    # Get the contine argument
+    continue_url = request.args.get('continue', '')
+
+    # Render the registration completed page
+    return render_template('register-completed.html', continue_url=continue_url)
 
 
 # Register a new application
