@@ -32,10 +32,10 @@ class RouteRegister(webapp2.RequestHandler):
         user = db_user.User()
     
         # Get the post values
-        user.name = self.request.get('name', '')
-        user.institution = self.request.get('institution', '')
-        user.email = self.request.get('email', '')
-        user.pwd = self.request.get('pwd', '')
+        user.name = self.request.get('name', default_value='')
+        user.institution = self.request.get('institution', default_value='')
+        user.email = self.request.get('email', default_value='')
+        user.pwd = self.request.get('pwd', default_value='')
         user.is_admin = False  # By default is not admin
     
         # Encrypt the password
@@ -43,10 +43,12 @@ class RouteRegister(webapp2.RequestHandler):
     
         # Check the values
         if user.name is '' or user.institution is '' or user.email is '' or user.pwd is '':
+            self.response.status_int = 400
             return render.template(self, 'register.html', error='You must fill all fields')
     
         # Check if the email is registered
         if db_user.exists_user(user.email):
+            self.response.status_int = 400
             return render.template(self, 'register.html', error='The email has already registered')
     
         # Register the user
