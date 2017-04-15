@@ -32,7 +32,7 @@ class RouteLogin(webapp2.RequestHandler):
         # Check if the captcha is enabled
         if config.captcha_enabled is True:
             # Get the captcha value
-            captcha_value = self.request.get('g-recaptcha-response', '')
+            captcha_value = self.request.get('g-recaptcha-response', default_value='')
 
             # Check the captcha value
             if captcha.verify(captcha_value) is False:
