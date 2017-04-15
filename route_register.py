@@ -13,10 +13,12 @@ import render
 
 # Main page
 class RouteRegister(webapp2.RequestHandler):
+    # Register get
     def get(self):
         # Render the register page
         return render.template(self, 'register.html', error='')
 
+    # Register post
     def post(self):
         # Check if the captcha is enabled
         if config.captcha_enabled is True:
