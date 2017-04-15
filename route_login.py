@@ -60,14 +60,11 @@ class RouteLogin(webapp2.RequestHandler):
             # Generate the token
             user_token = tokens.encode(user, config.openid_secret)
 
-            # Generate the response
-            #resp = make_response(render_template('home.html', email=user.email, name=user.name))
-
             # Set the cookie
-            #resp.set_cookie('mgviz_token', user_token)
+            self.response.set_cookie('mgviz_token', user_token, path='/')
 
-            # Do the response
-            #return resp
+            # Redirect to the home page
+            self.redirect('/')
 
 # Initialize the app
 app = webapp2.WSGIApplication([('/login', RouteLogin)], debug=True)
