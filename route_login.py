@@ -15,14 +15,16 @@ import tokens
 
 # Main page
 class RouteLogin(webapp2.RequestHandler):
+    # Login get
     def get(self):
         # Render the template
         render.template(self, 'login.html')
 
+    # Login post
     def post(self):
         # Get the user email and password
-        user_email = self.request.get('email', '')
-        user_pwd = self.request.get('pwd', '')
+        user_email = self.request.get('email', default_value='')
+        user_pwd = self.request.get('pwd', default_value='')
 
         # Display in logs
         logging.info('Logging user ' + user_email)
@@ -34,10 +36,12 @@ class RouteLogin(webapp2.RequestHandler):
 
             # Check the captcha value
             if captcha.verify(captcha_value) is False:
+                self.response.status_int = 400
                 return render.template(self, 'login.html',  error='Invalid captcha')
 
         # Check for empty email or password
         if user_email == '' or user_pwd == '':
+            self.response.status_int = 400
             return render.template(self, 'error.html', error='Invalid user request')
 
         # Get the user
@@ -45,10 +49,12 @@ class RouteLogin(webapp2.RequestHandler):
 
         # Check for user not found
         if user is None:
+            self.response.status_int = 400
             return render.template(self, 'login.html', error='Email not found')
 
         # Check the password
         if pbkdf2_sha256.verify(user_pwd, user.pwd) is False:
+            self.response.status_int = 400
             return render.template(self, 'login.html', error='Invalid email or password')
         else:
             # Generate the token
