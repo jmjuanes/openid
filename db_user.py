@@ -4,12 +4,12 @@ from google.appengine.ext import ndb
 
 # Users class
 class User(ndb.Model):
-    email = ndb.StringProperty()
-    name = ndb.StringProperty()
-    pwd = ndb.StringProperty()
-    institution = ndb.StringProperty()
-    is_admin = ndb.BooleanProperty()
-    active = ndb.BooleanProperty()
+    email = ndb.StringProperty(indexed=True)
+    name = ndb.StringProperty(indexed=False)
+    pwd = ndb.StringProperty(indexed=False)
+    institution = ndb.StringProperty(indexed=False)
+    is_admin = ndb.BooleanProperty(indexed=False)
+    active = ndb.BooleanProperty(indexed=False)
 
 
 # Perform a query and get the users with the provided email
