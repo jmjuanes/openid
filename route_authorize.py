@@ -109,6 +109,16 @@ class RouteAuthorize(webapp2.RequestHandler):
                                    app_name=application.name,
                                    error='Email not found')
         else:
+            # Check if user is active
+            if user.active is False:
+                self.response.status_int = 401
+                return render.template(self, 'authorize.html',
+                                       app_id=application_id,
+                                       app_state=application_state,
+                                       app_signup=application_signup,
+                                       app_name=application.name,
+                                       error='User is not active')
+
             # Check the password
             if pbkdf2_sha256.verify(user_pwd, user.pwd) is False:
                 self.response.status_int = 400
