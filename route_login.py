@@ -8,7 +8,7 @@ from passlib.hash import pbkdf2_sha256
 # Import modules
 import captcha
 import config
-import db
+import db_user
 import render
 import tokens
 
@@ -45,7 +45,7 @@ class RouteLogin(webapp2.RequestHandler):
             return render.template(self, 'error.html', error='Invalid user request')
 
         # Get the user
-        user = db.get_user(user_email)
+        user = db_user.get_user(user_email)
 
         # Check for user not found
         if user is None:
