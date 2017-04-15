@@ -4,10 +4,10 @@ from google.appengine.ext import ndb
 
 # Applications class
 class Application(ndb.Model):
-    secret = ndb.StringProperty()
-    name = ndb.StringProperty()
-    detail = ndb.StringProperty()
-    redirect = ndb.StringProperty()
+    secret = ndb.StringProperty(indexed=False)
+    name = ndb.StringProperty(indexed=False)
+    detail = ndb.StringProperty(indexed=False)
+    redirect = ndb.StringProperty(indexed=False)
 
 
 # Get an application by id
