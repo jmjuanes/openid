@@ -86,16 +86,6 @@ class RouteAuthorize(webapp2.RequestHandler):
             # Get the captcha value
             captcha_value = self.request.get('g-recaptcha-response', '')
     
-            # Check for empty captcha
-            if captcha_value == '':
-                self.response.status_int = 400
-                return render.template(self, 'authorize.html',
-                                       app_id=application_id,
-                                       app_state=application_state,
-                                       app_signup=application_signup,
-                                       app_name=application.name,
-                                       error='Invalid captcha')
-    
             # Check the captcha value
             if captcha.verify(captcha_value) is False:
                 self.response.status_int = 400
