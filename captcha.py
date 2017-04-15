@@ -16,6 +16,10 @@ def verify(captcha_response):
     if config.captcha_enabled is False:
         return True
 
+    # Check for empty captcha response
+    if captcha_response is '':
+        return False
+    
     # Build the form fields
     form_fields = {'secret': config.captcha_secret, 'response': captcha_response}
 
