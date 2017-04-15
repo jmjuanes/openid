@@ -52,6 +52,11 @@ class RouteLogin(webapp2.RequestHandler):
             self.response.status_int = 400
             return render.template(self, 'login.html', error='Email not found')
 
+        # Check if user is active
+        if user.active is False:
+            self.response.status_int = 401
+            return render.template(self, 'login.html', error='User is not active')
+
         # Check the password
         if pbkdf2_sha256.verify(user_pwd, user.pwd) is False:
             self.response.status_int = 400
