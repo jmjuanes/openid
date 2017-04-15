@@ -31,7 +31,7 @@ class RouteLogin(webapp2.RequestHandler):
         if config.captcha_enabled is True:
             # Get the captcha value
             captcha_value = self.request.get('g-recaptcha-response', '')
-            
+
             # Check the captcha value
             if captcha.verify(captcha_value) is False:
                 return render.template(self, 'login.html',  error='Invalid captcha')
