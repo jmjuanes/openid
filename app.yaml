@@ -2,6 +2,10 @@ runtime: python27
 api_version: 1
 threadsafe: true
 
+libraries:
+- name: webapp2
+  version: "2.5.2"
+
 handlers:
 - url: /css
   static_dir: public/css/
@@ -9,5 +13,17 @@ handlers:
 - url: /js
   static_dir: public/js/
 
-- url: /.*
-  script: main.app
+- url: /
+  script: route_index.app
+
+- url: /login
+  script: route_login.app
+
+- url: /register
+  script: route_register.app
+
+- url: /authorize
+  script: route_authorize.app
+
+- url: /test
+  script: route_test.app
