@@ -23,7 +23,7 @@ git clone https://github.com/mgviz/openid
 `cd` to the project folder and install python dependencies in the `lib` folder by running the following commands: 
 
 ```shell 
-pip install -t lib flask 
+pip install -t lib Jinja2 
 pip install -t lib PyJWT
 pip install -t lib passlib
 ```
