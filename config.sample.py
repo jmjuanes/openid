@@ -7,7 +7,12 @@
 # ======================
 
 # OpenID secret key
+# This key is used when user enters into the admin page
 openid_secret = 'YOUR_SECRET_KEY'
+
+# Default active value
+# User is active by default
+openid_default_active = True
 
 
 # Captcha configuration
