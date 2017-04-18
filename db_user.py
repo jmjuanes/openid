@@ -9,6 +9,8 @@ class User(ndb.Model):
     pwd = ndb.StringProperty(indexed=False)
     institution = ndb.StringProperty(indexed=False)
     is_admin = ndb.BooleanProperty(indexed=False)
+    is_premium = ndb.BooleanProperty(indexed=False)
+    is_demo = ndb.BooleanProperty(indexed=False)
     active = ndb.BooleanProperty(indexed=False)
 
 
