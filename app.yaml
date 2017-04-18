@@ -24,6 +24,3 @@ handlers:
 
 - url: /authorize
   script: route_authorize.app
-
-- url: /test
-  script: route_test.app
