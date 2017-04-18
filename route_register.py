@@ -39,6 +39,8 @@ class RouteRegister(webapp2.RequestHandler):
         user.email = self.request.get('email', default_value='')
         user.pwd = self.request.get('pwd', default_value='')
         user.is_admin = False  # By default is not admin
+        user.is_demo = False  # By default user is not demo
+        user.is_premium = False  # by default user is not premium
         user.active = config.openid_default_active  # Default active value
     
         # Encrypt the password
