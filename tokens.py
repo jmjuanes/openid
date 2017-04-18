@@ -11,6 +11,12 @@ def encode(user, secret):
     # Initialize the token payload
     payload = {'email': user.email, 'name': user.name, 'institution': user.institution, 'is_admin': user.is_admin }
 
+    # Add if user is a demo account
+    payload['is_demo'] = user.is_demo
+
+    # Add if user has a premium account
+    payload['is_premium'] = user.is_premium
+
     # Add the user id
     payload['id'] = user.key.id()
 
