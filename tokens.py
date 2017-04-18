@@ -11,6 +11,9 @@ def encode(user, secret):
     # Initialize the token payload
     payload = {'email': user.email, 'name': user.name, 'institution': user.institution, 'is_admin': user.is_admin }
 
+    # Add the user id
+    payload['id'] = user.key.id()
+
     # Add the created time
     payload['iat'] = int(time.time())
 
