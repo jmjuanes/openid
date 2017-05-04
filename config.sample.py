@@ -6,9 +6,13 @@
 # OpenID configuration
 # ======================
 
+# OpenID name
+# Public name of the OpenID
+openid_name = 'OPENID_NAME'
+
 # OpenID secret key
 # This key is used when user enters into the admin page
-openid_secret = 'YOUR_SECRET_KEY'
+openid_secret = 'OPENID_SECRET_KEY'
 
 # Default active value
 # User is active by default
