@@ -14,17 +14,21 @@ openid_name = 'OPENID_NAME'
 # This key is used when user enters into the admin page
 openid_secret = 'OPENID_SECRET_KEY'
 
-# Default active value
-# User is active by default
-openid_default_active = True
-
 # User roles
 # An array with all the available user roles
 openid_roles = [ 'demo', 'user', 'premium' ]
 
+# Default active value
+# User is active by default
+openid_default_active = True
+
 # Default user role
 # When a new user is registered, the default role is 'user'
 openid_default_role = 'user'
+
+# Allow signup
+# Allow users to create a new account
+openid_allow_signup = True
 
 
 # Captcha configuration
