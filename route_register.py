@@ -15,11 +15,19 @@ import render
 class RouteRegister(webapp2.RequestHandler):
     # Register get
     def get(self):
+        # Check if signup is allowed
+        if config.openid_allow_signup is False:
+            return self.redirect('/login')
+
         # Render the register page
         return render.template(self, 'register.html', error='')
 
     # Register post
     def post(self):
+        # Check if the signup is not allowed
+        if config.openid_allow_signup is False:
+            return self.redirect('/login')
+
         # Check if the captcha is enabled
         if config.captcha_enabled is True:
             # Get the captcha value
