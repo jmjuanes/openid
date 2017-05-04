@@ -13,6 +13,7 @@ jinja_env = jinja2.Environment(
 
 # Initialize the global variables
 jinja_env.globals['openid_name'] = config.openid_name
+jinja_env.globals['openid_allow_signup'] = config.openid_allow_signup
 jinja_env.globals['captcha_enabled'] = config.captcha_enabled
 jinja_env.globals['captcha_key'] = config.captcha_key
 
