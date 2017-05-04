@@ -13,7 +13,7 @@
 </script>
 
 <!-- Title -->
-<title>Authorize - MGviz Account</title>
+<title>Authorize - {{ openid_name }}</title>
 
 <!-- Content -->
 <div class="login-content">
@@ -21,7 +21,7 @@
   <div class="siimple-h2" align="center">Authorize</div>
   <!-- Detail -->
   <div class="login-detail" align="center">
-    <b>{{ app_name }}</b> would like permission to access to your <b>MGviz account</b>
+    <b>{{ app_name }}</b> would like permission to access to your account information.
   </div>
   <form id="login-form" method="POST" enctype="application/x-www-form-urlencoded">
     {% if error %}
@@ -64,7 +64,7 @@
   <!-- New account -->
   {% if app_signup == "true" %}
   <div class="login-register" align="center">
-    New to MGviz Accounts?
+    New to {{ openid_name }}?
     <a href="/register" class="siimple-btn siimple-btn--green login-submit" target="_blank">Create an account</a>
   </div>
   {% endif %}
