@@ -58,3 +58,7 @@ captcha_secret = 'YOUR_CAPTCHA_SECRET_KEY'
 # Token expiration days
 # Number of days where the token is valid
 token_expiration = 7 * (24 * 60 * 60)
+
+# Token algorithm
+# Allowed: HS256 or RS256
+token_algorithm = 'HS256'
