@@ -16,7 +16,7 @@ openid_secret = 'OPENID_SECRET_KEY'
 
 # User roles
 # An array with all the available user roles
-openid_roles = [ 'demo', 'user', 'premium' ]
+openid_roles = ['demo', 'user', 'premium']
 
 # Default active value
 # User is active by default
