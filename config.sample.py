@@ -60,5 +60,5 @@ captcha_secret = 'YOUR_CAPTCHA_SECRET_KEY'
 token_expiration = 7 * (24 * 60 * 60)
 
 # Token algorithm
-# Allowed: HS256 or RS256
+# Set the token sign algorithm. Allowed values: HS256 or RS256
 token_algorithm = 'HS256'
