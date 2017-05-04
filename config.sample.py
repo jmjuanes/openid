@@ -18,6 +18,14 @@ openid_secret = 'OPENID_SECRET_KEY'
 # User is active by default
 openid_default_active = True
 
+# User roles
+# An array with all the available user roles
+openid_roles = [ 'demo', 'user', 'premium' ]
+
+# Default user role
+# When a new user is registered, the default role is 'user'
+openid_default_role = 'user'
+
 
 # Captcha configuration
 # ======================
