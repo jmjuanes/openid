@@ -24,13 +24,13 @@ def encode(user, secret):
     payload['exp'] = int(time.time()) + config.token_expiration
 
     # Build the token
-    return jwt.encode(payload, secret, algorithm='HS256')
+    return jwt.encode(payload, secret, algorithm=config.token_algorithm)
 
 
 # Decode a token
 def decode(token, secret):
     # Get the payload
-    payload = jwt.decode(token, secret, algorithms=['HS256'])
+    payload = jwt.decode(token, secret, algorithms=[config.token_algorithm])
 
     print payload
 
