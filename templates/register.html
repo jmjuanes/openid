@@ -13,14 +13,14 @@
 </script>
 
 <!-- Title -->
-<title>Join - MGviz Account</title>
+<title>Join - {{ openid_name }}</title>
 
 <!-- Content -->
 <div class="login-content">
   <!-- Title -->
-  <div class="siimple-h2" align="center">Join MGviz</div>
+  <div class="siimple-h2" align="center">Join now</div>
   <div class="login-detail siimple-small" align="center">
-    With a <b>MGviz Account</b> you will get access to all applications developed by the <b>MGviz Team</b>. All fields are required.
+    Fill the following fields to create a new <b>{{ openid_name }}</b>. All fields are required.
   </div>
   <form id="register-form" method="POST" enctype="application/x-www-form-urlencoded">
     {% if error %}
