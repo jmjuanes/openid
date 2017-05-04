@@ -12,6 +12,7 @@ jinja_env = jinja2.Environment(
     autoescape=True)
 
 # Initialize the global variables
+jinja_env.globals['openid_name'] = config.openid_name
 jinja_env.globals['captcha_enabled'] = config.captcha_enabled
 jinja_env.globals['captcha_key'] = config.captcha_key
 
