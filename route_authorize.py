@@ -1,6 +1,6 @@
 # Import dependencies
 import webapp2
-import urlparse
+# import urlparse
 
 # Import lib modules
 from passlib.hash import pbkdf2_sha256
@@ -133,7 +133,8 @@ class RouteAuthorize(webapp2.RequestHandler):
                 user_token = tokens.encode(user, application.secret)
     
                 # Build the outgoing url and redirect
-                redirect_url = urlparse.urljoin(application.redirect, '?token=' + user_token)
+                # redirect_url = urlparse.urljoin(application.redirect, '?token=' + user_token)
+                redirect_url = application.redirect.format(token=user_token)
                 return self.redirect(str(redirect_url))
 
 
