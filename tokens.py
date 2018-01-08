@@ -31,8 +31,7 @@ def encode(user, secret):
 def decode(token, secret):
     # Get the payload
     payload = jwt.decode(token, secret, algorithms=[config.token_algorithm])
-
-    print payload
+    # print payload
 
     # Check for empty payload
     if payload is None:
