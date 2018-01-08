@@ -1,4 +1,5 @@
 import os
+import logging
 
 import webapp2
 import jinja2
@@ -31,6 +32,24 @@ def render(self, file_name, **kwargs):
     # Render the template and write to the response
     file_template = jinja_env.get_template(file_name)
     self.response.write(file_template.render(**kwargs))
+
+
+# Home route
+class RouteHome(webapp2.RequestHandler):
+    def get(self):
+        # Get and verify the cookie
+        token = self.request.cookies.get(config.openid_key + '_token')
+        if token is not None:
+            # logging.info('Has cookie --> validate the token')
+            payload = tokens.decode(token, config.openid_secret, config.token_algorithm)
+            if payload is not None:
+                return self.redirect('/dashboard')
+            else:
+                self.response.delete_cookie(config.openid_key + '_token')
+                return self.redirect('/login')
+        else:
+            # logging.info('Cookie not found --> redirect to login')
+            return self.redirect('/login')
 
 
 # Login route
@@ -72,8 +91,8 @@ class RouteLogin(webapp2.RequestHandler):
         # Check the password
         if pbkdf2_sha256.verify(user_pwd, user.pwd) is True:
             user_token = tokens.encode(user, config.openid_secret, config.token_algorithm, config.token_expiration)
-            self.response.set_cookie('mgviz_token', user_token, path='/')
-            self.redirect('/')
+            self.response.set_cookie(config.openid_key + '_token', user_token, path='/')
+            self.redirect('/dashboard')
         else:
             self.response.status_int = 400
             return render(self, 'login.html', error='Invalid email or password')
@@ -237,6 +256,7 @@ class RouteAuthorize(webapp2.RequestHandler):
 
 # Mount the app
 app = webapp2.WSGIApplication([
+    webapp2.Route('/', handler=RouteHome),
     webapp2.Route('/login', handler=RouteLogin),
     webapp2.Route('/register', handler=RouteRegister),
     webapp2.Route('/authorize', handler=RouteAuthorize)
