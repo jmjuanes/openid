@@ -13,14 +13,5 @@ handlers:
 - url: /js
   static_dir: public/js/
 
-- url: /
-  script: route_index.app
-
-- url: /login
-  script: route_login.app
-
-- url: /register
-  script: route_register.app
-
-- url: /authorize
-  script: route_authorize.app
+- url: /.*
+  script: openid.app
