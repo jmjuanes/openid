@@ -1,6 +1,6 @@
-# MGviz OpenID
+# OpenID
 
-An open ID for medical genomic web applications, hosted on [Google App Engine](https://cloud.google.com/appengine/). 
+An open ID ------, hosted on [Google App Engine](https://cloud.google.com/appengine/). 
 
 ## OpenID flow 
 
@@ -45,6 +45,6 @@ Open a new browser window and navigate to `localhost:8080`.
 
 ## License 
 
-[MIT LICENSE](./LICENSE) &copy; 2017 The MGviz Team.
+[MIT LICENSE](./LICENSE) &copy; 2017 ----.
 
 
