@@ -1,51 +1,40 @@
-# Import libs
-import jwt
 import time
-
-# Import custom modules
-import config
+import jwt
 
 
 # Generate a token
-def encode(user, secret):
-    # Initialize the token payload
-    payload = {'email': user.email, 'name': user.name, 'institution': user.institution, 'is_admin': user.is_admin }
-
-    # Add the user role
+def encode(user, secret, algorithm, expiration):
+    payload = dict()
+    payload['email'] = user.email
+    payload['name'] = user.name
+    payload['is_admin'] = user.is_admin
     payload['role'] = user.role
-
-    # Add the user id
     payload['id'] = user.key.id()
-
-    # Add the created time
     payload['iat'] = int(time.time())
+    payload['exp'] = int(time.time()) + expiration
 
-    # Add the expiration
-    payload['exp'] = int(time.time()) + config.token_expiration
-
-    # Build the token
-    return jwt.encode(payload, secret, algorithm=config.token_algorithm)
+    # Build and return the token
+    return jwt.encode(payload, secret, algorithm=algorithm)
 
 
 # Decode a token
-def decode(token, secret):
-    # Get the payload
-    payload = jwt.decode(token, secret, algorithms=[config.token_algorithm])
-    # print payload
-
-    # Check for empty payload
-    if payload is None:
-        # Return token not valid
-        return None
-    else:
-        # Check for no expiration time
-        if payload['exp'] is None:
-            # Return invalid token
-            return None
-
-        # Check the expiration date
-        if int(time.time()) < payload['exp']:
+def decode(token, secret, algorithm):
+    # Decode the payload
+    try:
+        payload = jwt.decode(token, secret, algorithms=[algorithm])
+        if payload is None:
             return None
         else:
-            # Return the payload
-            return payload
+            # Check for no expiration time
+            if payload['exp'] is None:
+                # Return invalid token
+                return None
+
+            # Check the expiration date
+            if int(time.time()) < payload['exp']:
+                return None
+            else:
+                # Return the payload
+                return payload
+    except jwt.exceptions.InvalidTokenError:
+        return None
