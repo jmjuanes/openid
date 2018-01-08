@@ -71,7 +71,7 @@ class RouteLogin(webapp2.RequestHandler):
 
         # Check the password
         if pbkdf2_sha256.verify(user_pwd, user.pwd) is True:
-            user_token = tokens.encode(user, config.openid_secret)
+            user_token = tokens.encode(user, config.openid_secret, config.token_algorithm, config.token_expiration)
             self.response.set_cookie('mgviz_token', user_token, path='/')
             self.redirect('/')
         else:
