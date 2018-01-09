@@ -12,12 +12,8 @@ import src.tokens as tokens
 import config
 
 # Initialize the jinja environment
-jinja_env = jinja2.Environment(
-    loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates/')),
-    extensions=['jinja2.ext.autoescape'],
-    autoescape=True)
-
-# Initialize the global variables
+jinja_loader = jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), 'templates/'))
+jinja_env = jinja2.Environment(loader=jinja_loader, extensions=['jinja2.ext.autoescape'], autoescape=True)
 jinja_env.globals['openid_name'] = config.openid_name
 jinja_env.globals['openid_allow_signup'] = config.openid_allow_signup
 jinja_env.globals['captcha_enabled'] = config.captcha_enabled
