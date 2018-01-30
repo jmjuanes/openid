@@ -10,6 +10,10 @@
 # Public name of the OpenID
 openid_name = 'OPENID_NAME'
 
+# OpenID key value
+#
+openid_key = 'openid'
+
 # OpenID secret key
 # This key is used when user enters into the admin page
 openid_secret = 'OPENID_SECRET_KEY'
