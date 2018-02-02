@@ -250,10 +250,30 @@ class RouteAuthorize(webapp2.RequestHandler):
                 return self.redirect(str(redirect_url))
 
 
+# Main dashboard route:
+class RouteDashboard(webapp2.RequestHandler):
+    def get(self):
+        # Step 1: check tokens
+        # Step 2: check if user is admin
+        # Step 3: render the user dashboard (and the admin if the user is admin too)
+        token = self.request.cookies.get(config.openid_key + '_token')
+        if token is not None:
+            payload = tokens.decode(token, config.openid_secret, config.token_algorithm)
+            if payload is not None:
+                return render(self, '/dashboard', is_admin=payload["is_admin"])
+        return self.redirect("/login")
+
+
+
+
+
+
+
 # Mount the app
 app = webapp2.WSGIApplication([
     webapp2.Route('/', handler=RouteHome),
     webapp2.Route('/login', handler=RouteLogin),
     webapp2.Route('/register', handler=RouteRegister),
-    webapp2.Route('/authorize', handler=RouteAuthorize)
+    webapp2.Route('/authorize', handler=RouteAuthorize),
+    webapp2.Route('/dashboard', handler=RouteDashboard)
 ], debug=True)
