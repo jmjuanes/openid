@@ -90,3 +90,6 @@ ENV/
 
 # IntellIJ project management files
 *.iml
+
+# Testing files
+config.py
