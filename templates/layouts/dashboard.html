@@ -1,0 +1,42 @@
+<!-- Styles -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/siimple@3.0.0/dist/siimple.min.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/dashboard.css">
+
+<!-- Title -->
+<title>{{ user }}'s dashboard</title>
+
+<!-- View -->
+<div class="siimple-content siimple-content--small">
+  <div class="siimple-grid">
+    <div class="siimple-grid-row">
+      <!-- Side menu -->
+      <div class="menu siimple-grid-col siimple-grid-col--3">
+        <!-- User panel -->
+        <div class="user-panel">
+          <div class="siimple-menu">
+            <div class="siimple-menu-group">Personal settings</div>
+            <a class="siimple-menu-item">My information</a>
+            <a class="siimple-menu-item">Change password</a>
+            <a class="siimple-menu-item">Authorised apps</a>
+            <a class="siimple-menu-item">Cancel account</a>
+          </div>
+        </div>
+        {% if is_admin %}
+        <!-- Admin panel -->
+        <div class="admin-panel">
+          <div class="siimple-menu">
+            <div class="siimple-menu-group">Administration</div>
+            <a class="siimple-menu-item">Users management</a>
+            <a class="siimple-menu-item">Apps management</a>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      <!-- Content -->
+      <div class="dashboard-content siimple-grid-col siimple-grid-col--9">
+        {% block dashboardContent %}{% endblock %}
+      </div>
+    </div>
+  </div>
+</div>
