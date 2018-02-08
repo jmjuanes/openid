@@ -30,21 +30,32 @@ def render(self, file_name, **kwargs):
     self.response.write(file_template.render(**kwargs))
 
 
+# Extract and verify the token from cookie
+def checkAuthentication(self):
+    # Get and verify the cookie
+    token = self.request.cookies.get(config.openid_key + '_token')
+    if token is not None:
+        # logging.info('Has cookie --> validate the token')
+        payload = tokens.decode(token, config.openid_secret, config.token_algorithm)
+        if payload is not None:
+            return payload
+        else:
+            self.response.delete_cookie(config.openid_key + '_token')
+            # self.redirect('/login')
+            return None
+    else:
+        # logging.info('Cookie not found --> redirect to login')
+        # self.redirect('/login')
+        return None
+
+
 # Home route
 class RouteHome(webapp2.RequestHandler):
     def get(self):
-        # Get and verify the cookie
-        token = self.request.cookies.get(config.openid_key + '_token')
-        if token is not None:
-            # logging.info('Has cookie --> validate the token')
-            payload = tokens.decode(token, config.openid_secret, config.token_algorithm)
-            if payload is not None:
-                return self.redirect('/dashboard')
-            else:
-                self.response.delete_cookie(config.openid_key + '_token')
-                return self.redirect('/login')
+        payload = checkAuthentication(self)
+        if payload is not None:
+            return self.redirect('/dashboard')
         else:
-            # logging.info('Cookie not found --> redirect to login')
             return self.redirect('/login')
 
 
@@ -88,6 +99,7 @@ class RouteLogin(webapp2.RequestHandler):
         if pbkdf2_sha256.verify(user_pwd, user.pwd) is True:
             user_token = tokens.encode(user, config.openid_secret, config.token_algorithm, config.token_expiration)
             self.response.set_cookie(config.openid_key + '_token', user_token, path='/')
+            # logging.info("cookie: " + )
             self.redirect('/dashboard')
         else:
             self.response.status_int = 400
@@ -255,16 +267,24 @@ class RouteDashboard(webapp2.RequestHandler):
     def get(self):
         # Step 1: check tokens
         # Step 2: check if user is admin
-        # Step 3: render the user dashboard (and the admin if the user is admin too)
-        token = self.request.cookies.get(config.openid_key + '_token')
-        if token is not None:
-            payload = tokens.decode(token, config.openid_secret, config.token_algorithm)
-            if payload is not None:
-                return render(self, '/dashboard', is_admin=payload["is_admin"])
+        # Step 3: render the user dashboard (and the admin one if the user is admin too)
+        payload = checkAuthentication(self)
+        if payload is not None:
+            return render(self, 'dashboard/index.html', is_admin=payload["is_admin"])
         return self.redirect("/login")
 
 
-
+# User profile route
+class RouteDashboardProfile(webapp2.RequestHandler):
+    def get(self):
+        payload = checkAuthentication(self)
+        if payload is not None:
+            user = db_user.get_user(payload["email"])
+            return render(self, 'dashboard/profile.html',
+                          is_admin=payload["is_admin"],
+                          name=user.name)
+        else:
+            return self.redirect("/login")
 
 
 
@@ -275,5 +295,6 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/login', handler=RouteLogin),
     webapp2.Route('/register', handler=RouteRegister),
     webapp2.Route('/authorize', handler=RouteAuthorize),
-    webapp2.Route('/dashboard', handler=RouteDashboard)
+    webapp2.Route('/dashboard', handler=RouteDashboard),
+    webapp2.Route('/dashboard/profile', handler=RouteDashboardProfile)
 ], debug=True)
