@@ -290,26 +290,30 @@ class RouteDashboardProfile(webapp2.RequestHandler):
         payload = checkAuthentication(self)
         if payload is not None:
             new_user = db_user.get_user(payload["email"])
-            new_user.name = self.request.get('name', default_value='')
-            try:
-                new_user.put()
-                message = "Your information has been successfully updated."
-                alert = "green"
+            if new_user.name != self.request.get('name', default_value=''):
+                try:
+                    new_user.name = self.request.get('name', default_value='')
+                    new_user.put()
+                    message = "Your information has been successfully updated."
+                    alert = "green"
+                except:
+                    message = "Something went wrong updating your information."
+                    alert = "red"
                 return render(self, "dashboard/profile.html",
                               change=True,
                               is_admin=payload["is_admin"],
                               name=new_user.name,
                               message=message,
                               alert=alert)
-            except:
-                message = "Something went wrong updating your information."
-                alert = "red"
+            else:
+                message = "No information was changed."
+                alert = "yellow"
                 return render(self, "dashboard/profile.html",
-                            change=True,
-                            is_admin=payload["is_admin"],
-                            name=new_user.name,
-                            message=message,
-                            alert=alert)
+                              change=True,
+                              is_admin=payload["is_admin"],
+                              name=new_user.name,
+                              message=message,
+                              alert=alert)
         else:
             return self.redirect("/login")
 
