@@ -1,7 +1,7 @@
 {% extends "layouts/dashboard.html" %}
 
 {% block dashboardContent %}
-<!-- Send the login form -->
+<!-- Scripts -->
 <script type="text/javascript">
     //Send the form
     function sendForm(name) {
@@ -11,17 +11,16 @@
         document.getElementById('alert').style.display = "none";
     }
 </script>
-
 <form class="siimple-form" method="post">
   <div class="siimple-form-title">Profile</div>
   <div class="siimple-form-detail">
     Edit your personal information.
   </div>
   <!-- Alert -->
-  {% if change %}
-  <div class="alert siimple-alert siimple-alert--{{ alert }}" id="alert">
+  {% if alert_message %}
+  <div class="siimple-alert siimple-alert--{{ alert_color }}" id="alert">
     <div class="siimple-close" onclick=hide()></div>
-    {{ message }}
+    {{ alert_message }}
   </div>
   {% endif %}
   <!-- Form -->
@@ -31,7 +30,7 @@
     <div class="siimple-form-field-helper">This is the name other users will see.</div>
   </div>
   <div class="siimple-form-field">
-    <div class="siimple-btn siimple-btn--green" onclick="sendForm('profile-submit')">Update</div>
+    <div class="siimple-btn siimple-btn--green" onclick="sendForm('profile-submit')">Update profile</div>
     <input id="profile-submit" type="submit" value="Sign in" style="display:none;">
   </div>
 </form>
