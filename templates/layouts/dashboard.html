@@ -8,35 +8,35 @@
 
 <!-- View -->
 <div class="siimple-content siimple-content--small">
-  <div class="siimple-grid">
-    <div class="siimple-grid-row">
-      <!-- Side menu -->
-      <div class="menu siimple-grid-col siimple-grid-col--3">
-        <!-- User panel -->
-        <div class="user-panel">
-          <div class="siimple-menu">
-            <div class="siimple-menu-group">Personal settings</div>
-            <a class="siimple-menu-item" href="/dashboard/profile">Profile</a>
-            <a class="siimple-menu-item" href="/dashboard/password">Change password</a>
-            <a class="siimple-menu-item">Authorised apps</a>
-            <a class="siimple-menu-item">Cancel account</a>
-          </div>
+    <div class="siimple-grid">
+        <div class="siimple-grid-row">
+            <!-- Side menu -->
+            <div class="menu siimple-grid-col siimple-grid-col--3">
+                <!-- User panel -->
+                <div class="user-panel">
+                    <div class="siimple-menu">
+                        <div class="siimple-menu-group">Personal settings</div>
+                        <a class="siimple-menu-item" href="/dashboard/profile">Profile</a>
+                        <a class="siimple-menu-item">Authorised apps</a>
+                        <a class="siimple-menu-item" href="/dashboard/account/password">Change password</a>
+                        <a class="siimple-menu-item">Cancel account</a>
+                    </div>
+                </div>
+                {% if is_admin %}
+                <!-- Admin panel -->
+                <div class="admin-panel">
+                    <div class="siimple-menu">
+                        <div class="siimple-menu-group">Administration</div>
+                        <a class="siimple-menu-item">Users management</a>
+                        <a class="siimple-menu-item">Apps management</a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <!-- Content -->
+            <div class="dashboard-content siimple-grid-col siimple-grid-col--9">
+                {% block dashboardContent %}{% endblock %}
+            </div>
         </div>
-        {% if is_admin %}
-        <!-- Admin panel -->
-        <div class="admin-panel">
-          <div class="siimple-menu">
-            <div class="siimple-menu-group">Administration</div>
-            <a class="siimple-menu-item">Users management</a>
-            <a class="siimple-menu-item">Apps management</a>
-          </div>
-        </div>
-        {% endif %}
-      </div>
-      <!-- Content -->
-      <div class="dashboard-content siimple-grid-col siimple-grid-col--9">
-        {% block dashboardContent %}{% endblock %}
-      </div>
     </div>
-  </div>
 </div>
