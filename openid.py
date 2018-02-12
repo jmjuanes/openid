@@ -322,7 +322,7 @@ class RouteDashboardPassword(webapp2.RequestHandler):
     def get(self):
         payload = checkAuthentication(self)
         if payload is not None:
-            return render(self, 'dashboard/password.html', is_admin=payload["is_admin"])
+            return render(self, 'dashboard/account-password.html', is_admin=payload["is_admin"])
 
     def post(self):
         payload = checkAuthentication(self)
@@ -337,19 +337,19 @@ class RouteDashboardPassword(webapp2.RequestHandler):
                 # self.response.status_int = 400
                 render_args["alert_message"] = "You must fill all the fields."
                 render_args["alert_color"] = "red"
-                return render(self, 'dashboard/password.html', **render_args)
+                return render(self, 'dashboard/account-password.html', **render_args)
             # New passwords do not match
             if new_pwd != repeat_pwd:
                 # self.response.status_int = 400
                 render_args["alert_message"] = "New passwords do not match."
                 render_args["alert_color"] = "red"
-                return render(self, 'dashboard/password.html', **render_args)
+                return render(self, 'dashboard/account-password.html', **render_args)
             # New and old passwords are the same
             if pwd == new_pwd:
                 # self.response.status_int = 400
                 render_args["alert_message"] = "Old and new passwords are the same"
                 render_args["alert_color"] = "red"
-                return render(self, 'dashboard/password.html', **render_args)
+                return render(self, 'dashboard/account-password.html', **render_args)
 
             # If we're here all the info is syntactically correct
             # Check if the old password is correct
@@ -363,16 +363,16 @@ class RouteDashboardPassword(webapp2.RequestHandler):
                         user.put()
                         render_args["alert_message"] = "Your password was updated successfully."
                         render_args["alert_color"] = "green"
-                        return render(self, 'dashboard/password.html', **render_args)
+                        return render(self, 'dashboard/account-password.html', **render_args)
                     except:
                         render_args["alert_message"] = "Something went wrong, please try again."
                         render_args["alert_color"] = "red"
-                        return render(self, 'dashboard/password.html', **render_args)
+                        return render(self, 'dashboard/account-password.html', **render_args)
                 else:
                     # self.response.status_int = 400
                     render_args["alert_message"] = "Enter your current password correctly."
                     render_args["alert_color"] = "red"
-                    return render(self, 'dashboard/password.html', **render_args)
+                    return render(self, 'dashboard/account-password.html', **render_args)
             else:
                 deleteAuthentication(self)
 
@@ -387,6 +387,6 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/authorize', handler=RouteAuthorize),
     webapp2.Route('/dashboard', handler=RouteDashboard),
     webapp2.Route('/dashboard/profile', handler=RouteDashboardProfile),
-    webapp2.Route('/dashboard/password', handler=RouteDashboardPassword),
+    webapp2.Route('/dashboard/account/password', handler=RouteDashboardPassword),
 
 ], debug=True)
