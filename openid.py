@@ -318,6 +318,73 @@ class RouteDashboardProfile(webapp2.RequestHandler):
             return self.redirect("/login")
 
 
+# Change password route
+class RouteDashboardPasswordChange(webapp2.RequestHandler):
+    def get(self):
+        payload = checkAuthentication(self)
+        if payload is not None:
+            return render(self, 'dashboard/change-password.html', is_admin=payload["is_admin"])
+
+    def post(self):
+        payload = checkAuthentication(self)
+        if payload is not None:
+
+            pwd = self.request.get('pwd', default_value='')
+            new_pwd = self.request.get('new_pwd', default_value='')
+            repeat_pwd = self.request.get('repeat_pwd', default_value='')
+            # Not all fields are filled
+            if pwd is '' or new_pwd is '' or repeat_pwd is '':
+                # self.response.status_int = 400
+                return render(self, 'dashboard/change-password.html',
+                              message="You must fill all the fields.",
+                              alert="red",
+                              change=True,
+                              is_admin=payload["is_admin"])
+            # New passwords do not match
+            if new_pwd != repeat_pwd:
+                # self.response.status_int = 400
+                return render(self, 'dashboard/change-password.html',
+                              message="New passwords do not match.",
+                              alert="red",
+                              change=True,
+                              is_admin=payload["is_admin"])
+            # New and old passwords are the same
+            if pwd == new_pwd:
+                # self.response.status_int = 400
+                return render(self, 'dashboard/change-password.html',
+                              message="Old and new passwords are the same",
+                              alert="red",
+                              change=True,
+                              is_admin=payload["is_admin"])
+            # If we're here all the info is syntactically correct
+            # Check if the old password is correct
+            user = db_user.get_user(payload["email"])
+            if pbkdf2_sha256.verify(pwd, user.pwd) is True:
+                # Update the pass of the user object
+                user.pwd = pbkdf2_sha256.hash(new_pwd)
+                # Update the token
+                user_token = tokens.encode(user, config.openid_secret, config.token_algorithm, config.token_expiration)
+                # Now set the new one with the updated password
+                self.response.set_cookie(config.openid_key + '_token', user_token, path='/')
+                # Update the db
+                user.put()
+                return render(self, 'dashboard/change-password.html',
+                              message="Your password was updated successfully.",
+                              alert="green",
+                              change=True,
+                              is_admin=payload["is_admin"])
+            else:
+                # self.response.status_int = 400
+                return render(self, 'dashboard/change-password.html',
+                              message="Enter your current password correctly.",
+                              alert="red",
+                              change=True,
+                              is_admin=payload["is_admin"])
+
+
+
+
+
 
 # Mount the app
 app = webapp2.WSGIApplication([
@@ -326,5 +393,7 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/register', handler=RouteRegister),
     webapp2.Route('/authorize', handler=RouteAuthorize),
     webapp2.Route('/dashboard', handler=RouteDashboard),
-    webapp2.Route('/dashboard/profile', handler=RouteDashboardProfile)
+    webapp2.Route('/dashboard/profile', handler=RouteDashboardProfile),
+    webapp2.Route('/dashboard/change-password', handler=RouteDashboardPasswordChange),
+
 ], debug=True)
