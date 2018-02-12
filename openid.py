@@ -48,6 +48,9 @@ def checkAuthentication(self):
         # self.redirect('/login')
         return None
 
+def deleteAuthentication(self):
+    self.request.delete_cookie(config.openid_key + '_token', path='/')
+    return self.redirect('/login')
 
 # Home route
 class RouteHome(webapp2.RequestHandler):
@@ -289,99 +292,89 @@ class RouteDashboardProfile(webapp2.RequestHandler):
     def post(self):
         payload = checkAuthentication(self)
         if payload is not None:
-            new_user = db_user.get_user(payload["email"])
-            if new_user.name != self.request.get('name', default_value=''):
-                try:
-                    new_user.name = self.request.get('name', default_value='')
-                    new_user.put()
-                    message = "Your information has been successfully updated."
-                    alert = "green"
-                except:
-                    message = "Something went wrong updating your information."
-                    alert = "red"
-                return render(self, "dashboard/profile.html",
-                              change=True,
-                              is_admin=payload["is_admin"],
-                              name=new_user.name,
-                              message=message,
-                              alert=alert)
+            user = db_user.get_user(payload["email"])
+            if user is not None:
+                render_args = {"is_admin": payload["is_admin"], "name": user.name}
+                if user.name != self.request.get('name', default_value=''):
+                    try:
+                        user.name = self.request.get('name', default_value='')
+                        user.put()
+                        render_args["name"] = user.name
+                        render_args["alert_message"] = "Your information has been successfully updated."
+                        render_args["alert_color"] = "green"
+                        return render(self, "dashboard/profile.html", **render_args)
+                    except:
+                        render_args["alert_message"] = "Something went wrong updating your information."
+                        render_args["alert_color"] = "red"
+                        return render(self, "dashboard/profile.html", **render_args)
+                else:
+                    render_args["alert_message"] = "No information was changed."
+                    render_args["alert_color"] = "yellow"
+                    return render(self, "dashboard/profile.html", **render_args)
             else:
-                message = "No information was changed."
-                alert = "yellow"
-                return render(self, "dashboard/profile.html",
-                              change=True,
-                              is_admin=payload["is_admin"],
-                              name=new_user.name,
-                              message=message,
-                              alert=alert)
+                return deleteAuthentication(self)
         else:
             return self.redirect("/login")
 
 
 # Change password route
-class RouteDashboardPasswordChange(webapp2.RequestHandler):
+class RouteDashboardPassword(webapp2.RequestHandler):
     def get(self):
         payload = checkAuthentication(self)
         if payload is not None:
-            return render(self, 'dashboard/change-password.html', is_admin=payload["is_admin"])
+            return render(self, 'dashboard/password.html', is_admin=payload["is_admin"])
 
     def post(self):
         payload = checkAuthentication(self)
         if payload is not None:
-
             pwd = self.request.get('pwd', default_value='')
             new_pwd = self.request.get('new_pwd', default_value='')
             repeat_pwd = self.request.get('repeat_pwd', default_value='')
+            # Create a dictionary with the non-changing info
+            render_args = {"is_admin": payload["is_admin"]}
             # Not all fields are filled
             if pwd is '' or new_pwd is '' or repeat_pwd is '':
                 # self.response.status_int = 400
-                return render(self, 'dashboard/change-password.html',
-                              message="You must fill all the fields.",
-                              alert="red",
-                              change=True,
-                              is_admin=payload["is_admin"])
+                render_args["alert_message"] = "You must fill all the fields."
+                render_args["alert_color"] = "red"
+                return render(self, 'dashboard/password.html', **render_args)
             # New passwords do not match
             if new_pwd != repeat_pwd:
                 # self.response.status_int = 400
-                return render(self, 'dashboard/change-password.html',
-                              message="New passwords do not match.",
-                              alert="red",
-                              change=True,
-                              is_admin=payload["is_admin"])
+                render_args["alert_message"] = "New passwords do not match."
+                render_args["alert_color"] = "red"
+                return render(self, 'dashboard/password.html', **render_args)
             # New and old passwords are the same
             if pwd == new_pwd:
                 # self.response.status_int = 400
-                return render(self, 'dashboard/change-password.html',
-                              message="Old and new passwords are the same",
-                              alert="red",
-                              change=True,
-                              is_admin=payload["is_admin"])
+                render_args["alert_message"] = "Old and new passwords are the same"
+                render_args["alert_color"] = "red"
+                return render(self, 'dashboard/password.html', **render_args)
+
             # If we're here all the info is syntactically correct
             # Check if the old password is correct
             user = db_user.get_user(payload["email"])
-            if pbkdf2_sha256.verify(pwd, user.pwd) is True:
-                # Update the pass of the user object
-                user.pwd = pbkdf2_sha256.hash(new_pwd)
-                # Update the token
-                user_token = tokens.encode(user, config.openid_secret, config.token_algorithm, config.token_expiration)
-                # Now set the new one with the updated password
-                self.response.set_cookie(config.openid_key + '_token', user_token, path='/')
-                # Update the db
-                user.put()
-                return render(self, 'dashboard/change-password.html',
-                              message="Your password was updated successfully.",
-                              alert="green",
-                              change=True,
-                              is_admin=payload["is_admin"])
+            if user is not None:
+                if pbkdf2_sha256.verify(pwd, user.pwd) is True:
+                    try:
+                        # Update the pass of the user object
+                        user.pwd = pbkdf2_sha256.hash(new_pwd)
+                        # Update the db
+                        user.put()
+                        render_args["alert_message"] = "Your password was updated successfully."
+                        render_args["alert_color"] = "green"
+                        return render(self, 'dashboard/password.html', **render_args)
+                    except:
+                        render_args["alert_message"] = "Something went wrong, please try again."
+                        render_args["alert_color"] = "red"
+                        return render(self, 'dashboard/password.html', **render_args)
+                else:
+                    # self.response.status_int = 400
+                    render_args["alert_message"] = "Enter your current password correctly."
+                    render_args["alert_color"] = "red"
+                    return render(self, 'dashboard/password.html', **render_args)
             else:
-                # self.response.status_int = 400
-                return render(self, 'dashboard/change-password.html',
-                              message="Enter your current password correctly.",
-                              alert="red",
-                              change=True,
-                              is_admin=payload["is_admin"])
-
-
+                deleteAuthentication(self)
 
 
 
@@ -394,6 +387,6 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/authorize', handler=RouteAuthorize),
     webapp2.Route('/dashboard', handler=RouteDashboard),
     webapp2.Route('/dashboard/profile', handler=RouteDashboardProfile),
-    webapp2.Route('/dashboard/change-password', handler=RouteDashboardPasswordChange),
+    webapp2.Route('/dashboard/password', handler=RouteDashboardPassword),
 
 ], debug=True)
