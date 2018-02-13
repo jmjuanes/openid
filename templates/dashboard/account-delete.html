@@ -1,0 +1,26 @@
+{% extends "layouts/dashboard.html" %}
+
+{% block dashboardContent %}
+<!-- Content -->
+<div class="siimple-h3 cancel-h3">Delete account</div>
+<p class="siimple-p ">Once the account is deleted you won't be able to recover it.</p>
+<div class="siimple-btn siimple-btn--red" onclick="showElement('modal')">Delete my account</div>
+<!-- Modal -->
+<div class="modal-background" id="modal">
+    <form class="modal siimple-form" method="delete">
+        <div class="siimple-h5">Are you sure?</div>
+        <div class="siimple-paragraph">
+            This action <b>can not be undone</b>. This will remove all your data from the server.
+        </div>
+        <div class="siimple-form-field">
+            <div class="siimple-form-field-label">Please, type your password to confirm.</div>
+            <input type="password" class="siimple-input siimple-input--fluid" name="pwd" pattern=".{6,}" placeholder="Your password" required>
+        </div>
+        <div class="siimple-btn siimple-btn--red modal-btn" onclick="sendForm('delete-submit')">
+            Yes, I want to delete my account
+        </div>
+        <input id="delete-submit" type="submit" style="display:none;">
+        <div class="siimple-close modal-close" onclick="hideElement('modal')"></div>
+    </form>
+</div>
+{% endblock %}
