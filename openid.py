@@ -48,9 +48,15 @@ def checkAuthentication(self):
         # self.redirect('/login')
         return None
 
-def deleteAuthentication(self):
-    self.request.delete_cookie(config.openid_key + '_token', path='/')
-    return self.redirect('/login')
+
+def deleteAuthentication(self, flag=''):
+    self.response.delete_cookie(config.openid_key + '_token', path='/')
+    if flag == '':
+        redirect_url = '/login'
+    else:
+        redirect_url = '/login?flag={}'.format(flag)
+    return self.redirect(redirect_url)
+
 
 # Home route
 class RouteHome(webapp2.RequestHandler):
@@ -314,7 +320,7 @@ class RouteDashboardProfile(webapp2.RequestHandler):
             else:
                 return deleteAuthentication(self)
         else:
-            return self.redirect("/login")
+            return deleteAuthentication(self)
 
 
 # Change password route
@@ -377,7 +383,38 @@ class RouteDashboardPassword(webapp2.RequestHandler):
                 deleteAuthentication(self)
 
 
+class RouteDashboardAccountDelete(webapp2.RequestHandler):
+    def get(self):
+        payload = checkAuthentication(self)
+        if payload is not None:
+            return render(self, 'dashboard/account-delete.html', is_admin=payload["is_admin"])
 
+    def post(self):
+        payload = checkAuthentication(self)
+        if payload is not None:
+            user = db_user.get_user(payload["email"])
+            render_args = {"is_admin": payload["is_admin"]}
+            if user is not None:
+                pwd = self.request.get('pwd', default_value='')
+                if pbkdf2_sha256.verify(pwd, user.pwd) is True:
+                    try:
+                        logging.info("PASSWORD VALID --> DELETE ACCOUNT")
+                        user.key.delete()
+                        logging.info("USER DELETED")
+                    except Exception as e:
+                        logging.info("WTF???")
+                        logging.info(e)
+                        render_args["alert_message"] = "Something went wrong trying to delete your account."
+                        return render(self, 'dashboard/account-delete.html', **render_args)
+                    else:
+                        return deleteAuthentication(self, flag="ACCOUNT_DELETED")
+                else:
+                    render_args["alert_message"] = "Please enter your password correctly."
+                    return render(self, 'dashboard/account-delete.html', **render_args)
+            else:
+                return deleteAuthentication(self)
+        else:
+            return deleteAuthentication(self)
 
 # Mount the app
 app = webapp2.WSGIApplication([
@@ -388,5 +425,6 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/dashboard', handler=RouteDashboard),
     webapp2.Route('/dashboard/profile', handler=RouteDashboardProfile),
     webapp2.Route('/dashboard/account/password', handler=RouteDashboardPassword),
+    webapp2.Route('/dashboard/account/delete', handler=RouteDashboardAccountDelete)
 
 ], debug=True)
