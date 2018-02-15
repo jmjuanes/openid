@@ -1,3 +1,5 @@
+{#{% extends "partials/alert.html" %}#}
+
 <!-- Styles -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/siimple@3.0.0/dist/siimple.min.css">
 <link rel="stylesheet" href="/css/style.css">
@@ -31,7 +33,7 @@
                     <div class="siimple-menu">
                         <div class="siimple-menu-group">Administration</div>
                         <a class="siimple-menu-item">Users management</a>
-                        <a class="siimple-menu-item">Apps management</a>
+                        <a class="siimple-menu-item" href="/dashboard/admin/apps">Apps management</a>
                     </div>
                 </div>
                 {% endif %}
