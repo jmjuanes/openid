@@ -8,8 +8,10 @@
 
 <!-- Send the login form -->
 <script type="text/javascript">
-  //Send the form
-  function send_form_register(){ return document.getElementById('register-submit').click(); }
+    //Send the form
+    function send_form_register() {
+        return document.getElementById('register-submit').click();
+    }
 </script>
 
 <!-- Title -->
@@ -17,58 +19,60 @@
 
 <!-- Content -->
 <div class="login-content">
-  <!-- Title -->
-  <div class="siimple-h2" align="center">Sign up</div>
-  <div class="login-detail siimple-small" align="center">
-    Fill the following fields to create a new <b>{{ openid_name }}</b>. All fields are required.
-  </div>
-  <form id="register-form" method="POST" enctype="application/x-www-form-urlencoded">
-    {% if error %}
-      <!-- display the alert mesage -->
-      <div class="siimple-alert siimple-alert--error" align="center">{{ error }}</div>
-    {% endif %}
-    <!-- Name -->
-    <div>
-      <label class="siimple-label">Your name</label><br>
-      <input type="text" class="siimple-input login-input" name="name" required><br>
-      <small class="siimple-small">Tell us what is your name.</small>
+    <!-- Title -->
+    <div class="siimple-h2" align="center">Sign up</div>
+    <div class="login-detail siimple-small" align="center">
+        Fill the following fields to create a new <b>{{ openid_name }}</b>. All fields are required.
     </div>
-    <!-- Institution -->
-    <div>
-      <label class="siimple-label">Your institution</label><br>
-      <input type="text" class="siimple-input login-input" name="institution" required><br>
-      <small class="siimple-small">Tell us where are your working.</small>
+    <form id="register-form" method="POST" enctype="application/x-www-form-urlencoded">
+        {% if error %}
+        <!-- display the alert mesage -->
+        <div class="siimple-alert siimple-alert--error" align="center">{{ error }}</div>
+        {% endif %}
+        <!-- Name -->
+        <div>
+            <label class="siimple-label">Your name</label><br>
+            <input type="text" class="siimple-input login-input" name="name" required><br>
+            <small class="siimple-small">Tell us what is your name.</small>
+        </div>
+        <!-- Institution -->
+        <div>
+            <label class="siimple-label">Your institution</label><br>
+            <input type="text" class="siimple-input login-input" name="institution" required><br>
+            <small class="siimple-small">Tell us where are your working.</small>
+        </div>
+        <!-- Email -->
+        <div>
+            <label class="siimple-label">Email</label><br>
+            <input type="email" class="siimple-input login-input" name="email" required><br>
+            <small class="siimple-small">We will send you an email to validate it.</small>
+        </div>
+        <!-- Password input -->
+        <div>
+            <label class="siimple-label">Password</label><br>
+            <input type="password" class="siimple-input login-input" name="pwd" pattern=".{6,}"
+                   title="6 characters minimum" required><br>
+            <small class="siimple-small">Use at least six characters.</small>
+        </div>
+        <!-- Captcha -->
+        {% if captcha_enabled %}
+        <div class="login-captcha">
+            <label class="siimple-label">Are you human?</label><br>
+            <div class="g-recaptcha" data-sitekey="{{ captcha_key }}"></div>
+        </div>
+        {% endif %}
+        <!-- Privacy -->
+        <div class="login-privacy siimple-small" align="center">
+            By clicking on <b>"Create account"</b> below, you are agreeing to our Privacy Policy.
+        </div>
+        <!-- Sign in -->
+        <div class="siimple-btn siimple-btn--blue login-submit" onclick="sendForm('register-submit')">Create account
+        </div>
+        <input id="register-submit" type="submit" value="Sign in" style="display:none;">
+    </form>
+    <!-- New account -->
+    <div class="login-register" align="center">
+        Already have an account?
+        <a href="/login" class="siimple-btn siimple-btn--green login-submit">Sign in</a>
     </div>
-    <!-- Email -->
-    <div>
-      <label class="siimple-label">Email</label><br>
-      <input type="email" class="siimple-input login-input" name="email" required><br>
-      <small class="siimple-small">We will send you an email to validate it.</small>
-    </div>
-    <!-- Password input -->
-    <div>
-      <label class="siimple-label">Password</label><br>
-      <input type="password" class="siimple-input login-input" name="pwd" pattern=".{6,}" title="6 characters minimum" required><br>
-      <small class="siimple-small">Use at least six characters.</small>
-    </div>
-    <!-- Captcha -->
-    {% if captcha_enabled %}
-    <div class="login-captcha">
-      <label class="siimple-label">Are you human?</label><br>
-      <div class="g-recaptcha" data-sitekey="{{ captcha_key }}"></div>
-    </div>
-    {%  endif %}
-    <!-- Privacy -->
-    <div class="login-privacy siimple-small" align="center">
-      By clicking on <b>"Create account"</b> below, you are agreeing to our Privacy Policy.
-    </div>
-    <!-- Sign in -->
-    <div class="siimple-btn siimple-btn--blue login-submit" onclick="send_form_register();">Create account</div>
-    <input id="register-submit" type="submit" value="Sign in" style="display:none;">
-  </form>
-  <!-- New account -->
-  <div class="login-register" align="center">
-    Already have an account?
-    <a href="/login" class="siimple-btn siimple-btn--green login-submit">Sign in</a>
-  </div>
 </div>
