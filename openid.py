@@ -3,6 +3,8 @@ import logging
 
 import webapp2
 import jinja2
+import random
+import string
 from passlib.hash import pbkdf2_sha256
 
 import src.captcha as captcha
@@ -56,6 +58,11 @@ def deleteAuthentication(self, flag=''):
     else:
         redirect_url = '/login?flag={}'.format(flag)
     return self.redirect(redirect_url)
+
+
+def generateSecret():
+    secret = ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits + string.ascii_uppercase) for _ in range(50))
+    return secret
 
 
 # Home route
@@ -383,6 +390,7 @@ class RouteDashboardPassword(webapp2.RequestHandler):
                 deleteAuthentication(self)
 
 
+# Delete your account route
 class RouteDashboardAccountDelete(webapp2.RequestHandler):
     def get(self):
         payload = checkAuthentication(self)
@@ -398,12 +406,8 @@ class RouteDashboardAccountDelete(webapp2.RequestHandler):
                 pwd = self.request.get('pwd', default_value='')
                 if pbkdf2_sha256.verify(pwd, user.pwd) is True:
                     try:
-                        logging.info("PASSWORD VALID --> DELETE ACCOUNT")
                         user.key.delete()
-                        logging.info("USER DELETED")
                     except Exception as e:
-                        logging.info("WTF???")
-                        logging.info(e)
                         render_args["alert_message"] = "Something went wrong trying to delete your account."
                         return render(self, 'dashboard/account-delete.html', **render_args)
                     else:
@@ -416,6 +420,70 @@ class RouteDashboardAccountDelete(webapp2.RequestHandler):
         else:
             return deleteAuthentication(self)
 
+
+# Applications list route
+class RouteAdminAppsManagement(webapp2.RequestHandler):
+    def get(self):
+        payload = checkAuthentication(self)
+        if payload is not None:
+            if payload["is_admin"] is True:
+                apps = db_application.getAll()
+                list_apps = []
+                for my_app in apps:
+                    list_apps.append({"id": my_app.key.id(), "name": my_app.name, "detail": my_app.detail})
+                return render(self, 'dashboard/admin-apps.html', is_admin=True, apps=list_apps)
+
+
+# Create an app route
+class RouteAdminAppsCreate(webapp2.RequestHandler):
+    def get(self):
+        payload = checkAuthentication(self)
+        if payload is not None:
+            if payload["is_admin"] is True:
+                return render(self, 'dashboard/admin-apps-new.html', is_admin=True)
+
+    def post(self):
+        payload = checkAuthentication(self)
+        if payload is not None:
+            if payload["is_admin"] is True:
+                render_args = {"is_admin": payload["is_admin"]}
+                # Initialize the app
+                application = db_application.Application()
+                application.name = self.request.get('name', default_value='')
+                application.detail = self.request.get('detail', default_value='')
+                application.redirect = self.request.get('redirect', default_value='')
+                application.secret = generateSecret()
+
+                # Insert the application in the db
+                try:
+                    app_key = application.put()
+                    return self.redirect('/dashboard/admin/apps/' + str(app_key.id()) + '?flag=APP_CREATED')
+                except:
+                    render_args["alert_message"] = "Something went wrong creating the application."
+                    render_args["alert_color"] = "red"
+                    return render(self, 'dashboard/admin-apps-new.html', **render_args)
+            else:
+                return render(self, 'dashboard/index.html', is_admin=payload["is_admin"])
+        else:
+            return deleteAuthentication(self)
+
+
+# Edit an app route
+class RouteAdminAppsOverview(webapp2.RequestHandler):
+    def get(self, app_id):
+        payload = checkAuthentication(self)
+        if payload is not None:
+            if payload["is_admin"] is True:
+                render_args = {"is_admin": payload["is_admin"], "alert_message": self.request.get('flag')}
+                application = db_application.get_application(app_id)
+                app_info = {"id": application.key.id(), "name": application.name, "detail": application.detail,
+                            "secret": application.secret, "redirect": application.redirect, "secret": application.secret}
+                return render(self, 'dashboard/admin-apps-overview.html', app=app_info, **render_args)
+            else:
+                return render(self, 'dashboard/index.html', is_admin=payload["is_admin"])
+        else:
+            return deleteAuthentication(self)
+
 # Mount the app
 app = webapp2.WSGIApplication([
     webapp2.Route('/', handler=RouteHome),
@@ -425,6 +493,9 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/dashboard', handler=RouteDashboard),
     webapp2.Route('/dashboard/profile', handler=RouteDashboardProfile),
     webapp2.Route('/dashboard/account/password', handler=RouteDashboardPassword),
-    webapp2.Route('/dashboard/account/delete', handler=RouteDashboardAccountDelete)
+    webapp2.Route('/dashboard/account/delete', handler=RouteDashboardAccountDelete),
+    webapp2.Route('/dashboard/admin/apps', handler=RouteAdminAppsManagement),
+    webapp2.Route('/dashboard/admin/apps/new', handler=RouteAdminAppsCreate),
+    webapp2.Route('/dashboard/admin/apps/<app_id>', handler=RouteAdminAppsOverview)
 
 ], debug=True)
