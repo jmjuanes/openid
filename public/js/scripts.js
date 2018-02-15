@@ -15,3 +15,12 @@ function showElement(id) {
     else
     document.getElementById(id).style.display = "block";
 }
+
+//Check the url from the add application route
+function checkUrl(url, id) {
+    url = document.getElementById(url).value;
+    if(url.indexOf('http://') == 0 || url.indexOf('https://') == 0)
+        sendForm(id);
+    else
+        console.log("Muy buenas tardes")
+}
