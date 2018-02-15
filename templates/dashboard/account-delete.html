@@ -2,15 +2,9 @@
 
 {% block dashboardContent %}
 <!-- Content -->
-<div class="siimple-h3 cancel-h3">Delete account</div>
+<div class="siimple-h3 dashboard-h3">Delete account</div>
 <p class="siimple-p ">Once the account is deleted you won't be able to recover it.</p>
-{% if alert_message %}
-<!-- Alert -->
-<div class="alert siimple-alert siimple-alert--red" id="alert">
-    <div class="siimple-close" onclick="hideElement('alert')"></div>
-    {{ alert_message }}
-</div>
-{% endif %}
+    {% include "partials/alert.html" %}
 <div class="siimple-btn siimple-btn--red" onclick="showElement('modal')">Delete my account</div>
 <!-- Modal -->
 <div class="modal-background" id="modal">

@@ -7,12 +7,7 @@
         Edit your personal information.
     </div>
     <!-- Alert -->
-    {% if alert_message %}
-    <div class="siimple-alert siimple-alert--{{ alert_color }}" id="alert">
-        <div class="siimple-close" onclick=hideElement('alert')></div>
-        {{ alert_message }}
-    </div>
-    {% endif %}
+    {% include "partials/alert.html" %}
     <!-- Form -->
     <div class="siimple-form-field">
         <div class="siimple-form-field-label">Your name</div>
