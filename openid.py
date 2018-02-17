@@ -421,17 +421,26 @@ class RouteDashboardAccountDelete(webapp2.RequestHandler):
             return deleteAuthentication(self)
 
 
-# Applications list route
+# Show applications list route
 class RouteAdminAppsManagement(webapp2.RequestHandler):
     def get(self):
         payload = checkAuthentication(self)
         if payload is not None:
             if payload["is_admin"] is True:
+                render_args = {"is_admin": payload["is_admin"]}
+                # Check for an alert
+                if self.request.get('flag') == "APP_DELETED":
+                    render_args["alert_message"] = "The application was deleted successfully."
+                    render_args["alert_color"] = "blue"
                 apps = db_application.getAll()
                 list_apps = []
                 for my_app in apps:
                     list_apps.append({"id": my_app.key.id(), "name": my_app.name, "detail": my_app.detail})
-                return render(self, 'dashboard/admin-apps.html', is_admin=True, apps=list_apps)
+                return render(self, 'dashboard/admin-apps.html', apps=list_apps, **render_args)
+            else:
+                return render(self, 'dashboard/index.html', is_admin=payload["is_admin"])
+        else:
+            return deleteAuthentication(self)
 
 
 # Create an app route
@@ -440,7 +449,11 @@ class RouteAdminAppsCreate(webapp2.RequestHandler):
         payload = checkAuthentication(self)
         if payload is not None:
             if payload["is_admin"] is True:
-                return render(self, 'dashboard/admin-apps-new.html', is_admin=True)
+                return render(self, 'dashboard/admin-apps-new.html', is_admin=payload["is_admin"])
+            else:
+                return render(self, 'dashboard/index.html', is_admin=payload["is_admin"])
+        else:
+            return deleteAuthentication(self)
 
     def post(self):
         payload = checkAuthentication(self)
@@ -474,7 +487,10 @@ class RouteAdminAppsOverview(webapp2.RequestHandler):
         payload = checkAuthentication(self)
         if payload is not None:
             if payload["is_admin"] is True:
-                render_args = {"is_admin": payload["is_admin"], "alert_message": self.request.get('flag')}
+                render_args = {"is_admin": payload["is_admin"]}
+                if self.request.get('flag') == "APP_CREATED":
+                    render_args["alert_message"] = "The application was registered successfully."
+                    render_args["alert_color"] = "green"
                 application = db_application.get_application(app_id)
                 app_info = {"id": application.key.id(), "name": application.name, "detail": application.detail,
                             "secret": application.secret, "redirect": application.redirect, "secret": application.secret}
@@ -483,6 +499,30 @@ class RouteAdminAppsOverview(webapp2.RequestHandler):
                 return render(self, 'dashboard/index.html', is_admin=payload["is_admin"])
         else:
             return deleteAuthentication(self)
+
+    # def post(self):
+        # Edit the info of the existing app
+
+
+# Delete an app route
+class RouteAdminAppsDelete(webapp2.RequestHandler):
+    def get(self, app_id):
+        payload = checkAuthentication(self)
+        if payload is not None:
+            if payload["is_admin"] is True:
+                application = db_application.get_application(app_id)
+                try:
+                    application.key.delete()
+                    return self.redirect('/dashboard/admin/apps?flag=APP_DELETED')
+                except:
+                    render_args = {"is_admin": payload["is_admin"]}
+                    render_args["alert_message"] = "Something went wrong deleting the application."
+                    render_args["alert_color"] = "red"
+                    return render(self, 'dashboard/admin-apps.html', **render_args)
+            else:
+                return render(self, 'dashboard/index.html', is_admin=payload["is_admin"])
+        else:
+            deleteAuthentication(self)
 
 # Mount the app
 app = webapp2.WSGIApplication([
@@ -496,6 +536,7 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/dashboard/account/delete', handler=RouteDashboardAccountDelete),
     webapp2.Route('/dashboard/admin/apps', handler=RouteAdminAppsManagement),
     webapp2.Route('/dashboard/admin/apps/new', handler=RouteAdminAppsCreate),
-    webapp2.Route('/dashboard/admin/apps/<app_id>', handler=RouteAdminAppsOverview)
+    webapp2.Route('/dashboard/admin/apps/<app_id>', handler=RouteAdminAppsOverview),
+    webapp2.Route('/dashboard/admin/apps/<app_id>/delete', handler=RouteAdminAppsDelete)
 
 ], debug=True)
