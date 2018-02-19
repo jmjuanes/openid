@@ -282,6 +282,12 @@ class RouteAuthorize(webapp2.RequestHandler):
                 return self.redirect(str(redirect_url))
 
 
+# Logout route
+class RouteLogout(webapp2.RequestHandler):
+    def get(self):
+        return deleteAuthentication(self)
+
+
 # Main dashboard route:
 class RouteDashboard(webapp2.RequestHandler):
     def get(self):
@@ -577,6 +583,7 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/dashboard/admin/apps', handler=RouteAdminAppsManagement),
     webapp2.Route('/dashboard/admin/apps/new', handler=RouteAdminAppsCreate),
     webapp2.Route('/dashboard/admin/apps/<app_id>', handler=RouteAdminAppsOverview),
-    webapp2.Route('/dashboard/admin/apps/<app_id>/delete', handler=RouteAdminAppsDelete)
+    webapp2.Route('/dashboard/admin/apps/<app_id>/delete', handler=RouteAdminAppsDelete),
+    webapp2.Route('/logout', handler=RouteLogout)
 
 ], debug=True)
