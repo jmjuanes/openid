@@ -21,6 +21,16 @@ def get_application(value):
         return None
 
 
+def getAll():
+    try:
+        # Get all the applications
+        apps = Application.query().fetch()
+        return apps
+    except ValueError:
+        # Catch an error: return none and exit
+        return None
+
+
 # Check if an application exists
 def exists_application(value):
     return get_application(value) is not None
