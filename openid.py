@@ -65,7 +65,9 @@ def deleteAuthentication(self, flag=''):
 
 
 def generateSecret():
-    secret = ''.join(random.SystemRandom().choice(string.ascii_lowercase + string.digits + string.ascii_uppercase) for _ in range(50))
+    secret = ''.join(
+        random.SystemRandom().choice(string.ascii_lowercase + string.digits + string.ascii_uppercase) for _ in
+        range(50))
     return secret
 
 
@@ -102,7 +104,7 @@ class RouteLogin(webapp2.RequestHandler):
             captcha_value = self.request.get('g-recaptcha-response', default_value='')
             if captcha.verify(captcha_value, config.captcha_secret, config.captcha_url) is False:
                 self.response.status_int = 400
-                return render(self, 'login.html',  error='Invalid captcha')
+                return render(self, 'login.html', error='Invalid captcha')
 
         # Get the user from the database
         user = db_user.get_user(user_email)
@@ -165,7 +167,7 @@ class RouteRegister(webapp2.RequestHandler):
             # Check the captcha value
             if captcha.verify(captcha_value, config.captcha_secret, config.captcha_url) is False:
                 self.response.status_int = 400
-                return render(self, 'register.html',  error='Invalid captcha')
+                return render(self, 'register.html', error='Invalid captcha')
 
         # Check if the email is registered
         if db_user.exists_user(user.email):
@@ -510,7 +512,8 @@ class RouteAdminAppsOverview(webapp2.RequestHandler):
                     render_args["alert_color"] = "green"
                 application = db_application.get_application(app_id)
                 app_info = {"id": application.key.id(), "name": application.name, "detail": application.detail,
-                            "secret": application.secret, "redirect": application.redirect, "secret": application.secret}
+                            "secret": application.secret, "redirect": application.redirect,
+                            "secret": application.secret}
                 return render(self, 'dashboard/admin-apps-overview.html', app=app_info, **render_args)
             else:
                 return render(self, 'dashboard/index.html', is_admin=payload["is_admin"])
@@ -570,20 +573,46 @@ class RouteAdminAppsDelete(webapp2.RequestHandler):
             deleteAuthentication(self)
 
 
+# Users management route
+class RouteAdminUsersManagement(webapp2.RequestHandler):
+    def get(self):
+        payload = checkAuthentication(self)
+        if payload is not None:
+            if payload["is_admin"] is True:
+                render_args = {"is_admin": payload["is_admin"]}
+                users = db_user.getAll()
+                list_users = []
+                for my_user in users:
+                    list_users.append({"id": my_user.key.id(), "name": my_user.name,
+                                       "email": my_user.email, "is_admin": my_user.is_admin,
+                                       "active": my_user.active})
+                return render(self, 'dashboard/admin-users.html', users=list_users, **render_args)
+            else:
+                return render(self, 'dashboard/index.html', is_admin=payload["is_admin"])
+        else:
+            return deleteAuthentication(self)
+
+
 # Mount the app
 app = webapp2.WSGIApplication([
+    # General routes
     webapp2.Route('/', handler=RouteHome),
     webapp2.Route('/login', handler=RouteLogin),
     webapp2.Route('/register', handler=RouteRegister),
     webapp2.Route('/authorize', handler=RouteAuthorize),
+    webapp2.Route('/logout', handler=RouteLogout),
+    # Dashboard routes
     webapp2.Route('/dashboard', handler=RouteDashboard),
     webapp2.Route('/dashboard/profile', handler=RouteDashboardProfile),
     webapp2.Route('/dashboard/account/password', handler=RouteDashboardPassword),
     webapp2.Route('/dashboard/account/delete', handler=RouteDashboardAccountDelete),
+    # Administrator routes:
+    # Apps routes
     webapp2.Route('/dashboard/admin/apps', handler=RouteAdminAppsManagement),
     webapp2.Route('/dashboard/admin/apps/new', handler=RouteAdminAppsCreate),
     webapp2.Route('/dashboard/admin/apps/<app_id>', handler=RouteAdminAppsOverview),
     webapp2.Route('/dashboard/admin/apps/<app_id>/delete', handler=RouteAdminAppsDelete),
-    webapp2.Route('/logout', handler=RouteLogout)
+    # Users routes
+    webapp2.Route('/dashboard/admin/users', handler=RouteAdminUsersManagement)
 
 ], debug=True)
