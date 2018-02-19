@@ -1,0 +1,34 @@
+{% extends 'layouts/dashboard.html' %}
+
+{% block dashboardContent %}
+    <div class="siimple-h3 dashboard-h3">Users management</div>
+    <p class="siimple-p">Delete or modify existing users or create new ones.</p>
+    {% include 'partials/alert.html' %}
+    <!-- Register a new user -->
+    <a href="#" class="siimple-btn siimple-btn--blue">Register a new user</a>
+    {% if users %}
+        <!-- Show the users list -->
+        <div class="siimple-h4">Registered users</div>
+        <div class="siimple-table">
+        <div class="siimple-table-header">
+            <div class="siimple-table-row">
+                <div class="siimple-table-cell">Name</div>
+                <div class="siimple-table-cell">Email</div>
+                <div class="siimple-table-cell">Edit</div>
+                <div class="siimple-table-cell">Delete</div>
+            </div>
+        </div>
+        <div class="siimple-table-body">
+            {% for user in users %}
+                <div class="siimple-table-row">
+                    <div class="siimple-table-cell">{{ user.name }}</div>
+                    <div class="siimple-table-cell">{{ user.email }}</div>
+                    <div class="siimple-table-cell"><a href="#" class="siimple-btn siimple-btn--blue">Edit</a></div>
+                    <div class="siimple-table-cell"><a href="#" class="siimple-btn siimple-btn--red">Delete</a></div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- If there are no users -->
+    {% endif %}
+{% endblock %}
