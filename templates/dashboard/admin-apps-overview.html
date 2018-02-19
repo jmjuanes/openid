@@ -13,26 +13,52 @@
         <div class="siimple-code">{{ app.secret }}</div>
     </div>
     <!-- Edit the info -->
-    <form class="siimple-form">
+    <form class="siimple-form" method="post">
         <div class="siimple-form-title">Edit the app information</div>
+        <!-- Name -->
         <div class="siimple-form-field">
             <div class="siimple-form-field-label">Name of the application</div>
             <input type="text" class="siimple-input siimple-input--fluid" value="{{ app.name }}" name="name" required>
             <div class="siimple-form-field-helper">Official name of the application</div>
         </div>
+        <!-- Detail -->
         <div class="siimple-form-field">
             <div class="siimple-form-field-label">Detail of the application</div>
             <input type="text" class="siimple-input siimple-input--fluid" value="{{ app.detail }}" name="detail"
                    required>
             <div class="siimple-form-field-helper">Brief description of the application</div>
         </div>
+        <!-- Redirect -->
         <div class="siimple-form-field">
             <div class="siimple-form-field-label">URL</div>
-            <input type="text" class="siimple-input siimple-input--fluid" value="{{ app.detail }}" name="detail"
+            <input type="text" class="siimple-input siimple-input--fluid" value="{{ app.redirect }}" name="redirect"
                    required>
             <div class="siimple-form-field-helper">URL that the users will access</div>
         </div>
-        <div class="siimple-btn siimple-btn--blue" id="update-btn">Update the information</div>
+        <!-- Hidden id -->
+        <input type="hidden" value="{{ app.id }}" name="app_id">
+        <!-- Buttons -->
+        <div class="siimple-form-field">
+            <div class="siimple-btn siimple-btn--blue" onclick="sendForm('app-update')">Update information</div>
+            <input id="app-update" type="submit" value="Update info" style="display:none;">
+        </div>
+        <div class="siimple-btn siimple-btn--red" id="delete-btn" onclick="showElement('modal')">Delete the
+            application
+        </div>
+        <!-- Modal -->
+        <div class="modal-background" id="modal">
+            <div class="modal">
+                <div class="siimple-h5">{{ app.name }} is going to be deleted</div>
+                <div class="siimple-paragraph">
+                    This action <b>can not be undone</b>. This will remove all the app's data from the server.
+                </div>
+                <a class="siimple-btn siimple-btn--red modal-btn" href="/dashboard/admin/apps/{{ app.id }}/delete">
+                    Yes, delete {{ app.name }}
+                </a>
+                <input id="delete-submit" type="submit" style="display:none;">
+                <div class="siimple-close modal-close" onclick="hideElement('modal')"></div>
+            </div>
+        </div>
     </form>
 {% endblock %}
 
