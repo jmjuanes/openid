@@ -1,12 +1,16 @@
+# Python imports
 import os
 import logging
-
-import webapp2
-import jinja2
 import random
 import string
+import time
+
+# Libs imports
+import webapp2
+import jinja2
 from passlib.hash import pbkdf2_sha256
 
+# Modules imports
 import src.captcha as captcha
 import src.database.application as db_application
 import src.database.user as db_user
@@ -507,11 +511,11 @@ class RouteAdminAppsOverview(webapp2.RequestHandler):
         else:
             return deleteAuthentication(self)
 
-    def post(self):
+    def post(self, app_id):
         payload = checkAuthentication(self)
         if payload is not None:
             if payload["is_admin"] is True:
-                app_id = self.request.get('app_id', default_value='')
+                # app_id = self.request.get('app_id', default_value='')
                 application = db_application.get_application(app_id)
                 render_args = {"is_admin": payload["is_admin"]}
                 try:
@@ -544,6 +548,10 @@ class RouteAdminAppsDelete(webapp2.RequestHandler):
                 application = db_application.get_application(app_id)
                 try:
                     application.key.delete()
+                    # TERRIBLE HACK!!
+                    # I'd fire myself for this kind of code
+                    # https://stackoverflow.com/a/21721681/7630629
+                    time.sleep(0.1)
                     return self.redirect('/dashboard/admin/apps?flag=APP_DELETED')
                 except:
                     render_args = {"is_admin": payload["is_admin"]}
