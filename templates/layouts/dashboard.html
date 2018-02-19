@@ -12,6 +12,14 @@
 <title>User dashboard</title>
 
 <!-- View -->
+<div class="siimple-navbar siimple-navbar--small siimple-navbar--white">
+    <div class="siimple-layout--left">
+        <a class="siimple-navbar-title">{{ openid_name }}</a>
+    </div>
+    <div class="siimple-layout--right">
+        <a class="siimple-btn siimple-btn--navy dashboard-logout" href="/logout">Logout</a>
+    </div>
+</div>
 <div class="siimple-content siimple-content--small">
     <div class="siimple-grid">
         <div class="siimple-grid-row">
@@ -28,14 +36,14 @@
                     </div>
                 </div>
                 {% if is_admin %}
-                <!-- Admin panel -->
-                <div class="admin-panel">
-                    <div class="siimple-menu">
-                        <div class="siimple-menu-group">Administration</div>
-                        <a class="siimple-menu-item">Users management</a>
-                        <a class="siimple-menu-item" href="/dashboard/admin/apps">Apps management</a>
+                    <!-- Admin panel -->
+                    <div class="admin-panel">
+                        <div class="siimple-menu">
+                            <div class="siimple-menu-group">Administration</div>
+                            <a class="siimple-menu-item">Users management</a>
+                            <a class="siimple-menu-item" href="/dashboard/admin/apps">Apps management</a>
+                        </div>
                     </div>
-                </div>
                 {% endif %}
             </div>
             <!-- Content -->
