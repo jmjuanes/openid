@@ -287,7 +287,8 @@ class RouteDashboard(webapp2.RequestHandler):
         payload = checkAuthentication(self)
         if payload is not None:
             return render(self, 'dashboard/index.html', is_admin=payload["is_admin"])
-        return self.redirect("/login")
+        else:
+            return deleteAuthentication(self)
 
 
 # User profile route
@@ -300,7 +301,7 @@ class RouteDashboardProfile(webapp2.RequestHandler):
                           is_admin=payload["is_admin"],
                           name=user.name)
         else:
-            return self.redirect("/login")
+            return deleteAuthentication(self)
 
     def post(self):
         payload = checkAuthentication(self)
@@ -336,6 +337,8 @@ class RouteDashboardPassword(webapp2.RequestHandler):
         payload = checkAuthentication(self)
         if payload is not None:
             return render(self, 'dashboard/account-password.html', is_admin=payload["is_admin"])
+        else:
+            return deleteAuthentication(self)
 
     def post(self):
         payload = checkAuthentication(self)
@@ -387,7 +390,9 @@ class RouteDashboardPassword(webapp2.RequestHandler):
                     render_args["alert_color"] = "red"
                     return render(self, 'dashboard/account-password.html', **render_args)
             else:
-                deleteAuthentication(self)
+                return deleteAuthentication(self)
+        else:
+            return deleteAuthentication(self)
 
 
 # Delete your account route
@@ -396,6 +401,8 @@ class RouteDashboardAccountDelete(webapp2.RequestHandler):
         payload = checkAuthentication(self)
         if payload is not None:
             return render(self, 'dashboard/account-delete.html', is_admin=payload["is_admin"])
+        else:
+            return deleteAuthentication(self)
 
     def post(self):
         payload = checkAuthentication(self)
@@ -500,8 +507,32 @@ class RouteAdminAppsOverview(webapp2.RequestHandler):
         else:
             return deleteAuthentication(self)
 
-    # def post(self):
-        # Edit the info of the existing app
+    def post(self):
+        payload = checkAuthentication(self)
+        if payload is not None:
+            if payload["is_admin"] is True:
+                app_id = self.request.get('app_id', default_value='')
+                application = db_application.get_application(app_id)
+                render_args = {"is_admin": payload["is_admin"]}
+                try:
+                    application.name = self.request.get('name', default_value='')
+                    application.detail = self.request.get('detail', default_value='')
+                    application.redirect = self.request.get('redirect', default_value='')
+                    application.put()
+                    app_info = {"id": application.key.id(), "name": application.name, "detail": application.detail,
+                                "secret": application.secret, "redirect": application.redirect,
+                                "secret": application.secret}
+                    render_args["alert_message"] = "The app's information has been successfully updated."
+                    render_args["alert_color"] = "green"
+                    return render(self, "dashboard/admin-apps-overview.html", app=app_info, **render_args)
+                except:
+                    render_args["alert_message"] = "Something went wrong updating the app's information."
+                    render_args["alert_color"] = "red"
+                    return render(self, "dashboard/admin-apps.html", **render_args)
+            else:
+                return render(self, 'dashboard/index.html', is_admin=payload["is_admin"])
+        else:
+            return deleteAuthentication(self)
 
 
 # Delete an app route
@@ -523,6 +554,7 @@ class RouteAdminAppsDelete(webapp2.RequestHandler):
                 return render(self, 'dashboard/index.html', is_admin=payload["is_admin"])
         else:
             deleteAuthentication(self)
+
 
 # Mount the app
 app = webapp2.WSGIApplication([
