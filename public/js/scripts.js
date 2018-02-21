@@ -24,3 +24,14 @@ function checkUrl(url, id) {
     else
         console.log("Muy buenas tardes")
 }
+
+//Check the status of a switch and change its label and tab
+function checkSwitch(id) {
+    var label = id + '-label';
+    if (document.getElementById(id).checked) {
+        document.getElementById(label).classList.remove('dashboard-text-disabled')
+    }
+    else {
+        document.getElementById(label).classList.add('dashboard-text-disabled');
+    }
+}

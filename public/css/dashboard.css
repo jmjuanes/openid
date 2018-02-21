@@ -3,7 +3,53 @@
     margin-top: 15px;
 }
 
-/* Content container */
-.alert {
-    width: 361px;
+/* General */
+.dashboard-heading {
+    margin-bottom: 5px;
+}
+
+.dashboard-logout {
+    margin-top: 15px;
+}
+
+.dashboard-text-disabled {
+    color: #8790ab;
+}
+
+/* Modal */
+.modal-background {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    overflow: auto;
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4);
+    flex-direction: column;
+    justify-content: center;
+    z-index: 2;
+}
+
+.modal {
+    background-color: white;
+    width: 360px;
+    padding: 16px;
+    margin: 50px auto;
+    border-radius: 5px;
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.modal-btn {
+    width: 100%;
+    padding-left: 0px;
+    padding-right: 0px;
 }
