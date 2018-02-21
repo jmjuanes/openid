@@ -647,6 +647,19 @@ class RouteAdminUsersDelete(webapp2.RequestHandler):
             deleteAuthentication(self)
 
 
+# Create a new user route
+class RouteAdminUsersCreate(webapp2.RequestHandler):
+    def get(self):
+        payload = checkAuthentication(self)
+        if payload is not None:
+            if payload["is_admin"] is True:
+                return render(self, 'dashboard/admin-users-new.html', is_admin=payload["is_admin"])
+            else:
+                return render(self, 'dashboard/index.html', is_admin=payload['is_admin'])
+        else:
+            deleteAuthentication(self)
+
+
 # Mount the app
 app = webapp2.WSGIApplication([
     # General routes
@@ -668,6 +681,7 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/dashboard/admin/apps/<app_id>/delete', handler=RouteAdminAppsDelete),
     # Users routes
     webapp2.Route('/dashboard/admin/users', handler=RouteAdminUsersManagement),
+    webapp2.Route('/dashboard/admin/users/new', handler=RouteAdminUsersCreate),
     webapp2.Route('/dashboard/admin/users/<user_id>', handler=RouteAdminUsersOverview),
     webapp2.Route('/dashboard/admin/users/<user_id>/delete', handler=RouteAdminUsersDelete)
 
