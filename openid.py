@@ -606,25 +606,9 @@ class RouteAdminUsersManagement(webapp2.RequestHandler):
 
 
 # User overview route
-class RouteAdminUsersOverview(webapp2.RequestHandler):
-    def get(self, user_id):
-        payload = checkAuthentication(self)
-        if payload is not None:
-            if payload["is_admin"] is True:
-                user = db_user.getUserById(user_id)
-                render_args = {"is_admin": payload["is_admin"]}
-                if user is not None:
-                    user_info = {"id": user_id, "name": user.name, "email": user.email,
-                                 "is_admin": user.is_admin, "active": user.active}
-                    return render(self, 'dashboard/admin-users-overview.html', user=user_info, **render_args)
-                else:
-                    render_args["alert_message"] = "The user couldn't be retrieved from the database."
-                    render_args["alert_color"] = "red"
-                    return render(self, 'dashboard/admin-users.html', **render_args)
-            else:
-                return render(self, 'dashboard/index.html', is_admin=payload["is_admin"])
-        else:
-            deleteAuthentication(self)
+class RouteAdminUsersEdit(webapp2.RequestHandler):
+    def post(self, user_id):
+        pass
 
 
 # Delete a user route
@@ -643,6 +627,7 @@ class RouteAdminUsersDelete(webapp2.RequestHandler):
                     render_args = {"is_admin": payload["is_admin"]}
                     render_args["alert_message"] = "Something went wrong deleting the user."
                     render_args["alert_color"] = "red"
+                    # Change the return value to a JSON
                     return render(self, 'dashboard/admin-users.html', **render_args)
             else:
                 return render(self, 'dashboard/index.html', is_admin=payload["is_admin"])
@@ -730,7 +715,7 @@ app = webapp2.WSGIApplication([
     # Users routes
     webapp2.Route('/dashboard/admin/users', handler=RouteAdminUsersManagement),
     webapp2.Route('/dashboard/admin/users/new', handler=RouteAdminUsersCreate),
-    webapp2.Route('/dashboard/admin/users/<user_id>', handler=RouteAdminUsersOverview),
+    webapp2.Route('/dashboard/admin/users/<user_id>/edit', handler=RouteAdminUsersEdit),
     webapp2.Route('/dashboard/admin/users/<user_id>/delete', handler=RouteAdminUsersDelete)
 
 ], debug=True)
