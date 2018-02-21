@@ -450,7 +450,7 @@ class RouteAdminAppsManagement(webapp2.RequestHandler):
                 # Check for an alert
                 if self.request.get('flag') == "APP_DELETED":
                     render_args["alert_message"] = "The application was deleted successfully."
-                    render_args["alert_color"] = "blue"
+                    render_args["alert_color"] = "green"
                 apps = db_application.getAll()
                 list_apps = []
                 for my_app in apps:
@@ -511,10 +511,15 @@ class RouteAdminAppsOverview(webapp2.RequestHandler):
                     render_args["alert_message"] = "The application was registered successfully."
                     render_args["alert_color"] = "green"
                 application = db_application.get_application(app_id)
-                app_info = {"id": application.key.id(), "name": application.name, "detail": application.detail,
-                            "secret": application.secret, "redirect": application.redirect,
-                            "secret": application.secret}
-                return render(self, 'dashboard/admin-apps-overview.html', app=app_info, **render_args)
+                if application is not None:
+                    app_info = {"id": application.key.id(), "name": application.name, "detail": application.detail,
+                                "secret": application.secret, "redirect": application.redirect,
+                                "secret": application.secret}
+                    return render(self, 'dashboard/admin-apps-overview.html', app=app_info, **render_args)
+                else:
+                    render_args["alert_message"] = "The app's info couldn't be retrieved from the database."
+                    render_args["alert_color"] = "red"
+                    return render(self, 'dashboard/admin-apps.html', **render_args)
             else:
                 return render(self, 'dashboard/index.html', is_admin=payload["is_admin"])
         else:
@@ -580,6 +585,10 @@ class RouteAdminUsersManagement(webapp2.RequestHandler):
         if payload is not None:
             if payload["is_admin"] is True:
                 render_args = {"is_admin": payload["is_admin"]}
+                # Check for an alert
+                if self.request.get('flag') == "USER_DELETED":
+                    render_args["alert_message"] = "The user was deleted successfully."
+                    render_args["alert_color"] = "green"
                 users = db_user.getAll()
                 list_users = []
                 for my_user in users:
@@ -591,6 +600,51 @@ class RouteAdminUsersManagement(webapp2.RequestHandler):
                 return render(self, 'dashboard/index.html', is_admin=payload["is_admin"])
         else:
             return deleteAuthentication(self)
+
+
+# User overview route
+class RouteAdminUsersOverview(webapp2.RequestHandler):
+    def get(self, user_id):
+        payload = checkAuthentication(self)
+        if payload is not None:
+            if payload["is_admin"] is True:
+                user = db_user.getUserById(user_id)
+                render_args = {"is_admin": payload["is_admin"]}
+                if user is not None:
+                    user_info = {"id": user_id, "name": user.name, "email": user.email,
+                                 "is_admin": user.is_admin, "active": user.active}
+                    return render(self, 'dashboard/admin-users-overview.html', user=user_info, **render_args)
+                else:
+                    render_args["alert_message"] = "The user couldn't be retrieved from the database."
+                    render_args["alert_color"] = "red"
+                    return render(self, 'dashboard/admin-users.html', **render_args)
+            else:
+                return render(self, 'dashboard/index.html', is_admin=payload["is_admin"])
+        else:
+            deleteAuthentication(self)
+
+
+# Delete a user route
+class RouteAdminUsersDelete(webapp2.RequestHandler):
+    def get(self, user_id):
+        payload = checkAuthentication(self)
+        if payload is not None:
+            if payload["is_admin"] is True:
+                user = db_user.getUserById(user_id)
+                try:
+                    user.key.delete()
+                    # AWFUL HACK, YOUR MOM WOULD BE ASHAMED IF SHE KNEW YOU'RE DOING THIS!!!!
+                    time.sleep(0.1)
+                    self.redirect('/dashboard/admin/users?flag=USER_DELETED')
+                except:
+                    render_args = {"is_admin": payload["is_admin"]}
+                    render_args["alert_message"] = "Something went wrong deleting the user."
+                    render_args["alert_color"] = "red"
+                    return render(self, 'dashboard/admin-users.html', **render_args)
+            else:
+                return render(self, 'dashboard/index.html', is_admin=payload["is_admin"])
+        else:
+            deleteAuthentication(self)
 
 
 # Mount the app
@@ -613,6 +667,8 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/dashboard/admin/apps/<app_id>', handler=RouteAdminAppsOverview),
     webapp2.Route('/dashboard/admin/apps/<app_id>/delete', handler=RouteAdminAppsDelete),
     # Users routes
-    webapp2.Route('/dashboard/admin/users', handler=RouteAdminUsersManagement)
+    webapp2.Route('/dashboard/admin/users', handler=RouteAdminUsersManagement),
+    webapp2.Route('/dashboard/admin/users/<user_id>', handler=RouteAdminUsersOverview),
+    webapp2.Route('/dashboard/admin/users/<user_id>/delete', handler=RouteAdminUsersDelete)
 
 ], debug=True)
