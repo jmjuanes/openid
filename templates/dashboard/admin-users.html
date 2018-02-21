@@ -12,17 +12,45 @@
         <div class="siimple-table">
             <div class="siimple-table-header">
                 <div class="siimple-table-row">
-                    <div class="siimple-table-cell">Name</div>
                     <div class="siimple-table-cell">Email</div>
-                    <div class="siimple-table-cell">Edit</div>
+                    <div class="siimple-table-cell">Admin</div>
+                    <div class="siimple-table-cell">Active</div>
+                    <div class="siimple-table-cell">Delete</div>
                 </div>
             </div>
             <div class="siimple-table-body">
                 {% for user in users %}
                     <div class="siimple-table-row">
-                        <div class="siimple-table-cell">{{ user.name }}</div>
+                        <!-- Email -->
                         <div class="siimple-table-cell">{{ user.email }}</div>
-                        <div class="siimple-table-cell"><a href="/dashboard/admin/users/{{ user.id }}" class="siimple-btn siimple-btn--blue">Edit</a></div>
+                        <!-- Admin switch -->
+                        <div class="siimple-table-cell">
+                            <div class="siimple-switch">
+                                {% if user.is_admin %}
+                                    <input type="checkbox" id="admin-{{ user.id }}" checked>
+                                {% else %}
+                                    <input type="checkbox" id="admin-{{ user.id }}">
+                                {% endif %}
+                                <label for="admin-{{ user.id }}"></label>
+                                <div></div>
+                            </div>
+                        </div>
+                        <!-- Active switch -->
+                        <div class="siimple-table-cell">
+                            <div class="siimple-switch">
+                                {% if user.active %}
+                                    <input type="checkbox" id="active-{{ user.id }}" checked>
+                                {% else %}
+                                    <input type="checkbox" id="active-{{ user.id }}">
+                                {% endif %}
+                                <label for="active-{{ user.id }}"></label>
+                                <div></div>
+                            </div>
+                        </div>
+                        <!-- Delete button -->
+                        <div class="siimple-table-cell">
+                            <a href="#" class="siimple-btn siimple-btn--red">Delete</a>
+                        </div>
                     </div>
                 {% endfor %}
             </div>
