@@ -25,6 +25,25 @@ def get_user(value):
         return query.get()
 
 
+# Get the user using its id, not email
+def getUserById(value):
+    value = int(value)
+    try:
+        user = User.get_by_id(value)
+        return user
+    except ValueError:
+        return None
+
+
+# Extract all the users
+def getAll():
+    try:
+        users = User.query().fetch()
+        return users
+    except ValueError:
+        return None
+
+
 # Check if an user with the provided email exists
 def exists_user(value):
     return get_user(value) is not None

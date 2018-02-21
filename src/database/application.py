@@ -21,6 +21,7 @@ def get_application(value):
         return None
 
 
+# Extract all the apps
 def getAll():
     try:
         # Get all the applications
