@@ -27,8 +27,8 @@ def get_user(value):
 
 # Get the user using its id, not email
 def getUserById(value):
-    value = int(value)
     try:
+        value = int(value)
         user = User.get_by_id(value)
         return user
     except ValueError:
