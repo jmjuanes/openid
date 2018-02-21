@@ -608,7 +608,14 @@ class RouteAdminUsersManagement(webapp2.RequestHandler):
 # User overview route
 class RouteAdminUsersEdit(webapp2.RequestHandler):
     def post(self, user_id):
-        pass
+        payload = checkAuthentication(self)
+        if payload is not None:
+            if payload["is_admin"] is True:
+                pass
+            else:
+                return render(self, 'dashboard/index.html', is_admin=payload["is_admin"])
+        else:
+            deleteAuthentication(self)
 
 
 # Delete a user route
