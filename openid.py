@@ -588,6 +588,9 @@ class RouteAdminUsersManagement(webapp2.RequestHandler):
                 # Check for an alert
                 if self.request.get('flag') == "USER_DELETED":
                     render_args["alert_message"] = "The user was deleted successfully."
+                    render_args["alert_color"] = "blue"
+                elif self.request.get('flag') == "USER_CREATED":
+                    render_args["alert_message"] = "The user was created successfully."
                     render_args["alert_color"] = "green"
                 users = db_user.getAll()
                 list_users = []
@@ -654,6 +657,51 @@ class RouteAdminUsersCreate(webapp2.RequestHandler):
         if payload is not None:
             if payload["is_admin"] is True:
                 return render(self, 'dashboard/admin-users-new.html', is_admin=payload["is_admin"])
+            else:
+                return render(self, 'dashboard/index.html', is_admin=payload['is_admin'])
+        else:
+            deleteAuthentication(self)
+
+    def post(self):
+        payload = checkAuthentication(self)
+        if payload is not None:
+            if payload["is_admin"] is True:
+                render_args = {"is_admin": payload["is_admin"]}
+                # Initialize the user
+                user = db_user.User()
+                user.name = self.request.get('name', default_value='')
+                user.email = self.request.get('email', default_value='')
+                user.pwd = self.request.get('pwd', default_value='')
+                user.is_admin = False  # By default is not admin
+                user.role = config.openid_default_role  # Default user role
+                user.active = config.openid_default_active  # Default active value
+
+                # Encrypt the password
+                user.pwd = pbkdf2_sha256.hash(user.pwd)
+
+                # Check the values
+                if user.name is '' or user.email is '' or user.pwd is '':
+                    render_args["alert_message"] = "Please fill all the fields."
+                    render_args["alert_color"] = "red"
+                    return render(self, 'dashboard/admin-users-new.html', **render_args)
+
+                # Check if the email is registered
+                if db_user.exists_user(user.email):
+                    render_args["alert_message"] = "This email is already registered."
+                    render_args["alert_color"] = "red"
+                    return render(self, 'dashboard/admin-users-new.html', **render_args)
+
+                # Register the user
+                try:
+                    user_key = user.put()
+                    # AWFUL HACK, YOUR MOM WOULD BE ASHAMED IF SHE KNEW YOU'RE DOING THIS!!!!
+                    time.sleep(0.1)
+                    self.redirect('/dashboard/admin/users?flag=USER_CREATED')
+                except:
+                    render_args["alert_message"] = "Something went wrong creating the user."
+                    render_args["alert_color"] = "red"
+                    return render(self, 'dashboard/admin-users-new.html', **render_args)
+
             else:
                 return render(self, 'dashboard/index.html', is_admin=payload['is_admin'])
         else:
