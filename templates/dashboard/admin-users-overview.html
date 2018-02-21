@@ -1,0 +1,54 @@
+{% extends 'layouts/dashboard.html' %}
+
+{% block dashboardContent %}
+    <div class="siimple-h3 dashboard-heading">{{ user.name }}</div>
+    <p class="siimple-p">Update or delete the user's information.</p>
+    {% include "partials/alert.html" %}
+    <form class="siimple-form" method="post">
+        <!-- Admin privileges -->
+        <div class="siimple-form-field">
+            <div class="siimple-h5 dashboard-heading">Administrator privileges</div>
+            <label class="siimple-label" id="admin-label">The user is an administrator</label>
+            <div class="siimple-switch">
+                <input type="checkbox" id="admin" onclick="checkSwitch('admin');" checked>
+                <label for="admin"></label>
+                <div></div>
+            </div>
+            <p class="siimple-p">Currently the admin privileges for this user are: <span
+                class="siimple-tag siimple-tag--grey" id="admin-tag">ON</span></p>
+        </div>
+        <!-- User enabled -->
+        <div class="siimple-form-field">
+            <div class="siimple-h5 dashboard-heading">User's account status</div>
+            <label class="siimple-label" id="active-label">The user account is enabled</label>
+            <div class="siimple-switch">
+                <input type="checkbox" id="active" onclick="checkSwitch('active');" checked>
+                <label for="active"></label>
+                <div></div>
+            </div>
+            <p class="siimple-p">Currently the account of this user is: <span
+                class="siimple-tag siimple-tag--grey" id="active-tag">ON</span></p>
+        </div>
+        <!-- Buttons -->
+        <div class="siimple-form-field">
+            <div class="siimple-btn siimple-btn--blue" onclick="sendForm('user-update')">Save changes</div>
+            <input id="user-update" type="submit" value="Update info" style="display:none;">
+            <div class="siimple-btn siimple-btn--red" id="delete-btn" onclick="showElement('modal')">Delete user</div>
+        </div>
+        <!-- Modal -->
+        <div class="modal-background" id="modal">
+            <div class="modal">
+                <div class="siimple-h5">The user is going to be deleted</div>
+                <div class="siimple-paragraph">
+                    This action <b>can not be undone</b>. This will remove all the user's data from the server.
+                </div>
+                <a class="siimple-btn siimple-btn--red modal-btn" href="/dashboard/admin/users/{{ user.id }}/delete">
+                    Yes, delete this user
+                </a>
+                <input id="delete-submit" type="submit" style="display:none;">
+                <div class="siimple-close modal-close" onclick="hideElement('modal')"></div>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}
