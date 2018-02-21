@@ -1,7 +1,7 @@
 {% extends "layouts/dashboard.html" %}
 
 {% block dashboardContent %}
-    <div class="siimple-h3 dashboard-h3">Applications management</div>
+    <div class="siimple-h3 dashboard-heading">Applications management</div>
     <p class="siimple-p">Delete or modify existing apps or create new ones.</p>
     {% include "partials/alert.html" %}
     <!-- Create app -->
@@ -29,6 +29,6 @@
         </div>
         <!-- No apps registered -->
     {% else %}
-        <div class="siimple-h6">There are currently no applications registered;</div>
+        <div class="siimple-h6">There are currently no applications registered.</div>
     {% endif %}
 {% endblock %}
