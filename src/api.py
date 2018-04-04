@@ -63,7 +63,7 @@ class RouteUsers(webapp2.RequestHandler):
 
         # Check if the user already exists
         if user.exists_user(u.email):
-            return renderError(self, 404, 'This user already exists')
+            return renderError(self, 400, 'This user already exists')
 
         # Check if the captcha is enabled
         # if config.captcha_enabled is True:
@@ -87,7 +87,7 @@ class RouteUsersById(webapp2.RequestHandler):
             u = user.getUserById(user_id)
             if u is None:
                 return renderError(self, 404, 'This user does not exist')
-            # Return a JSON with the user's info
+
             return renderJSON(self, {'name': u.name, 'email': u.email, 'password': u.pwd,
                                      'is_admin': u.is_admin, 'active': u.active})
         except:
@@ -98,11 +98,31 @@ class RouteUsersById(webapp2.RequestHandler):
             u = user.getUserById(user_id)
             if u is None:
                 return renderError(self, 404, 'This user does not exist')
+
             u.key.delete()
-            return renderJSON(self, {'message': 'This is the deleted user info', 'name': u.name, 'email': u.email, 'password': u.pwd,
+            return renderJSON(self, {'message': 'This is the deleted user info', 'name': u.name, 'email': u.email,
+                                     'password': u.pwd,
                                      'is_admin': u.is_admin, 'active': u.active})
         except:
             return renderError(self, 500, 'The user could not be deleted')
+
+    def put(self, user_id):
+        try:
+            u = user.getUserById(user_id)
+            if u is None:
+                return renderError(self, 404, 'This user does not exist')
+
+            active = self.request.get('active')
+            if active == 'True':
+                active = True
+            elif active == 'False':
+                active = False
+
+            u.active = active
+            u.put()
+            return renderJSON(self, {"active": u.active})
+        except:
+            return renderError(self, 500, 'The user could not be modified')
 
 
 # Mount the app
