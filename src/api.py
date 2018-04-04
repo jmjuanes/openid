@@ -18,7 +18,7 @@ import captcha
 
 
 # Render a JSON 
-def renderJSON(self, obj): 
+def renderJSON(self, obj):
     self.response.headers['Content-Type'] = 'application/json'
     return self.response.out.write(json.dumps(obj))
 
@@ -33,7 +33,7 @@ def renderError(self, code, message):
 
 # Home route
 class RouteHome(webapp2.RequestHandler):
-    def get(self): 
+    def get(self):
         return renderJSON(self, {'message': 'Hello world!'})
 
 
@@ -77,30 +77,32 @@ class RouteUsers(webapp2.RequestHandler):
 
         # Return a JSON with the new user's info
         return renderJSON(self, {'name': u.name, 'email': u.email, 'password': u.pwd,
-                          'is_admin': u.is_admin, 'active': u.active})
+                                 'is_admin': u.is_admin, 'active': u.active})
 
 
 # Specific user route
 class RouteUsersById(webapp2.RequestHandler):
     def get(self, user_id):
-        u = user.getUserById(user_id)
-        if u is None:
-            return renderError(self, 400, 'This user does not exist')
-        # Return a JSON with the user's info
-        return renderJSON(self, {'name': u.name, 'email': u.email, 'password': u.pwd,
-                          'is_admin': u.is_admin, 'active': u.active})
+        try:
+            u = user.getUserById(user_id)
+            if u is None:
+                return renderError(self, 404, 'This user does not exist')
+            # Return a JSON with the user's info
+            return renderJSON(self, {'name': u.name, 'email': u.email, 'password': u.pwd,
+                                     'is_admin': u.is_admin, 'active': u.active})
+        except:
+            return renderError(self, 500, 'The user could not be extracted from the database')
 
     def delete(self, user_id):
-        u = user.getUserById(user_id)
-        if u is None:
-            return renderError(self, 400, 'This user does not exist')
-
-        # Try to delete the user
         try:
+            u = user.getUserById(user_id)
+            if u is None:
+                return renderError(self, 404, 'This user does not exist')
             u.key.delete()
+            return renderJSON(self, {'message': 'This is the deleted user info', 'name': u.name, 'email': u.email, 'password': u.pwd,
+                                     'is_admin': u.is_admin, 'active': u.active})
         except:
             return renderError(self, 500, 'The user could not be deleted')
-
 
 
 # Mount the app
@@ -112,4 +114,3 @@ app = webapp2.WSGIApplication([
     # Error route
     webapp2.Route('/api/<:.*>', handler=RouteError)
 ], debug=True)
-
