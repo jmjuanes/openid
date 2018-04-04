@@ -11,7 +11,7 @@ import webapp2
 from passlib.hash import pbkdf2_sha256
 
 # Modules imports
-# import config
+import config
 
 
 # Render a JSON 
