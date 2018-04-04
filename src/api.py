@@ -57,6 +57,14 @@ class RouteUsers(webapp2.RequestHandler):
         u.pwd = self.request.get('pwd', default_value='')
         u.pwd = pbkdf2_sha256.hash(u.pwd)
 
+        # Check if values are correct
+        if u.name is '' or u.email is '':
+            return renderError(self, 400, 'Please fill all the fields')
+
+        # Check if the user already exists
+        if user.exists_user(u.email):
+            return renderError(self, 400, 'This user already exists')
+
         # Register the user
         try:
             u.put()
