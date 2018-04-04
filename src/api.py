@@ -66,8 +66,8 @@ class RouteUsers(webapp2.RequestHandler):
             return renderError(self, 404, 'This user already exists')
 
         # Check if the captcha is enabled
-        if config.captcha_enabled is True:
-            return renderError(self, 400, 'Captcha still in progress')
+        # if config.captcha_enabled is True:
+        #     return renderError(self, 400, 'Captcha still in progress')
 
         # Register the user
         try:
@@ -76,7 +76,7 @@ class RouteUsers(webapp2.RequestHandler):
             return renderError(self, 500, 'The user could not be registered')
 
         # Return a JSON with the new user's info
-        renderJSON(self, {'name': u.name, 'email': u.email, 'password': u.pwd,
+        return renderJSON(self, {'name': u.name, 'email': u.email, 'password': u.pwd,
                           'is_admin': u.is_admin, 'active': u.active})
 
 
@@ -87,11 +87,20 @@ class RouteUsersById(webapp2.RequestHandler):
         if u is None:
             return renderError(self, 400, 'This user does not exist')
         # Return a JSON with the user's info
-        renderJSON(self, {'name': u.name, 'email': u.email, 'password': u.pwd,
+        return renderJSON(self, {'name': u.name, 'email': u.email, 'password': u.pwd,
                           'is_admin': u.is_admin, 'active': u.active})
 
     def delete(self, user_id):
-        u = us
+        u = user.getUserById(user_id)
+        if u is None:
+            return renderError(self, 400, 'This user does not exist')
+
+        # Try to delete the user
+        try:
+            u.key.delete()
+        except:
+            return renderError(self, 500, 'The user could not be deleted')
+
 
 
 # Mount the app
