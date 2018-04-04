@@ -13,6 +13,9 @@ from passlib.hash import pbkdf2_sha256
 # Modules imports
 import config
 
+import application
+import user
+
 
 # Render a JSON 
 def renderJSON(self, obj): 
@@ -40,10 +43,36 @@ class RouteError(webapp2.RequestHandler):
         return renderError(self, 404, 'Not found')
 
 
+# Users route
+class RouteUsers(webapp2.RequestHandler):
+    def post(self):
+        # Initialize the user
+        u = user.User()
+        u.name = self.request.get('name', default_value='')
+        u.email = self.request.get('email', default_value='')
+        u.is_admin = False
+        u.active = config.openid_default_active
+
+        # Encrypt the password
+        u.pwd = self.request.get('pwd', default_value='')
+        u.pwd = pbkdf2_sha256.hash(u.pwd)
+
+        # Register the user
+        try:
+            u.put()
+        except:
+            return renderError(self, 500, 'The user could not be registered')
+
+        # Return a JSON with the new user's info
+        renderJSON(self, {'name': u.name, 'email': u.email, 'password': u.pwd,
+                          'is_admin': u.is_admin, 'active': u.active})
+
+
 # Mount the app
 app = webapp2.WSGIApplication([
     # General routes
     webapp2.Route('/api/', handler=RouteHome),
+    webapp2.Route('/api/users/', handler=RouteUsers),
     # Error route
     webapp2.Route('/api/<:.*>', handler=RouteError)
 ], debug=True)
