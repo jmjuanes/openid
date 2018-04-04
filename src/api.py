@@ -43,7 +43,7 @@ class RouteError(webapp2.RequestHandler):
         return renderError(self, 404, 'Not found')
 
 
-# Users route
+# General users route
 class RouteUsers(webapp2.RequestHandler):
     def post(self):
         # Initialize the user
@@ -57,20 +57,17 @@ class RouteUsers(webapp2.RequestHandler):
         u.pwd = self.request.get('pwd', default_value='')
         u.pwd = pbkdf2_sha256.hash(u.pwd)
 
-        # Check if values are correct
+        # Check if values aren't empty
         if not u.name or not u.email:
             return renderError(self, 400, 'Please fill all the fields')
 
         # Check if the user already exists
         if user.exists_user(u.email):
-            return renderError(self, 400, 'This user already exists')
+            return renderError(self, 404, 'This user already exists')
 
         # Check if the captcha is enabled
-        # if config.captcha_enabled is True:
-        #     # Get the captcha value and check if the captcha is valid
-        #     captcha_value = self.request.get('g-recaptcha-response', default_value='')
-        #     if captcha.verify(captcha_value, config.captcha_secret, config.captcha_url) is False:
-        #         return renderError(self, 400, 'Captcha was not completed correctly')
+        if config.captcha_enabled is True:
+            return renderError(self, 400, 'Captcha still in progress')
 
         # Register the user
         try:
@@ -83,11 +80,26 @@ class RouteUsers(webapp2.RequestHandler):
                           'is_admin': u.is_admin, 'active': u.active})
 
 
+# Specific user route
+class RouteUsersById(webapp2.RequestHandler):
+    def get(self, user_id):
+        u = user.getUserById(user_id)
+        if u is None:
+            return renderError(self, 400, 'This user does not exist')
+        # Return a JSON with the user's info
+        renderJSON(self, {'name': u.name, 'email': u.email, 'password': u.pwd,
+                          'is_admin': u.is_admin, 'active': u.active})
+
+    def delete(self, user_id):
+        u = us
+
+
 # Mount the app
 app = webapp2.WSGIApplication([
     # General routes
     webapp2.Route('/api/', handler=RouteHome),
     webapp2.Route('/api/users/', handler=RouteUsers),
+    webapp2.Route('/api/users/<user_id>/', handler=RouteUsersById),
     # Error route
     webapp2.Route('/api/<:.*>', handler=RouteError)
 ], debug=True)
