@@ -12,9 +12,9 @@ from passlib.hash import pbkdf2_sha256
 
 # Modules imports
 import config
-
 import application
 import user
+import captcha
 
 
 # Render a JSON 
@@ -58,12 +58,19 @@ class RouteUsers(webapp2.RequestHandler):
         u.pwd = pbkdf2_sha256.hash(u.pwd)
 
         # Check if values are correct
-        if u.name is '' or u.email is '':
+        if not u.name or not u.email:
             return renderError(self, 400, 'Please fill all the fields')
 
         # Check if the user already exists
         if user.exists_user(u.email):
             return renderError(self, 400, 'This user already exists')
+
+        # Check if the captcha is enabled
+        # if config.captcha_enabled is True:
+        #     # Get the captcha value and check if the captcha is valid
+        #     captcha_value = self.request.get('g-recaptcha-response', default_value='')
+        #     if captcha.verify(captcha_value, config.captcha_secret, config.captcha_url) is False:
+        #         return renderError(self, 400, 'Captcha was not completed correctly')
 
         # Register the user
         try:
