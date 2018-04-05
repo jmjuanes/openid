@@ -113,17 +113,19 @@ class RouteUsersById(webapp2.RequestHandler):
             return renderError(self, 500, 'The user could not be deleted')
 
     def put(self, user_id):
+        # Parse the body to JSON
+        try:
+            data = json.loads(self.request.body)
+        except:
+            return renderError(self, 401, 'Unauthorized request')
+
+        # Edit the user information
         try:
             u = user.getUserById(user_id)
             if u is None:
                 return renderError(self, 404, 'This user does not exist')
 
-            active = self.request.get('active')
-            if active == 'True':
-                active = True
-            elif active == 'False':
-                active = False
-
+            active = data['active']
             u.active = active
             u.put()
             return renderJSON(self, {"active": u.active})
