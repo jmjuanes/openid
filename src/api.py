@@ -137,6 +137,7 @@ class RouteUsersById(webapp2.RequestHandler):
             return renderError(self, 500, 'The user could not be modified')
 
 
+# Login route
 class RouteLogin(webapp2.RequestHandler):
     def post(self):
         # Parse the body to JSON
@@ -179,6 +180,43 @@ class RouteLogin(webapp2.RequestHandler):
             return renderError(self, 500, 'There was a problem trying to log you in')
 
 
+
+# General applications route
+class RouteApplications(webapp2.RequestHandler):
+    def post(self):
+        # Parse the body to JSON
+        try:
+            data = json.loads(self.request.body)
+        except:
+            return renderError(self, 401, 'Unauthorized request')
+
+        # Check if the captcha is enabled
+        if config.captcha_enabled is True:
+            # Get the captcha value and check if the captcha is valid
+            captcha_value = data['g-recaptcha-response']
+            if captcha.verify(captcha_value, config.captcha_secret, config.captcha_url) is False:
+                return renderError(self, 400, 'Answer the captcha correctly')
+
+        # Create the application
+        a = application.Application()
+        a.name = data['name']
+        a.detail = data['detail']
+        a.redirect = data['redirect']
+        a.secret = application.generateSecret()
+
+        # Check if values aren't empty
+        if not a.name or not a.detail or not a.redirect:
+            return renderError(self, 400, 'Please fill all the fields')
+
+        # Insert the application in the database
+        try:
+            a.put()
+            renderJSON(self, {"name": a.name, "detail": a.detail, "redirect": a.redirect})
+        except:
+            return renderError(self, 500, 'The application could not be registered')
+
+
+
 # Mount the app
 app = webapp2.WSGIApplication([
     # General routes
@@ -186,8 +224,12 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/api/', handler=RouteHome),
     webapp2.Route('/api/users/', handler=RouteUsers),
     webapp2.Route('/api/users/<user_id>/', handler=RouteUsersById),
+    # - Applications routes
+    webapp2.Route('/api/applications/', handler=RouteApplications),
     # - Login route
     webapp2.Route('/api/login/', handler=RouteLogin),
+    # - Authorize route
+    # webapp2.Route('/api/authorize/', handler=RouteAuthorize),
 
     # Error route
     webapp2.Route('/api/<:.*>', handler=RouteError)
