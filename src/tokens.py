@@ -4,13 +4,12 @@ import logging
 
 
 # Generate a token
-def encode(user, secret, algorithm, expiration):
+def encode(u, secret, algorithm, expiration):
     payload = dict()
-    payload['email'] = user.email
-    payload['name'] = user.name
-    payload['is_admin'] = user.is_admin
-    payload['role'] = user.role
-    payload['id'] = user.key.id()
+    payload['email'] = u.email
+    payload['name'] = u.name
+    payload['is_admin'] = u.is_admin
+    payload['id'] = u.key.id()
     payload['iat'] = int(time.time())
     payload['exp'] = int(time.time()) + expiration
 
