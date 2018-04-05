@@ -13,8 +13,9 @@ from passlib.hash import pbkdf2_sha256
 # Modules imports
 import config
 import application
-import user
+import users
 import captcha
+import tokens
 
 
 # Render a JSON 
@@ -53,7 +54,7 @@ class RouteUsers(webapp2.RequestHandler):
             return renderError(self, 401, 'Unauthorized request')
 
         # Initialize the user
-        u = user.User()
+        u = users.User()
         u.name = data['name']
         u.email = data['email']
         u.is_admin = False
@@ -68,12 +69,15 @@ class RouteUsers(webapp2.RequestHandler):
             return renderError(self, 400, 'Please fill all the fields')
 
         # Check if the user already exists
-        if user.exists_user(u.email):
+        if users.exists_user(u.email):
             return renderError(self, 400, 'This user already exists')
 
         # Check if the captcha is enabled
-        # if config.captcha_enabled is True:
-        #     return renderError(self, 400, 'Captcha still in progress')
+        if config.captcha_enabled is True:
+            # Get the captcha value and check if the captcha is valid
+            captcha_value = data['g-recaptcha-response']
+            if captcha.verify(captcha_value, config.captcha_secret, config.captcha_url) is False:
+                return renderError(self, 400, 'Answer the captcha correctly')
 
         # Register the user
         try:
@@ -90,7 +94,7 @@ class RouteUsers(webapp2.RequestHandler):
 class RouteUsersById(webapp2.RequestHandler):
     def get(self, user_id):
         try:
-            u = user.getUserById(user_id)
+            u = users.getUserById(user_id)
             if u is None:
                 return renderError(self, 404, 'This user does not exist')
 
@@ -101,7 +105,7 @@ class RouteUsersById(webapp2.RequestHandler):
 
     def delete(self, user_id):
         try:
-            u = user.getUserById(user_id)
+            u = users.getUserById(user_id)
             if u is None:
                 return renderError(self, 404, 'This user does not exist')
 
@@ -121,7 +125,7 @@ class RouteUsersById(webapp2.RequestHandler):
 
         # Edit the user information
         try:
-            u = user.getUserById(user_id)
+            u = users.getUserById(user_id)
             if u is None:
                 return renderError(self, 404, 'This user does not exist')
 
@@ -133,12 +137,58 @@ class RouteUsersById(webapp2.RequestHandler):
             return renderError(self, 500, 'The user could not be modified')
 
 
+class RouteLogin(webapp2.RequestHandler):
+    def post(self):
+        # Parse the body to JSON
+        try:
+            data = json.loads(self.request.body)
+        except:
+            return renderError(self, 401, 'Unauthorized request')
+
+        # Check the login info
+        email = data['email']
+        pwd = data['pwd']
+
+        # Check if the captcha is enabled
+        if config.captcha_enabled is True:
+            # Get the captcha value and check if the captcha is valid
+            captcha_value = data['g-recaptcha-response']
+            if captcha.verify(captcha_value, config.captcha_secret, config.captcha_url) is False:
+                return renderError(self, 400, 'Answer the captcha correctly')
+
+        # Empty information
+        if not email or not pwd:
+            return renderError(self, 400, 'Please fill all the fields')
+
+        # Search the user in the db
+        try:
+            u = users.get_user(email)
+            if u is None:
+                return renderError(self, 404, 'This user does not exist')
+            if u.active is False:
+                return renderError(self, 401, 'This user is not active')
+
+            # Check the password
+            if pbkdf2_sha256.verify(pwd, u.pwd) is True:
+                # Encode token and give it to the user
+                user_token = tokens.encode(u, config.openid_secret, config.token_algorithm, config.token_expiration)
+                return renderJSON(self, {"token": user_token})
+            else:
+                return renderError(self, 400, 'Invalid password')
+        except:
+            return renderError(self, 500, 'There was a problem trying to log you in')
+
+
 # Mount the app
 app = webapp2.WSGIApplication([
     # General routes
+    # - Users routes
     webapp2.Route('/api/', handler=RouteHome),
     webapp2.Route('/api/users/', handler=RouteUsers),
     webapp2.Route('/api/users/<user_id>/', handler=RouteUsersById),
+    # - Login route
+    webapp2.Route('/api/login/', handler=RouteLogin),
+
     # Error route
     webapp2.Route('/api/<:.*>', handler=RouteError)
 ], debug=True)
