@@ -46,15 +46,21 @@ class RouteError(webapp2.RequestHandler):
 # General users route
 class RouteUsers(webapp2.RequestHandler):
     def post(self):
+        # Parse the body to JSON
+        try:
+            data = json.loads(self.request.body)
+        except:
+            return renderError(self, 401, 'Unauthorized request')
+
         # Initialize the user
         u = user.User()
-        u.name = self.request.get('name', default_value='')
-        u.email = self.request.get('email', default_value='')
+        u.name = data['name']
+        u.email = data['email']
         u.is_admin = False
         u.active = config.openid_default_active
 
         # Encrypt the password
-        u.pwd = self.request.get('pwd', default_value='')
+        u.pwd = data['pwd']
         u.pwd = pbkdf2_sha256.hash(u.pwd)
 
         # Check if values aren't empty
