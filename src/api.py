@@ -46,6 +46,7 @@ class RouteError(webapp2.RequestHandler):
 
 # General users route
 class RouteUsers(webapp2.RequestHandler):
+    # Create a new user
     def post(self):
         # Parse the body to JSON
         try:
@@ -92,6 +93,7 @@ class RouteUsers(webapp2.RequestHandler):
 
 # Specific user route
 class RouteUsersById(webapp2.RequestHandler):
+    # Get the info from a user
     def get(self, user_id):
         try:
             u = users.getUserById(user_id)
@@ -103,6 +105,7 @@ class RouteUsersById(webapp2.RequestHandler):
         except:
             return renderError(self, 500, 'The user could not be extracted from the database')
 
+    # Delete a user
     def delete(self, user_id):
         try:
             u = users.getUserById(user_id)
@@ -116,6 +119,7 @@ class RouteUsersById(webapp2.RequestHandler):
         except:
             return renderError(self, 500, 'The user could not be deleted')
 
+    # Modify user info
     def put(self, user_id):
         # Parse the body to JSON
         try:
@@ -139,6 +143,7 @@ class RouteUsersById(webapp2.RequestHandler):
 
 # Login route
 class RouteLogin(webapp2.RequestHandler):
+    # Login with username and pass
     def post(self):
         # Parse the body to JSON
         try:
@@ -180,9 +185,66 @@ class RouteLogin(webapp2.RequestHandler):
             return renderError(self, 500, 'There was a problem trying to log you in')
 
 
+# Authorization route
+class RouteAuthorize(webapp2.RequestHandler):
+    # Authorize an app
+    def post(self):
+        # Parse the body to JSON
+        try:
+            data = json.loads(self.request.body)
+        except:
+            return renderError(self, 401, 'Unauthorized request')
+
+        # Check if the captcha is enabled
+        if config.captcha_enabled is True:
+            # Get the captcha value and check if the captcha is valid
+            captcha_value = data['g-recaptcha-response']
+            if captcha.verify(captcha_value, config.captcha_secret, config.captcha_url) is False:
+                return renderError(self, 400, 'Answer the captcha correctly')
+
+        # Get the user and application info
+        email = data['email']
+        pwd = data['pwd']
+        app_id = data['client']
+
+        # Empty user information
+        if not email or not pwd:
+            return renderError(self, 400, 'User information missing')
+        # Empty app information
+        if not app_id:
+            return renderError(self, 400, 'App information missing')
+
+        # Get the application
+        try:
+            a = application.get_application(app_id)
+            if a is None:
+                return renderError(self, 404, 'Application not found')
+        except:
+            renderError(self, 500, 'Unable to retrieve the application')
+
+        # Get the user
+        try:
+            u = users.get_user(email)
+            if u is None:
+                return renderError(self, 404, 'User not found')
+
+            # Check if the user is active
+            if u.active is False:
+                return renderError(self, 401, 'User not active')
+        except:
+            renderError(self, 500, 'Unable to retrieve the user/application')
+
+        # If nothing went wrong, check the password
+        if pbkdf2_sha256.verify(pwd, u.pwd) is True:
+            user_token = tokens.encode(u, a.secret, config.token_algorithm, config.token_expiration)
+            return renderJSON(self, {"username": u.name, "app_name": a.name, "user_token": user_token})
+        else:
+            return renderError(self, 400, 'Invalid password')
+
 
 # General applications route
 class RouteApplications(webapp2.RequestHandler):
+    # Create a new application
     def post(self):
         # Parse the body to JSON
         try:
@@ -216,7 +278,6 @@ class RouteApplications(webapp2.RequestHandler):
             return renderError(self, 500, 'The application could not be registered')
 
 
-
 # Mount the app
 app = webapp2.WSGIApplication([
     # General routes
@@ -229,7 +290,7 @@ app = webapp2.WSGIApplication([
     # - Login route
     webapp2.Route('/api/login/', handler=RouteLogin),
     # - Authorize route
-    # webapp2.Route('/api/authorize/', handler=RouteAuthorize),
+    webapp2.Route('/api/authorize/', handler=RouteAuthorize),
 
     # Error route
     webapp2.Route('/api/<:.*>', handler=RouteError)
