@@ -104,17 +104,17 @@ class RouteUsersById(webapp2.RequestHandler):
 
     # Delete a user
     def delete(self, user_id):
-            u = users.getUserById(user_id)
-            if u is None:
-                return renderError(self, 404, 'This user does not exist')
+        u = users.getUserById(user_id)
+        if u is None:
+            return renderError(self, 404, 'This user does not exist')
 
-            try:
-                u.key.delete()
-                return renderJSON(self, {'message': 'This is the deleted user info', 'name': u.name, 'email': u.email,
-                                         'password': u.pwd,
-                                         'is_admin': u.is_admin, 'active': u.active})
-            except:
-                return renderError(self, 500, 'The user could not be deleted')
+        try:
+            u.key.delete()
+            return renderJSON(self, {'message': 'This is the deleted user info', 'name': u.name, 'email': u.email,
+                                     'password': u.pwd,
+                                     'is_admin': u.is_admin, 'active': u.active})
+        except:
+            return renderError(self, 500, 'The user could not be deleted')
 
     # Modify user info
     def put(self, user_id):
@@ -137,6 +137,89 @@ class RouteUsersById(webapp2.RequestHandler):
             return renderJSON(self, {"active": u.active})
         except:
             return renderError(self, 500, 'The user could not be modified')
+
+
+# General applications route
+class RouteApplications(webapp2.RequestHandler):
+    # Create a new application
+    def post(self):
+        # Parse the body to JSON
+        try:
+            data = json.loads(self.request.body)
+        except:
+            return renderError(self, 401, 'Unauthorized request')
+
+        # Check if the captcha is enabled
+        # if config.captcha_enabled is True:
+        #     # Get the captcha value and check if the captcha is valid
+        #     captcha_value = data['g-recaptcha-response']
+        #     if captcha.verify(captcha_value, config.captcha_secret, config.captcha_url) is False:
+        #         return renderError(self, 400, 'Answer the captcha correctly')
+
+        # Create the application
+        a = application.Application()
+        a.name = data['name']
+        a.detail = data['detail']
+        a.redirect = data['redirect']
+        a.secret = application.generateSecret()
+
+        # Check if values aren't empty
+        if not a.name or not a.detail or not a.redirect:
+            return renderError(self, 400, 'Please fill all the fields')
+
+        # Insert the application in the database
+        try:
+            a.put()
+            renderJSON(self, {"name": a.name, "detail": a.detail, "redirect": a.redirect})
+        except:
+            return renderError(self, 500, 'The application could not be registered')
+
+
+# Specific application route
+class RouteApplicationsById(webapp2.RequestHandler):
+    # Get an application's information
+    def get(self, app_id):
+        a = application.get_application(app_id)
+        if a is None:
+            return renderError(self, 404, 'This application does not exist')
+        return renderJSON(self, {'name': a.name, 'detail': a.detail, 'redirect': a.redirect})
+
+    # Delete an application
+    def delete(self, app_id):
+        a = application.get_application(app_id)
+        if a is None:
+            return renderError(self, 404, 'This application does not exist')
+
+        try:
+            a.key.delete()
+            return renderJSON(self, {'message': 'This is the deleted application info', 'name': a.name,
+                                     'detail': a.detail, 'redirect': a.redirect})
+        except:
+            return renderError(self, 500, 'The application could not be deleted')
+
+    # Modify application's info
+    def put(self, app_id):
+        # Parse the body to JSON
+        try:
+            data = json.loads(self.request.body)
+        except:
+            return renderError(self, 401, 'Unauthorized request')
+
+        # Edit the app information
+        a = application.get_application(app_id)
+        if a is None:
+            return renderError(self, 404, 'This application does not exist')
+
+        a.name = data['name']
+        a.detail = data['detail']
+        a.redirect = data['redirect']
+
+        try:
+            a.put()
+            return renderJSON(self, {'message': 'This is the modified application info', 'name': a.name,
+                                     'detail': a.detail, 'redirect': a.redirect})
+        except:
+            return renderError(self, 500, 'The application could not be modified')
 
 
 # Login route
@@ -231,54 +314,19 @@ class RouteAuthorize(webapp2.RequestHandler):
             return renderError(self, 400, 'Invalid password')
 
 
-# General applications route
-class RouteApplications(webapp2.RequestHandler):
-    # Create a new application
-    def post(self):
-        # Parse the body to JSON
-        try:
-            data = json.loads(self.request.body)
-        except:
-            return renderError(self, 401, 'Unauthorized request')
-
-        # Check if the captcha is enabled
-        if config.captcha_enabled is True:
-            # Get the captcha value and check if the captcha is valid
-            captcha_value = data['g-recaptcha-response']
-            if captcha.verify(captcha_value, config.captcha_secret, config.captcha_url) is False:
-                return renderError(self, 400, 'Answer the captcha correctly')
-
-        # Create the application
-        a = application.Application()
-        a.name = data['name']
-        a.detail = data['detail']
-        a.redirect = data['redirect']
-        a.secret = application.generateSecret()
-
-        # Check if values aren't empty
-        if not a.name or not a.detail or not a.redirect:
-            return renderError(self, 400, 'Please fill all the fields')
-
-        # Insert the application in the database
-        try:
-            a.put()
-            renderJSON(self, {"name": a.name, "detail": a.detail, "redirect": a.redirect})
-        except:
-            return renderError(self, 500, 'The application could not be registered')
-
-
 # Mount the app
 app = webapp2.WSGIApplication([
     # General routes
-    # - Users routes
     webapp2.Route('/api/', handler=RouteHome),
+    # Users routes
     webapp2.Route('/api/users/', handler=RouteUsers),
     webapp2.Route('/api/users/<user_id>/', handler=RouteUsersById),
-    # - Applications routes
+    # Applications routes
     webapp2.Route('/api/applications/', handler=RouteApplications),
-    # - Login route
+    webapp2.Route('/api/applications/<app_id>/', handler=RouteApplicationsById),
+    # Login route
     webapp2.Route('/api/login/', handler=RouteLogin),
-    # - Authorize route
+    # Authorize route
     webapp2.Route('/api/authorize/', handler=RouteAuthorize),
 
     # Error route
