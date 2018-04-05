@@ -95,29 +95,26 @@ class RouteUsers(webapp2.RequestHandler):
 class RouteUsersById(webapp2.RequestHandler):
     # Get the info from a user
     def get(self, user_id):
-        try:
-            u = users.getUserById(user_id)
-            if u is None:
-                return renderError(self, 404, 'This user does not exist')
+        u = users.getUserById(user_id)
+        if u is None:
+            return renderError(self, 404, 'This user does not exist')
 
-            return renderJSON(self, {'name': u.name, 'email': u.email, 'password': u.pwd,
-                                     'is_admin': u.is_admin, 'active': u.active})
-        except:
-            return renderError(self, 500, 'The user could not be extracted from the database')
+        return renderJSON(self, {'name': u.name, 'email': u.email, 'password': u.pwd,
+                                 'is_admin': u.is_admin, 'active': u.active})
 
     # Delete a user
     def delete(self, user_id):
-        try:
             u = users.getUserById(user_id)
             if u is None:
                 return renderError(self, 404, 'This user does not exist')
 
-            u.key.delete()
-            return renderJSON(self, {'message': 'This is the deleted user info', 'name': u.name, 'email': u.email,
-                                     'password': u.pwd,
-                                     'is_admin': u.is_admin, 'active': u.active})
-        except:
-            return renderError(self, 500, 'The user could not be deleted')
+            try:
+                u.key.delete()
+                return renderJSON(self, {'message': 'This is the deleted user info', 'name': u.name, 'email': u.email,
+                                         'password': u.pwd,
+                                         'is_admin': u.is_admin, 'active': u.active})
+            except:
+                return renderError(self, 500, 'The user could not be deleted')
 
     # Modify user info
     def put(self, user_id):
@@ -128,13 +125,14 @@ class RouteUsersById(webapp2.RequestHandler):
             return renderError(self, 401, 'Unauthorized request')
 
         # Edit the user information
-        try:
-            u = users.getUserById(user_id)
-            if u is None:
-                return renderError(self, 404, 'This user does not exist')
+        u = users.getUserById(user_id)
+        if u is None:
+            return renderError(self, 404, 'This user does not exist')
 
-            active = data['active']
-            u.active = active
+        active = data['active']
+        u.active = active
+
+        try:
             u.put()
             return renderJSON(self, {"active": u.active})
         except:
@@ -167,22 +165,19 @@ class RouteLogin(webapp2.RequestHandler):
             return renderError(self, 400, 'Please fill all the fields')
 
         # Search the user in the db
-        try:
-            u = users.get_user(email)
-            if u is None:
-                return renderError(self, 404, 'This user does not exist')
-            if u.active is False:
-                return renderError(self, 401, 'This user is not active')
+        u = users.get_user(email)
+        if u is None:
+            return renderError(self, 404, 'This user does not exist')
+        if u.active is False:
+            return renderError(self, 401, 'This user is not active')
 
-            # Check the password
-            if pbkdf2_sha256.verify(pwd, u.pwd) is True:
-                # Encode token and give it to the user
-                user_token = tokens.encode(u, config.openid_secret, config.token_algorithm, config.token_expiration)
-                return renderJSON(self, {"token": user_token})
-            else:
-                return renderError(self, 400, 'Invalid password')
-        except:
-            return renderError(self, 500, 'There was a problem trying to log you in')
+        # Check the password
+        if pbkdf2_sha256.verify(pwd, u.pwd) is True:
+            # Encode token and give it to the user
+            user_token = tokens.encode(u, config.openid_secret, config.token_algorithm, config.token_expiration)
+            return renderJSON(self, {"token": user_token})
+        else:
+            return renderError(self, 400, 'Invalid password')
 
 
 # Authorization route
@@ -215,24 +210,18 @@ class RouteAuthorize(webapp2.RequestHandler):
             return renderError(self, 400, 'App information missing')
 
         # Get the application
-        try:
-            a = application.get_application(app_id)
-            if a is None:
-                return renderError(self, 404, 'Application not found')
-        except:
-            renderError(self, 500, 'Unable to retrieve the application')
+        a = application.get_application(app_id)
+        if a is None:
+            return renderError(self, 404, 'Application not found')
 
         # Get the user
-        try:
-            u = users.get_user(email)
-            if u is None:
-                return renderError(self, 404, 'User not found')
+        u = users.get_user(email)
+        if u is None:
+            return renderError(self, 404, 'User not found')
 
-            # Check if the user is active
-            if u.active is False:
-                return renderError(self, 401, 'User not active')
-        except:
-            renderError(self, 500, 'Unable to retrieve the user/application')
+        # Check if the user is active
+        if u.active is False:
+            return renderError(self, 401, 'User not active')
 
         # If nothing went wrong, check the password
         if pbkdf2_sha256.verify(pwd, u.pwd) is True:
