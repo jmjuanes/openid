@@ -1,6 +1,10 @@
 # Import google modules
 from google.appengine.ext import ndb
 
+# Python imports
+import random
+import string
+
 
 # Applications class
 class Application(ndb.Model):
@@ -35,3 +39,11 @@ def getAll():
 # Check if an application exists
 def exists_application(value):
     return get_application(value) is not None
+
+
+# Generate a secret for the application
+def generateSecret():
+    secret = ''.join(
+        random.SystemRandom().choice(string.ascii_lowercase + string.digits + string.ascii_uppercase) for _ in
+        range(50))
+    return secret
