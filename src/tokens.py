@@ -36,10 +36,19 @@ def decode(token, secret, algorithm):
             # Check the expiration date
             current_time = int(time.time())
             if current_time > payload['exp']:
-                # logging.info("Invalid token time. Current time: " + str(current_time) + ". Token time: " + str(payload["exp"]))
+                # logging.info("Invalid token time. Current time: " + str(current_time)
+                # + ". Token time: " + str(payload["exp"]))
                 return None
             else:
                 # Return the payload
                 return payload
     except jwt.exceptions.InvalidTokenError:
         return None
+
+
+# Extract the token from the Authorization header
+def extractToken(header):
+    info = header.split()
+    if info[0] != 'Bearer':
+        return None
+    return info[1]
