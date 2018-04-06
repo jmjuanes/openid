@@ -35,7 +35,7 @@ def renderError(self, code, message):
 # Home route
 class RouteHome(webapp2.RequestHandler):
     def get(self):
-        return renderJSON(self, {'message': 'Hello world!'})
+        return renderJSON(self, {'api_name': config.openid_name, 'captcha': config.captcha_enabled})
 
 
 # Error route
