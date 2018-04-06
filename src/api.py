@@ -139,6 +139,43 @@ class RouteUsersById(webapp2.RequestHandler):
             return renderError(self, 500, 'The user could not be modified')
 
 
+# User over his own information route
+class RouteUser(webapp2.RequestHandler):
+    def put(self):
+        # Parse the body to JSON
+        try:
+            data = json.loads(self.request.body)
+        except:
+            return renderError(self, 401, 'Unauthorized request')
+
+        # Extract the user token from the header
+        header = self.request.headers['Authorization']
+        token = tokens.extractToken(header)
+        if token is None:
+            return renderError(self, 400, 'Invalid authorization type')
+
+        # Decode the token
+        payload = tokens.decode(token, config.openid_secret, config.token_algorithm)
+        if payload is None:
+            return renderError(self, 401, 'Invalid authentication credentials')
+
+        # Get the user
+        u = users.getUserById(payload['id'])
+        if u is None:
+            return renderError(self, 400, 'Invalid user information')
+
+        # Update his information
+        active = data['active']
+        u.active = active
+
+        # Update the db information
+        try:
+            u.put()
+            return renderJSON(self, {"message": "Info was updated succesfully", "active": u.active})
+        except:
+            return renderError(self, 500, 'Unable to udpate your information')
+
+
 # General applications route
 class RouteApplications(webapp2.RequestHandler):
     # Create a new application
@@ -258,7 +295,7 @@ class RouteLogin(webapp2.RequestHandler):
         if pbkdf2_sha256.verify(pwd, u.pwd) is True:
             # Encode token and give it to the user
             user_token = tokens.encode(u, config.openid_secret, config.token_algorithm, config.token_expiration)
-            return renderJSON(self, {"token": user_token})
+            return renderJSON(self, {'token': user_token})
         else:
             return renderError(self, 400, 'Invalid password')
 
@@ -309,7 +346,7 @@ class RouteAuthorize(webapp2.RequestHandler):
         # If nothing went wrong, check the password
         if pbkdf2_sha256.verify(pwd, u.pwd) is True:
             user_token = tokens.encode(u, a.secret, config.token_algorithm, config.token_expiration)
-            return renderJSON(self, {"username": u.name, "app_name": a.name, "user_token": user_token})
+            return renderJSON(self, {'username': u.name, 'app_name': a.name, 'user_token': user_token})
         else:
             return renderError(self, 400, 'Invalid password')
 
@@ -321,6 +358,7 @@ app = webapp2.WSGIApplication([
     # Users routes
     webapp2.Route('/api/users/', handler=RouteUsers),
     webapp2.Route('/api/users/<user_id>/', handler=RouteUsersById),
+    webapp2.Route('/api/user/', handler=RouteUser),
     # Applications routes
     webapp2.Route('/api/applications/', handler=RouteApplications),
     webapp2.Route('/api/applications/<app_id>/', handler=RouteApplicationsById),
