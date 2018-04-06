@@ -141,6 +141,7 @@ class RouteUsersById(webapp2.RequestHandler):
 
 # User over his own information route
 class RouteUser(webapp2.RequestHandler):
+    # The user updates his own info
     def put(self):
         # Parse the body to JSON
         try:
@@ -171,9 +172,30 @@ class RouteUser(webapp2.RequestHandler):
         # Update the db information
         try:
             u.put()
-            return renderJSON(self, {"message": "Info was updated succesfully", "active": u.active})
+            return renderJSON(self, {'message': 'Info was updated succesfully', 'active': u.active})
         except:
             return renderError(self, 500, 'Unable to udpate your information')
+
+    # The user sees his own information
+    def get(self):
+        # Extract the user token from the header
+        header = self.request.headers['Authorization']
+        token = tokens.extractToken(header)
+        if token is None:
+            return renderError(self, 400, 'Invalid authorization type')
+
+        # Decode the token
+        payload = tokens.decode(token, config.openid_secret, config.token_algorithm)
+        if payload is None:
+            return renderError(self, 401, 'Invalid authentication credentials')
+
+        # Get the user
+        u = users.getUserById(payload['id'])
+        if u is None:
+            return renderError(self, 400, 'Invalid user information')
+
+        return renderJSON(self, {'name': u.name, 'email': u.email, 'password': u.pwd,
+                                 'is_admin': u.is_admin, 'active': u.active})
 
 
 # General applications route
