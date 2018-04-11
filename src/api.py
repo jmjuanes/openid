@@ -145,12 +145,12 @@ class RouteUser(webapp2.RequestHandler):
 
         # Extract the user token from the header
         header = self.request.headers['Authorization']
-        token = token.extract(header)
-        if token is None:
+        t = token.extract(header)
+        if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
 
         # Decode the token
-        payload = token.decode(token, config.openid_secret, config.token_algorithm)
+        payload = token.decode(t, config.openid_secret, config.token_algorithm)
         if payload is None:
             return response.sendError(self, 401, 'Invalid authentication credentials')
 
@@ -175,12 +175,12 @@ class RouteUser(webapp2.RequestHandler):
     def get(self):
         # Extract the user token from the header
         header = self.request.headers['Authorization']
-        token = token.extract(header)
-        if token is None:
+        t = token.extract(header)
+        if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
 
         # Decode the token
-        payload = token.decode(token, config.openid_secret, config.token_algorithm)
+        payload = token.decode(t, config.openid_secret, config.token_algorithm)
         if payload is None:
             return response.sendError(self, 401, 'Invalid authentication credentials')
 
