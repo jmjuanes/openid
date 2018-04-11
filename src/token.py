@@ -47,7 +47,7 @@ def decode(token, secret, algorithm):
 
 
 # Extract the token from the Authorization header
-def extractToken(header):
+def extract(header):
     info = header.split()
     if info[0] != 'Bearer':
         return None
