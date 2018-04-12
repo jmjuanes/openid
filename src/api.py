@@ -40,7 +40,7 @@ class RouteUsers(webapp2.RequestHandler):
         try:
             data = json.loads(self.request.body)
         except:
-            return response.sendError(self, 401, 'Unauthorized request')
+            return response.sendError(self, 400, 'Bad request')
 
         # Initialize the user
         u = users.User()
@@ -58,7 +58,7 @@ class RouteUsers(webapp2.RequestHandler):
             return response.sendError(self, 400, 'Please fill all the fields')
 
         # Check if the user already exists
-        if users.exists_user(u.email):
+        if users.exists(u.email):
             return response.sendError(self, 400, 'This user already exists')
 
         # Check if the captcha is enabled
@@ -75,10 +75,7 @@ class RouteUsers(webapp2.RequestHandler):
             return response.sendError(self, 500, 'The user could not be registered')
 
         # Return a JSON with the new user's info
-        return response.sendJson(self, {'name': u.name,
-                                        'email': u.email,
-                                        'is_admin': u.is_admin,
-                                        'active': u.active})
+        return users.getInfo(self, u)
 
 
 # Specific user route
@@ -89,10 +86,7 @@ class RouteUsersById(webapp2.RequestHandler):
         if u is None:
             return response.sendError(self, 404, 'This user does not exist')
 
-        return response.sendJson(self, {'name': u.name,
-                                        'email': u.email,
-                                        'is_admin': u.is_admin,
-                                        'active': u.active})
+        return users.getInfo(self, u)
 
     # Delete a user
     def delete(self, user_id):
@@ -102,11 +96,7 @@ class RouteUsersById(webapp2.RequestHandler):
 
         try:
             u.key.delete()
-            return response.sendJson(self, {'message': 'This is the deleted user info',
-                                            'name': u.name,
-                                            'password': u.pwd,
-                                            'is_admin': u.is_admin,
-                                            'active': u.active})
+            return users.getInfo(self, u)
         except:
             return response.sendError(self, 500, 'The user could not be deleted')
 
@@ -116,7 +106,7 @@ class RouteUsersById(webapp2.RequestHandler):
         try:
             data = json.loads(self.request.body)
         except:
-            return response.sendError(self, 400, 'Unauthorized request')
+            return response.sendError(self, 400, 'Bad request')
 
         # Edit the user information
         u = users.getUserById(user_id)
@@ -128,7 +118,7 @@ class RouteUsersById(webapp2.RequestHandler):
 
         try:
             u.put()
-            return response.sendJson(self, {"active": u.active})
+            return users.getInfo(self, u)
         except:
             return response.sendError(self, 500, 'The user could not be modified')
 
@@ -141,7 +131,7 @@ class RouteUser(webapp2.RequestHandler):
         try:
             data = json.loads(self.request.body)
         except:
-            return response.sendError(self, 401, 'Unauthorized request')
+            return response.sendError(self, 400, 'Bad request')
 
         # Extract the user token from the header
         header = self.request.headers['Authorization']
@@ -189,10 +179,7 @@ class RouteUser(webapp2.RequestHandler):
         if u is None:
             return response.sendError(self, 400, 'Invalid user information')
 
-        return response.sendJson(self, {'name': u.name,
-                                        'email': u.email,
-                                        'is_admin': u.is_admin,
-                                        'active': u.active})
+        return users.getInfo(self, u)
 
 
 # General applications route
@@ -203,7 +190,7 @@ class RouteApplications(webapp2.RequestHandler):
         try:
             data = json.loads(self.request.body)
         except:
-            return response.sendError(self, 401, 'Unauthorized request')
+            return response.sendError(self, 400, 'Bad request')
 
         # Check if the captcha is enabled
         # if config.captcha_enabled is True:
@@ -265,7 +252,7 @@ class RouteApplicationsById(webapp2.RequestHandler):
         try:
             data = json.loads(self.request.body)
         except:
-            return response.sendError(self, 401, 'Unauthorized request')
+            return response.sendError(self, 400, 'Bad request')
 
         # Edit the app information
         a = application.get_application(app_id)
@@ -294,7 +281,7 @@ class RouteLogin(webapp2.RequestHandler):
         try:
             data = json.loads(self.request.body)
         except:
-            return response.sendError(self, 401, 'Unauthorized request')
+            return response.sendError(self, 400, 'Bad request')
 
         # Check the login info
         email = data['email']
@@ -335,7 +322,7 @@ class RouteAuthorize(webapp2.RequestHandler):
         try:
             data = json.loads(self.request.body)
         except:
-            return response.sendError(self, 401, 'Unauthorized request')
+            return response.sendError(self, 400, 'Bad request')
 
         # Check if the captcha is enabled
         if config.captcha_enabled is True:
