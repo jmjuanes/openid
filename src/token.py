@@ -4,13 +4,12 @@ import logging
 
 
 # Generate a token
-def encode(user, secret, algorithm, expiration):
+def encode(u, secret, algorithm, expiration):
     payload = dict()
-    payload['email'] = user.email
-    payload['name'] = user.name
-    payload['is_admin'] = user.is_admin
-    payload['role'] = user.role
-    payload['id'] = user.key.id()
+    payload['email'] = u.email
+    payload['name'] = u.name
+    payload['is_admin'] = u.is_admin
+    payload['id'] = u.key.id()
     payload['iat'] = int(time.time())
     payload['exp'] = int(time.time()) + expiration
 
@@ -37,10 +36,19 @@ def decode(token, secret, algorithm):
             # Check the expiration date
             current_time = int(time.time())
             if current_time > payload['exp']:
-                # logging.info("Invalid token time. Current time: " + str(current_time) + ". Token time: " + str(payload["exp"]))
+                # logging.info("Invalid token time. Current time: " + str(current_time)
+                # + ". Token time: " + str(payload["exp"]))
                 return None
             else:
                 # Return the payload
                 return payload
     except jwt.exceptions.InvalidTokenError:
         return None
+
+
+# Extract the token from the Authorization header
+def extract(header):
+    info = header.split()
+    if info[0] != 'Bearer':
+        return None
+    return info[1]

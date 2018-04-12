@@ -93,3 +93,4 @@ ENV/
 
 # Testing files
 config.py
+src/config.py
