@@ -47,7 +47,7 @@ class RouteUsers(webapp2.RequestHandler):
         u.name = data['name']
         u.email = data['email']
         u.is_admin = False
-        u.active = config.openid_default_active
+        u.is_active = config.openid_default_active
 
         # Encrypt the password
         u.pwd = data['pwd']
@@ -82,7 +82,7 @@ class RouteUsers(webapp2.RequestHandler):
 class RouteUsersById(webapp2.RequestHandler):
     # Get the info from a user
     def get(self, user_id):
-        u = users.getUserById(user_id)
+        u = users.get(id=user_id)
         if u is None:
             return response.sendError(self, 404, 'This user does not exist')
 
@@ -90,7 +90,7 @@ class RouteUsersById(webapp2.RequestHandler):
 
     # Delete a user
     def delete(self, user_id):
-        u = users.getUserById(user_id)
+        u = users.get(id=user_id)
         if u is None:
             return response.sendError(self, 404, 'This user does not exist')
 
@@ -109,12 +109,12 @@ class RouteUsersById(webapp2.RequestHandler):
             return response.sendError(self, 400, 'Bad request')
 
         # Edit the user information
-        u = users.getUserById(user_id)
+        u = users.get(id=user_id)
         if u is None:
             return response.sendError(self, 404, 'This user does not exist')
 
-        if isinstance(data['active'], bool):
-            u.active = data['active']
+        if isinstance(data['is_active'], bool):
+            u.is_active = data['is_active']
 
         try:
             u.put()
@@ -145,19 +145,18 @@ class RouteUser(webapp2.RequestHandler):
             return response.sendError(self, 401, 'Invalid authentication credentials')
 
         # Get the user
-        u = users.getUserById(payload['id'])
+        u = users.get(id=payload['id'])
         if u is None:
             return response.sendError(self, 400, 'Invalid user information')
 
         # Update his information
-        active = data['active']
-        u.active = active
+        u.is_active = data['is_active']
 
         # Update the db information
         try:
             u.put()
             return response.sendJson(self, {'message': 'Info was updated succesfully',
-                                            'active': u.active})
+                                            'is_active': u.is_active})
         except:
             return response.sendError(self, 500, 'Unable to udpate your information')
 
@@ -175,7 +174,7 @@ class RouteUser(webapp2.RequestHandler):
             return response.sendError(self, 401, 'Invalid authentication credentials')
 
         # Get the user
-        u = users.getUserById(payload['id'])
+        u = users.get(id=payload['id'])
         if u is None:
             return response.sendError(self, 400, 'Invalid user information')
 
@@ -299,10 +298,10 @@ class RouteLogin(webapp2.RequestHandler):
             return response.sendError(self, 400, 'Please fill all the fields')
 
         # Search the user in the db
-        u = users.get_user(email)
+        u = users.get(email=email)
         if u is None:
             return response.sendError(self, 404, 'This user does not exist')
-        if u.active is False:
+        if u.is_active is False:
             return response.sendError(self, 401, 'This user is not active')
 
         # Check the password
@@ -349,12 +348,12 @@ class RouteAuthorize(webapp2.RequestHandler):
             return response.sendError(self, 404, 'Application not found')
 
         # Get the user
-        u = users.get_user(email)
+        u = users.get(email=email)
         if u is None:
             return response.sendError(self, 404, 'User not found')
 
         # Check if the user is active
-        if u.active is False:
+        if u.is_active is False:
             return response.sendError(self, 401, 'User not active')
 
         # If nothing went wrong, check the password
