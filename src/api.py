@@ -13,7 +13,7 @@ from passlib.hash import pbkdf2_sha256
 # Modules imports
 import config
 import application
-import users
+import user
 import captcha
 import token
 import response
@@ -43,7 +43,7 @@ class RouteUsers(webapp2.RequestHandler):
             return response.sendError(self, 400, 'Bad request')
 
         # Initialize the user
-        u = users.User()
+        u = user.User()
         u.name = data['name']
         u.email = data['email']
         u.is_admin = False
@@ -58,7 +58,7 @@ class RouteUsers(webapp2.RequestHandler):
             return response.sendError(self, 400, 'Please fill all the fields')
 
         # Check if the user already exists
-        if users.exists(u.email):
+        if user.exists(u.email):
             return response.sendError(self, 400, 'This user already exists')
 
         # Check if the captcha is enabled
@@ -75,28 +75,28 @@ class RouteUsers(webapp2.RequestHandler):
             return response.sendError(self, 500, 'The user could not be registered')
 
         # Return a JSON with the new user's info
-        return users.getInfo(self, u)
+        return user.getInfo(self, u)
 
 
 # Specific user route
 class RouteUsersById(webapp2.RequestHandler):
     # Get the info from a user
     def get(self, user_id):
-        u = users.get(id=user_id)
+        u = user.get(id=user_id)
         if u is None:
             return response.sendError(self, 404, 'This user does not exist')
 
-        return users.getInfo(self, u)
+        return user.getInfo(self, u)
 
     # Delete a user
     def delete(self, user_id):
-        u = users.get(id=user_id)
+        u = user.get(id=user_id)
         if u is None:
             return response.sendError(self, 404, 'This user does not exist')
 
         try:
             u.key.delete()
-            return users.getInfo(self, u)
+            return user.getInfo(self, u)
         except:
             return response.sendError(self, 500, 'The user could not be deleted')
 
@@ -109,7 +109,7 @@ class RouteUsersById(webapp2.RequestHandler):
             return response.sendError(self, 400, 'Bad request')
 
         # Edit the user information
-        u = users.get(id=user_id)
+        u = user.get(id=user_id)
         if u is None:
             return response.sendError(self, 404, 'This user does not exist')
 
@@ -118,7 +118,7 @@ class RouteUsersById(webapp2.RequestHandler):
 
         try:
             u.put()
-            return users.getInfo(self, u)
+            return user.getInfo(self, u)
         except:
             return response.sendError(self, 500, 'The user could not be modified')
 
@@ -145,7 +145,7 @@ class RouteUser(webapp2.RequestHandler):
             return response.sendError(self, 401, 'Invalid authentication credentials')
 
         # Get the user
-        u = users.get(id=payload['id'])
+        u = user.get(id=payload['id'])
         if u is None:
             return response.sendError(self, 400, 'Invalid user information')
 
@@ -174,11 +174,11 @@ class RouteUser(webapp2.RequestHandler):
             return response.sendError(self, 401, 'Invalid authentication credentials')
 
         # Get the user
-        u = users.get(id=payload['id'])
+        u = user.get(id=payload['id'])
         if u is None:
             return response.sendError(self, 400, 'Invalid user information')
 
-        return users.getInfo(self, u)
+        return user.getInfo(self, u)
 
 
 # General applications route
@@ -298,7 +298,7 @@ class RouteLogin(webapp2.RequestHandler):
             return response.sendError(self, 400, 'Please fill all the fields')
 
         # Search the user in the db
-        u = users.get(email=email)
+        u = user.get(email=email)
         if u is None:
             return response.sendError(self, 404, 'This user does not exist')
         if u.is_active is False:
@@ -348,7 +348,7 @@ class RouteAuthorize(webapp2.RequestHandler):
             return response.sendError(self, 404, 'Application not found')
 
         # Get the user
-        u = users.get(email=email)
+        u = user.get(email=email)
         if u is None:
             return response.sendError(self, 404, 'User not found')
 
