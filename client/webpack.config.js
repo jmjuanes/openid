@@ -1,4 +1,4 @@
-lth = require("path");
+let path = require("path");
 let MiniCssExtract = require("mini-css-extract-plugin");
 
 //Export the webpack configuration
