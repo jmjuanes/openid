@@ -1,6 +1,9 @@
 # Import google modules
 from google.appengine.ext import ndb
 
+# Import python modules
+import json
+
 
 # Users class
 class User(ndb.Model):
@@ -44,5 +47,15 @@ def getAll():
 
 
 # Check if an user with the provided email exists
-def exists_user(value):
+def exists(value):
     return get_user(value) is not None
+
+
+# Generate Json from user
+def getInfo(self, u):
+    self.response.headers['Content-Type'] = 'application/json'
+    obj = {'name': u.name,
+           'email': u.email,
+           'is_admin': u.is_admin,
+           'active': u.active}
+    return self.response.out.write(json.dumps(obj))
