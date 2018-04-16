@@ -36,7 +36,7 @@ class Login extends React.Component {
             return this.setState({error: "Invalid password"});
         }
         //Do the request
-        request({url: "/api/login", method: "post", json: true, body: credentials}), function (error, res, body) {
+        request({url: "/api/login", method: "post", json: true, body: credentials}, function (error, res, body) {
             if (error) {
                 return self.setState({error: error.message});
             }
