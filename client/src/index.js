@@ -10,21 +10,37 @@ let defaultInfo = {
     openid_name: "OPENID_NAME",
     captcha: false,
     captcha_key: 'nope',
-    openid_allow_signup: true,
-    // error: "This is an error"
+    openid_allow_signup: true
 };
 
 //Main app class
 class App extends React.Component {
-
     constructor(props) {
         super(props);
+        this.state = {
+            token: null
+        };
+        this.saveToken = this.saveToken.bind(this);
+        this.deleteToken = this.deleteToken.bind(this);
+    }
+
+    saveToken(token) {
+        return this.setState({token: token}, function (){
+            return Router.redirect("/dashboard");
+        });
+    }
+
+    deleteToken() {
+        return this.setState({token: null}, function () {
+            return Router.redirect("/login");
+        });
     }
 
     render() {
+        let loginProps = Object.assign({saveToken: this.saveToken}, defaultInfo);
         return (
             <Router.Switch>
-                <Router.Route exact path="/" component={Login} props={defaultInfo}/>
+                <Router.Route exact path="/" component={Login} props={loginProps}/>
             </Router.Switch>
         );
     }
