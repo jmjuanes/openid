@@ -27,7 +27,8 @@ module.exports = {
                         "options": {"includePaths": ["./node_modules/"]}
                     }
                 ]
-            }
+            },
+            { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" }
         ]
     },
     "plugins": [
