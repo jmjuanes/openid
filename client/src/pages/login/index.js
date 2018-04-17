@@ -14,14 +14,16 @@ class Login extends React.Component {
             emailInput: React.createRef(),
             pwdInput: React.createRef()
         };
-
         //Bind methods 
         this.handleSignInClick = this.handleSignInClick.bind(this);
     }
 
+    // Try to login with the information provided
     handleSignInClick() {
         let self = this;
-
+        console.log(this.ref.emailInput.current.value);
+        console.log(this.ref.pwdInput.current.value);
+        return;
         // User login info
         let credentials = {
             email: "",
@@ -92,7 +94,7 @@ class Login extends React.Component {
                 {/*Title*/}
                 <Heading type={"h2"} align="center">Sign in</Heading>
                 <div align="center" className={"login-subtitle siimple-small"}>Sign in into your
-                    <b>{this.props.openid_name}</b></div>
+                    <b> {this.props.openid_name}</b></div>
                 {/*Form*/}
                 <div id="login-form">
                     {/*Error message*/}
@@ -101,7 +103,7 @@ class Login extends React.Component {
                     <Field>
                         <FieldLabel>Email</FieldLabel>
                         <Input className="login-input"
-                               ref={this.ref.emailInput}
+                               inputRef={this.ref.emailInput}
                                required/>
                         <FieldHelper>Please enter a valid email</FieldHelper>
                     </Field>
@@ -109,7 +111,7 @@ class Login extends React.Component {
                     <Field>
                         <FieldLabel>Password</FieldLabel>
                         <Input className="login-input"
-                               ref={this.ref.pwdInput}
+                               inputRef={this.ref.pwdInput}
                                type={"password"}
                                required/>
                     </Field>

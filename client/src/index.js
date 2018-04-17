@@ -4,6 +4,7 @@ import {hyperscript as h, ready} from "neutrine-utils";
 import * as Router from "neutrine-router";
 
 import Login from "./pages/login/index.js";
+import Authorize from "./pages/authorize/index";
 
 //General props
 let defaultInfo = {
@@ -37,10 +38,14 @@ class App extends React.Component {
     }
 
     render() {
+        // Custom props for each route
         let loginProps = Object.assign({saveToken: this.saveToken}, defaultInfo);
+        let authorizeProps = Object.assign({app_name: "Falsebook"}, defaultInfo);
+        
         return (
             <Router.Switch>
                 <Router.Route exact path="/" component={Login} props={loginProps}/>
+                <Router.Route exact path="/authorize" component={Authorize} props={authorizeProps}/>
             </Router.Switch>
         );
     }
