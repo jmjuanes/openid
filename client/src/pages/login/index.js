@@ -1,5 +1,5 @@
 import React from "react";
-import {Heading,Alert, Field, FieldLabel, FieldHelper, Input, Btn} from "neutrine";
+import {Heading, Alert, Field, FieldLabel, FieldHelper, Input, Btn} from "neutrine";
 import {request} from "neutrine-utils";
 
 import "./styles.scss";
@@ -8,7 +8,7 @@ class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            error: null 
+            error: null
         };
         this.ref = {
             emailInput: React.createRef(),
@@ -21,21 +21,22 @@ class Login extends React.Component {
 
     handleSignInClick() {
         let self = this;
-        //console.log(this.ref.emailInput.current.value);
-        //console.log(this.ref.pwdInput.current.value);
+
+        // User login info
         let credentials = {
             email: "",
             pwd: ""
         };
-        //Check for a valid email
+        // Check for a valid email
         if (credentials.email.indexOf("@") === -1) {
             return this.setState({error: "Invalid email provided"});
         }
-        //Check the password
+        // Check the password
         if (credentials.pwd.length < 6) {
             return this.setState({error: "Invalid password"});
         }
-        //Do the request
+
+        // Do the request
         request({url: "/api/login", method: "post", json: true, body: credentials}, function (error, res, body) {
             if (error) {
                 return self.setState({error: error.message});
@@ -64,7 +65,7 @@ class Login extends React.Component {
             return (
                 <div className="login-captcha">
                     <label className="siimple-label">Are you human?</label><br/>
-                    <div className="g-recaptcha" data-sitekey={this.props.captcha_key}> </div>
+                    <div className="g-recaptcha" data-sitekey={this.props.captcha_key}></div>
                 </div>
             );
         }
@@ -93,25 +94,24 @@ class Login extends React.Component {
                 <div align="center" className={"login-subtitle siimple-small"}>Sign in into your
                     <b>{this.props.openid_name}</b></div>
                 {/*Form*/}
-                <form id="login-form" method="POST" encType="application/x-www-form-urlencoded">
+                <div id="login-form">
                     {/*Error message*/}
                     {this.renderError()}
-                    {/*Email*/}
+                    {/*Email input*/}
                     <Field>
                         <FieldLabel>Email</FieldLabel>
                         <Input className="login-input"
-                            ref={this.ref.emailInput}/>
+                               ref={this.ref.emailInput}
+                               required/>
                         <FieldHelper>Please enter a valid email</FieldHelper>
                     </Field>
                     {/*Password input*/}
                     <Field>
                         <FieldLabel>Password</FieldLabel>
-                        <Input className="login-input" 
-                            ref={this.ref.pwdInput}
-                            type={"password"} 
-                            pattern={".{6,}"}
-                            title={"6 characters minimum"} 
-                            name={"pwd"}/>
+                        <Input className="login-input"
+                               ref={this.ref.pwdInput}
+                               type={"password"}
+                               required/>
                     </Field>
                     {/*Captcha*/}
                     {this.renderCaptcha()}
@@ -123,7 +123,7 @@ class Login extends React.Component {
                     <Btn color={"blue"} fluid onClick={this.handleSignInClick}>Sign in</Btn>
                     {/*New account*/}
                     {this.renderRegisterField()}
-                </form>
+                </div>
             </div>
         );
     }
