@@ -119,7 +119,7 @@ class Login extends React.Component {
                     {this.renderCaptcha()}
                     {/*Notice*/}
                     <div className="login-privacy siimple-small" align="center">
-                        Check if all the information is correct and click on <b>"Sign in"</b>
+                        Check that all the information is correct and click on <b>"Sign in"</b>
                     </div>
                     {/*Sign in*/}
                     <Btn color={"blue"} fluid onClick={this.handleSignInClick}>Sign in</Btn>
