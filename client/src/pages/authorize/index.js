@@ -41,7 +41,7 @@ class Authorize extends React.Component {
             return this.setState({error: "Invalid application id"});
         }
 
-        // Do the request
+        // Do the request to the authorize route
         request({url: "/api/authorize", method: "post", json: true, body: credentials}, function (err, res, body) {
             if (err) {
                 return self.setState({error: err.message});
@@ -49,9 +49,10 @@ class Authorize extends React.Component {
             if (res.statusCode >= 300) {
                 return self.setState({error: body.message})
             }
-            return;
+            // The API returns a client token
+            let url = "http://localhost:5000" + "/test?token=" + body.client_token;
+            window.location.replace(url);
         });
-
     }
 
     // Display the error message
@@ -90,9 +91,9 @@ class Authorize extends React.Component {
         if (query.id.length === 0) {
             return this.setState({error: "Invalid application ID provided"});
         }
-
         let url = "/api/applications/" + query.id;
 
+        // Do the request to the specific application route
         request({url: url, method: "get", json: true},
             function (err, res, body) {
                 if (err) {
@@ -101,7 +102,6 @@ class Authorize extends React.Component {
                 if (res.statusCode >= 300) {
                     return self.setState({error: body.message});
                 }
-
                 return self.setState({
                     app: {
                         id: query.id,
