@@ -369,18 +369,18 @@ class RouteAuthorize(webapp2.RequestHandler):
 # Mount the app
 app = webapp2.WSGIApplication([
     # General routes
-    webapp2.Route('/api/', handler=RouteHome),
+    webapp2.Route('/api', handler=RouteHome),
     # Users routes
-    webapp2.Route('/api/users/', handler=RouteUsers),
-    webapp2.Route('/api/users/<user_id>/', handler=RouteUsersById),
-    webapp2.Route('/api/user/', handler=RouteUser),
+    webapp2.Route('/api/users', handler=RouteUsers),
+    webapp2.Route('/api/users/<user_id>', handler=RouteUsersById),
+    webapp2.Route('/api/user', handler=RouteUser),
     # Applications routes
-    webapp2.Route('/api/applications/', handler=RouteApplications),
-    webapp2.Route('/api/applications/<app_id>/', handler=RouteApplicationsById),
+    webapp2.Route('/api/applications', handler=RouteApplications),
+    webapp2.Route('/api/applications/<app_id>', handler=RouteApplicationsById),
     # Login route
-    webapp2.Route('/api/login/', handler=RouteLogin),
+    webapp2.Route('/api/login', handler=RouteLogin),
     # Authorize route
-    webapp2.Route('/api/authorize/', handler=RouteAuthorize),
+    webapp2.Route('/api/authorize', handler=RouteAuthorize),
 
     # Error route
     webapp2.Route('/api/<:.*>', handler=RouteError)
