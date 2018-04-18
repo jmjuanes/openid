@@ -1,15 +1,19 @@
 import React from "react";
-import {Btn, Field, FieldHelper, FieldLabel, Heading, Input} from 'neutrine';
+import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input} from 'neutrine';
 import {request} from "neutrine-utils";
+
+import "./styles.scss";
 
 class Authorize extends React.Component {
     constructor(props) {
         super(props);
-        // Check if the error
-        let err = Object.keys(props.request.query).length === 0 ? "Invalid application id" : null;
         this.state = {
-            app_name: props.app_name,
-            error: err
+            error: null,
+            app: {
+                name: "",
+                detail: "",
+                redirect: ""
+            }
         };
         this.ref = {
             emailInput: React.createRef(),
@@ -27,6 +31,8 @@ class Authorize extends React.Component {
             pwd: this.ref.pwdInput.current.value,
             client: this.props.request.query.id
         };
+
+        return;
         // Check if the email is valid
         if (credentials.email.indexOf("@") === -1) {
             return this.setState({error: "Invalid email provided"});
@@ -42,14 +48,14 @@ class Authorize extends React.Component {
 
         // Do the request
         request({url: "/api/authorize", method: "post", json: true, body: credentials}, function (err, res, body) {
-            if(err){
+            if (err) {
                 return self.setState({error: err.message});
             }
-            if(res.statusCode >= 300){
+            if (res.statusCode >= 300) {
                 return self.setState({error: body.message})
             }
             // return;
-        })
+        });
 
     }
 
@@ -76,6 +82,42 @@ class Authorize extends React.Component {
         }
     }
 
+    // Ask for the app info to the API
+    componentDidMount() {
+        let self = this;
+        let query = this.props.request.query;
+
+        //Check for no app id provided
+        if (typeof query.id !== "string") {
+            return this.setState({error: "No application ID provided"});
+        }
+        //Check for invalid app id
+        if (query.id.length === 0) {
+            return this.setState({error: "Invalid application ID provided"});
+        }
+
+        let url = "/api/applications/" + query.id;
+
+        request({url: url, method: "get", json: true},
+            function (err, res, body) {
+                if (err) {
+                    return self.setState({error: err.message});
+                }
+                if (res.statusCode >= 300) {
+                    return self.setState({error: body.message});
+                }
+                console.log(body.name);
+                return self.setState({
+                    app: {
+                        id: query.id,
+                        name: body.name,
+                        detail: body.detail,
+                        redirect: body.redirect
+                    }
+                });
+            });
+    }
+
 
     render() {
         return (
@@ -83,7 +125,7 @@ class Authorize extends React.Component {
                 {/*Title*/}
                 <Heading align={"center"} type={"h2"}>Authorize - {this.props.openid_name}</Heading>
                 {/*Detail*/}
-                <div className={"authorize-detail"} align={"center"}>{this.state.app_name} is requesting permission to
+                <div className={"authorize-detail"} align={"center"}><b>{this.state.app.name}</b> is requesting permission to
                     access your account information.
                 </div>
                 {/*Authorize form*/}
