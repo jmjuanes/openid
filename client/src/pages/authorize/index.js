@@ -1,5 +1,5 @@
 import React from "react";
-import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input} from 'neutrine';
+import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Spinner} from 'neutrine';
 import {request} from "neutrine-utils";
 
 import "./styles.scss";
@@ -9,11 +9,7 @@ class Authorize extends React.Component {
         super(props);
         this.state = {
             error: null,
-            app: {
-                name: "",
-                detail: "",
-                redirect: ""
-            }
+            app: null
         };
         this.ref = {
             emailInput: React.createRef(),
@@ -23,16 +19,15 @@ class Authorize extends React.Component {
         this.handleAuthorizeClick = this.handleAuthorizeClick.bind(this);
     }
 
-    // Authorize
+    // Authorize and redirect
     handleAuthorizeClick() {
         let self = this;
         let credentials = {
             email: this.ref.emailInput.current.value,
             pwd: this.ref.pwdInput.current.value,
-            client: this.props.request.query.id
+            client: this.state.app.id
         };
 
-        return;
         // Check if the email is valid
         if (credentials.email.indexOf("@") === -1) {
             return this.setState({error: "Invalid email provided"});
@@ -42,7 +37,7 @@ class Authorize extends React.Component {
             return this.setState({error: "Invalid password"});
         }
         // Check if the application id exists
-        if (typeof credentials.client === "undefined" || credentials.client.length === 0) {
+        if (typeof credentials.client !== "string" || credentials.client.length === 0) {
             return this.setState({error: "Invalid application id"});
         }
 
@@ -54,7 +49,7 @@ class Authorize extends React.Component {
             if (res.statusCode >= 300) {
                 return self.setState({error: body.message})
             }
-            // return;
+            return;
         });
 
     }
@@ -106,7 +101,7 @@ class Authorize extends React.Component {
                 if (res.statusCode >= 300) {
                     return self.setState({error: body.message});
                 }
-                console.log(body.name);
+
                 return self.setState({
                     app: {
                         id: query.id,
@@ -120,45 +115,55 @@ class Authorize extends React.Component {
 
 
     render() {
-        return (
-            <div className={"authorize-content"}>
-                {/*Title*/}
-                <Heading align={"center"} type={"h2"}>Authorize - {this.props.openid_name}</Heading>
-                {/*Detail*/}
-                <div className={"authorize-detail"} align={"center"}><b>{this.state.app.name}</b> is requesting permission to
-                    access your account information.
-                </div>
-                {/*Authorize form*/}
-                <div className={"authorize-form"}>
-                    {/*Error message*/}
-                    {this.renderError()}
-                    {/*Email input*/}
-                    <Field>
-                        <FieldLabel>Email</FieldLabel>
-                        <Input className="authorize-input"
-                               inputRef={this.ref.emailInput}
-                               required/>
-                        <FieldHelper>Please enter a valid email</FieldHelper>
-                    </Field>
-                    {/*Password input*/}
-                    <Field>
-                        <FieldLabel>Password</FieldLabel>
-                        <Input className="authorize-input"
-                               type={"password"}
-                               inputRef={this.ref.pwdInput}
-                               required/>
-                    </Field>
-                    {/*Captcha*/}
-                    {this.renderCaptcha()}
-                    {/*Notice*/}
-                    <div className="authorize-privacy siimple-small" align="center">
-                        Check if all the information is correct and click on <b>"Sign in"</b>
+        // Show a loading screen before getting the info from the API
+        if (this.state.app === null) {
+            return(
+                <Spinner className={"authorize-loading"}/>
+            );
+        }
+        // Render the actual component
+        else {
+            return (
+                <div className={"authorize-content"}>
+                    {/*Title*/}
+                    <Heading align={"center"} type={"h2"}>Authorize - {this.props.openid_name}</Heading>
+                    {/*Detail*/}
+                    <div className={"authorize-subtitle"} align={"center"}><b>{this.state.app.name}</b> is requesting
+                        permission to
+                        access your account information.
                     </div>
-                    {/*Submit the information*/}
-                    <Btn color={"blue"} onClick={this.handleAuthorizeClick} fluid>Authorize</Btn>
+                    {/*Authorize form*/}
+                    <div className={"authorize-form"}>
+                        {/*Error message*/}
+                        {this.renderError()}
+                        {/*Email input*/}
+                        <Field>
+                            <FieldLabel>Email</FieldLabel>
+                            <Input className="authorize-input"
+                                   inputRef={this.ref.emailInput}
+                                   required/>
+                            <FieldHelper>Please enter a valid email</FieldHelper>
+                        </Field>
+                        {/*Password input*/}
+                        <Field>
+                            <FieldLabel>Password</FieldLabel>
+                            <Input className="authorize-input"
+                                   type={"password"}
+                                   inputRef={this.ref.pwdInput}
+                                   required/>
+                        </Field>
+                        {/*Captcha*/}
+                        {this.renderCaptcha()}
+                        {/*Notice*/}
+                        <div className="authorize-privacy siimple-small" align="center">
+                            Check that all the information is correct and click on <b>"Authorize"</b>
+                        </div>
+                        {/*Submit the information*/}
+                        <Btn color={"blue"} onClick={this.handleAuthorizeClick} fluid>Authorize</Btn>
+                    </div>
                 </div>
-            </div>
-        );
+            );
+        }
     };
 }
 
