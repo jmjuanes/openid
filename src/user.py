@@ -47,7 +47,7 @@ def getAll():
 
 # Check if an user with the provided email exists
 def exists(value):
-    return get_user(value) is not None
+    return get(email=value) is not None
 
 
 # Generate Json from user
