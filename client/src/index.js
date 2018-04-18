@@ -5,6 +5,7 @@ import * as Router from "neutrine-router";
 
 import Login from "./pages/login/index.js";
 import Authorize from "./pages/authorize/index";
+import Register from "./pages/register/index";
 
 //General props
 let defaultProps = {
@@ -45,6 +46,7 @@ class App extends React.Component {
             <Router.Switch>
                 <Router.Route exact path="/login" component={Login} props={loginProps}/>
                 <Router.Route exact path="/authorize" component={Authorize} props={defaultProps}/>
+                <Router.Route exact path="/register" component={Register} props={defaultProps}/>
             </Router.Switch>
         );
     }
