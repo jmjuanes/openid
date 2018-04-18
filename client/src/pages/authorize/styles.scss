@@ -1,0 +1,47 @@
+
+// Authorize content div
+.authorize-content {
+    display: block;
+    width: 304px;
+    margin: 120px auto 180px;
+    font-family: 'Open Sans', sans-serif;
+}
+
+// Authorize subtitle
+.authorize-subtitle {
+    margin-bottom: 10px !important;
+}
+
+// Authorize input
+.authorize-input {
+    width: 100%;
+}
+
+// Authorize captcha
+.authorize-captcha {
+    margin-top: 5px;
+}
+
+// Authorize error
+.authorize-error {
+    margin-top: 15px;
+}
+
+// Authorize submit button
+.authorize-submit {
+    width: 100%;
+    margin-top: 10px !important;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+
+// Authorize privacy
+.authorize-privacy {
+    margin-top: 25px;
+    margin-bottom: 15px;
+}
+
+// Authorize loading spinner
+.authorize-loading {
+    margin-top: 300px;
+}
