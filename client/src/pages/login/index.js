@@ -26,8 +26,8 @@ class Login extends React.Component {
         return;
         // User login info
         let credentials = {
-            email: "",
-            pwd: ""
+            email: this.ref.emailInput.current.value,
+            pwd: this.ref.pwdInput.current.value
         };
         // Check for a valid email
         if (credentials.email.indexOf("@") === -1) {
