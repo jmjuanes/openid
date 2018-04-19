@@ -358,10 +358,10 @@ class RouteAuthorize(webapp2.RequestHandler):
 
         # If nothing went wrong, check the password
         if pbkdf2_sha256.verify(pwd, u.pwd) is True:
-            user_token = token.encode(u, a.secret, config.token_algorithm, config.token_expiration)
+            client_token = token.encode(u, a.secret, config.token_algorithm, config.token_expiration)
             return response.sendJson(self, {'username': u.name,
                                             'app_name': a.name,
-                                            'user_token': user_token})
+                                            'client_token': client_token})
         else:
             return response.sendError(self, 400, 'Invalid password')
 
