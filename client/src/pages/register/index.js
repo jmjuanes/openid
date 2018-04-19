@@ -1,5 +1,8 @@
 import React from "react";
-import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input} from "neutrine";
+import {Alert, Btn, Field, FieldLabel, Heading, Input} from "neutrine";
+
+import './styles.scss';
+
 
 
 class Register extends React.Component {
@@ -39,8 +42,8 @@ class Register extends React.Component {
                 {/*Title*/}
                 <Heading type={"h2"} align="center">Register</Heading>
                 {/*Subtitle*/}
-                <div classname={"register-subtitle siimple-small"}>
-                    Fill the following fields to create a new <b>{this.props.openid_name}</b>. All fields are required.
+                <div className={"register-subtitle siimple-small"} align={"center"}>
+                    Fill the following fields to create a new <b>{this.props.openid_name}</b> account. All of them are required.
                 </div>
                 {/*Form*/}
                 <div className={"register-form"}>
