@@ -2,7 +2,7 @@
 .register-content {
     display: block;
     width: 304px;
-    margin: 120px auto 180px;
+    margin: 50px auto 100px;
     font-family: 'Open Sans', sans-serif;
 }
 
@@ -38,4 +38,10 @@
 .register-privacy {
     margin-top: 25px;
     margin-bottom: 15px;
+}
+
+// Register login box
+.register-login {
+    font-size: 15px;
+    margin-top: 20px !important;
 }
