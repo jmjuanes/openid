@@ -9,7 +9,8 @@ class Register extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            error: null
+            error: null,
+            done: false
         };
         this.ref = {
             nameInput: React.createRef(),
@@ -71,77 +72,93 @@ class Register extends React.Component {
                 if (err) {
                     self.setState({error: err.message});
                 }
-                if(res.statusCode >= 300){
+                if (res.statusCode >= 300) {
                     self.setState({error: body.message});
                 }
-                return window.location.replace("http://localhost:8080/#!/login");
+                // Show the successful register view
+                return self.setState({done: true});
             });
     }
 
     render() {
-        return (
-            <div className={"register-content"}>
-                {/*Title*/}
-                <Heading type={"h2"} align="center">Register</Heading>
-                {/*Subtitle*/}
-                <div className={"register-subtitle siimple-small"} align={"center"}>
-                    Fill the following fields to create a new <b>{this.props.openid_name}</b> account. All of them are
-                    required.
-                </div>
-                {/*Form*/}
-                <div className={"register-form"}>
-                    {/*Error*/}
-                    {this.renderError()}
-                    {/*Name input*/}
-                    <Field>
-                        <FieldLabel>Name</FieldLabel>
-                        <Input className="register-input"
-                               inputRef={this.ref.nameInput}
-                               maxLength={"16"}
-                               required/>
-                    </Field>
-                    {/*Email input*/}
-                    <Field>
-                        <FieldLabel>Email</FieldLabel>
-                        <Input className="register-input"
-                               inputRef={this.ref.emailInput}
-                               required/>
-                    </Field>
-                    {/*Password input*/}
-                    <Field>
-                        <FieldLabel>Password</FieldLabel>
-                        <Input className="register-input"
-                               inputRef={this.ref.pwdInput}
-                               type={"password"}
-                               required/>
-                        <FieldHelper>6 characters minimum</FieldHelper>
-                    </Field>
-                    {/*Password input*/}
-                    <Field>
-                        <FieldLabel>Repeat password</FieldLabel>
-                        <Input className="register-input"
-                               inputRef={this.ref.pwdRepeatInput}
-                               type={"password"}
-                               required/>
-                    </Field>
-                    {/*Captcha*/}
-                    {this.renderCaptcha()}
-                    {/*Notice*/}
-                    <div className="register-privacy siimple-small" align="center">
-                        Check that all the information is correct and click on <b>"Create account"</b>
+        if (this.state.done === true) {
+            return (
+                <div className="register-content register-success">
+                    {/*Title*/}
+                    <Heading type={"h2"} align={"center"}>You are done!</Heading>
+                    <div className={"register-subtitle siimple-small"} align={"center"}>
+                        Thanks for creating an account in <b>{this.props.openid_name}</b>. You can now continue with your signup:
                     </div>
-                    {/*Register*/}
-                    <Btn color={"blue"} onClick={this.handleRegisterClick} fluid>Create account</Btn>
-                    {/*Login*/}
-                    <Field className={"register-login"}>
-                        <FieldLabel align="center">
-                            Are you already registered?
-                        </FieldLabel>
-                        <Btn color={"green"} fluid> Log in </Btn>
-                    </Field>
+                    <Btn color={"green"} fluid>Continue</Btn>
                 </div>
-            </div>
-        );
+            );
+        }
+        else {
+            return (
+                <div className={"register-content"}>
+                    {/*Title*/}
+                    <Heading type={"h2"} align="center">Register</Heading>
+                    {/*Subtitle*/}
+                    <div className={"register-subtitle siimple-small"} align={"center"}>
+                        Fill the following fields to create a new <b>{this.props.openid_name}</b> account. All of them
+                        are
+                        required.
+                    </div>
+                    {/*Form*/}
+                    <div className={"register-form"}>
+                        {/*Error*/}
+                        {this.renderError()}
+                        {/*Name input*/}
+                        <Field>
+                            <FieldLabel>Name</FieldLabel>
+                            <Input className="register-input"
+                                   inputRef={this.ref.nameInput}
+                                   maxLength={"16"}
+                                   required/>
+                        </Field>
+                        {/*Email input*/}
+                        <Field>
+                            <FieldLabel>Email</FieldLabel>
+                            <Input className="register-input"
+                                   inputRef={this.ref.emailInput}
+                                   required/>
+                        </Field>
+                        {/*Password input*/}
+                        <Field>
+                            <FieldLabel>Password</FieldLabel>
+                            <Input className="register-input"
+                                   inputRef={this.ref.pwdInput}
+                                   type={"password"}
+                                   required/>
+                            <FieldHelper>6 characters minimum</FieldHelper>
+                        </Field>
+                        {/*Password input*/}
+                        <Field>
+                            <FieldLabel>Repeat password</FieldLabel>
+                            <Input className="register-input"
+                                   inputRef={this.ref.pwdRepeatInput}
+                                   type={"password"}
+                                   required/>
+                        </Field>
+                        {/*Captcha*/}
+                        {this.renderCaptcha()}
+                        {/*Notice*/}
+                        <div className="register-privacy siimple-small" align="center">
+                            Check that all the information is correct and click on <b>"Create account"</b>
+                        </div>
+                        {/*Register*/}
+                        <Btn color={"blue"} onClick={this.handleRegisterClick} fluid>Create account</Btn>
+                        {/*Login*/}
+                        <Field className={"register-login"}>
+                            <FieldLabel align="center">
+                                Are you already registered?
+                            </FieldLabel>
+                            <Btn color={"green"} fluid> Log in </Btn>
+                        </Field>
+                    </div>
+                </div>
+            );
+        }
     };
 }
 
