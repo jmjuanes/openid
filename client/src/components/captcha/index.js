@@ -26,7 +26,7 @@ export default class Captcha extends React.Component {
     renderCaptcha() {
         let self = this;
         //Render the captcha and save the captcha widget
-        this.ref.captcha = grecaptcha.render(this.ref.wrapper.current {
+        this.ref.captcha = grecaptcha.render(this.ref.wrapper.current, {
             "sitekey": self.props.sitekey,
             "theme": self.props.theme,
             "size": self.props.size,
