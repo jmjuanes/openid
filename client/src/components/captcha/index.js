@@ -2,7 +2,7 @@ import React from "react";
 import {Spinner} from "neutrine";
 
 //Check if recaptcha is ready 
-let recpatchaReady = function () {
+let recaptchaReady = function () {
     return typeof window !== "undefined" && typeof window.grecaptcha !== "undefined";
 };
 
