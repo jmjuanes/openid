@@ -3,6 +3,7 @@ import {Heading, Alert, Field, FieldLabel, FieldHelper, Input, Btn} from "neutri
 import {request} from "neutrine-utils";
 
 import "./styles.scss";
+import Captcha from "../../components/captcha/index.js";
 
 class Login extends React.Component {
     constructor(props) {
@@ -12,22 +13,32 @@ class Login extends React.Component {
         };
         this.ref = {
             emailInput: React.createRef(),
-            pwdInput: React.createRef()
+            pwdInput: React.createRef(),
+            captchaInput: React.createRef()
         };
         //Bind methods 
         this.handleSignInClick = this.handleSignInClick.bind(this);
+        this.captchaError = this.captchaError.bind(this);
+    }
+
+    // Callback for the captcha in case of error
+    captchaError() {
+        return (
+            <Alert color={"red"} className={"register-error"}>
+                Captcha validation error
+            </Alert>
+        );
     }
 
     // Try to login with the information provided
     handleSignInClick() {
         let self = this;
-        console.log(this.ref.emailInput.current.value);
-        console.log(this.ref.pwdInput.current.value);
-        return;
+
         // User login info
         let credentials = {
             email: this.ref.emailInput.current.value,
-            pwd: this.ref.pwdInput.current.value
+            pwd: this.ref.pwdInput.current.value,
+            recaptcha: this.ref.captchaInput.current.getResponse()
         };
         // Check for a valid email
         if (credentials.email.indexOf("@") === -1) {
@@ -58,18 +69,6 @@ class Login extends React.Component {
                     {this.state.error}
                 </Alert>
             )
-        }
-    }
-
-    // Display the captcha
-    renderCaptcha() {
-        if (this.props.captcha) {
-            return (
-                <div className="login-captcha">
-                    <label className="siimple-label">Are you human?</label><br/>
-                    <div className="g-recaptcha" data-sitekey={this.props.captcha_key}></div>
-                </div>
-            );
         }
     }
 
@@ -116,7 +115,9 @@ class Login extends React.Component {
                                required/>
                     </Field>
                     {/*Captcha*/}
-                    {this.renderCaptcha()}
+                    {this.props.captcha_enabled ? (<Captcha sitekey={this.props.captcha_key}
+                                                            onError={this.captchaError}
+                                                            ref={this.ref.captchaInput}/>) : (null)}
                     {/*Notice*/}
                     <div className="login-privacy siimple-small" align="center">
                         Check that all the information is correct and click on <b>"Sign in"</b>
