@@ -22,8 +22,9 @@ import response
 # Home route
 class RouteHome(webapp2.RequestHandler):
     def get(self):
-        return response.sendJson(self, {'api_name': config.openid_name,
-                                        'captcha': config.captcha_enabled})
+        return response.sendJson(self, {'openid_name': config.openid_name, 'captcha_enabled': config.captcha_enabled,
+                                        'captcha_key': config.captcha_key,
+                                        'openid_allow_signup': config.openid_allow_signup})
 
 
 # Error route
@@ -64,9 +65,9 @@ class RouteUsers(webapp2.RequestHandler):
         # Check if the captcha is enabled
         if config.captcha_enabled is True:
             # Get the captcha value and check if the captcha is valid
-            captcha_value = data['g-recaptcha-response']
+            captcha_value = data['recaptcha']
             if captcha.verify(captcha_value, config.captcha_secret, config.captcha_url) is False:
-                return response.sendError(self, 400, 'Answer the captcha correctly')
+                return response.sendError(self, 400, 'Captcha answered incorrectly')
 
         # Register the user
         try:
@@ -194,7 +195,7 @@ class RouteApplications(webapp2.RequestHandler):
         # Check if the captcha is enabled
         # if config.captcha_enabled is True:
         #     # Get the captcha value and check if the captcha is valid
-        #     captcha_value = data['g-recaptcha-response']
+        #     captcha_value = data['recaptcha']
         #     if captcha.verify(captcha_value, config.captcha_secret, config.captcha_url) is False:
         #         return response.sendError(self, 400, 'Answer the captcha correctly')
 
@@ -289,7 +290,7 @@ class RouteLogin(webapp2.RequestHandler):
         # Check if the captcha is enabled
         if config.captcha_enabled is True:
             # Get the captcha value and check if the captcha is valid
-            captcha_value = data['g-recaptcha-response']
+            captcha_value = data['recaptcha']
             if captcha.verify(captcha_value, config.captcha_secret, config.captcha_url) is False:
                 return response.sendError(self, 400, 'Answer the captcha correctly')
 
@@ -326,7 +327,7 @@ class RouteAuthorize(webapp2.RequestHandler):
         # Check if the captcha is enabled
         if config.captcha_enabled is True:
             # Get the captcha value and check if the captcha is valid
-            captcha_value = data['g-recaptcha-response']
+            captcha_value = data['recaptcha']
             if captcha.verify(captcha_value, config.captcha_secret, config.captcha_url) is False:
                 return response.sendError(self, 400, 'Answer the captcha correctly')
 
@@ -369,7 +370,7 @@ class RouteAuthorize(webapp2.RequestHandler):
 # Mount the app
 app = webapp2.WSGIApplication([
     # General routes
-    webapp2.Route('/api', handler=RouteHome),
+    webapp2.Route('/api/', handler=RouteHome),
     # Users routes
     webapp2.Route('/api/users', handler=RouteUsers),
     webapp2.Route('/api/users/<user_id>', handler=RouteUsersById),
