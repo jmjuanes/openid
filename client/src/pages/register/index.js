@@ -3,6 +3,7 @@ import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input} from "neutri
 import {request} from "neutrine-utils";
 
 import './styles.scss';
+import Captcha from "../../components/captcha/index.js";
 
 
 class Register extends React.Component {
@@ -16,10 +17,12 @@ class Register extends React.Component {
             nameInput: React.createRef(),
             emailInput: React.createRef(),
             pwdInput: React.createRef(),
-            pwdRepeatInput: React.createRef()
+            pwdRepeatInput: React.createRef(),
+            captchaInput: React.createRef()
         };
         //Bind functions
         this.handleRegisterClick = this.handleRegisterClick.bind(this);
+        this.captchaError = this.captchaError.bind(this);
     }
 
     // Display the error message
@@ -29,20 +32,17 @@ class Register extends React.Component {
                 <Alert color={"red"} className={"register-error"}>
                     {this.state.error}
                 </Alert>
-            )
+            );
         }
     }
 
-    // Display the captcha
-    renderCaptcha() {
-        if (this.props.captcha) {
-            return (
-                <div className="login-captcha">
-                    <label className="siimple-label">Are you human?</label><br/>
-                    <div className="g-recaptcha" data-sitekey={this.props.captcha_key}></div>
-                </div>
-            );
-        }
+    // Callback for the captcha in case of error
+    captchaError() {
+        return (
+            <Alert color={"red"} className={"register-error"}>
+                Captcha validation error
+            </Alert>
+        );
     }
 
     // Register the user with the provided info
@@ -52,10 +52,12 @@ class Register extends React.Component {
             name: this.ref.nameInput.current.value,
             email: this.ref.emailInput.current.value,
             pwd: this.ref.pwdInput.current.value,
+            recaptcha: this.ref.captchaInput.current.getResponse()
         };
+
         // Check if the email is valid
         if (credentials.email.indexOf("@") === -1) {
-            return this.state.setState({error: "Invalid email provided"});
+            return this.setState({error: "Invalid email provided"});
         }
         // Check if the password is valid
         if (credentials.pwd.length < 6) {
@@ -70,10 +72,10 @@ class Register extends React.Component {
         request({url: "/api/users", method: "post", json: true, body: credentials},
             function (err, res, body) {
                 if (err) {
-                    self.setState({error: err.message});
+                    return self.setState({error: err.message});
                 }
                 if (res.statusCode >= 300) {
-                    self.setState({error: body.message});
+                    return self.setState({error: body.message});
                 }
                 // Show the successful register view
                 return self.setState({done: true});
@@ -87,7 +89,8 @@ class Register extends React.Component {
                     {/*Title*/}
                     <Heading type={"h2"} align={"center"}>You are done!</Heading>
                     <div className={"register-subtitle siimple-small"} align={"center"}>
-                        Thanks for creating an account in <b>{this.props.openid_name}</b>. You can now continue with your signup:
+                        Thanks for creating an account in <b>{this.props.openid_name}</b>. You can now continue with
+                        your signup:
                     </div>
                     <Btn color={"green"} fluid>Continue</Btn>
                 </div>
@@ -141,7 +144,9 @@ class Register extends React.Component {
                                    required/>
                         </Field>
                         {/*Captcha*/}
-                        {this.renderCaptcha()}
+                        {this.props.captcha_enabled ? (<Captcha sitekey={this.props.captcha_key}
+                                                                onError={this.captchaError}
+                                                                ref={this.ref.captchaInput}/>) : (null)}
                         {/*Notice*/}
                         <div className="register-privacy siimple-small" align="center">
                             Check that all the information is correct and click on <b>"Create account"</b>
