@@ -33,8 +33,6 @@ class App extends React.Component {
             if (res.statusCode >= 300) {
                 return self.setState({error: body.message});
             }
-            console.log(body.openid_name + "-" + body.captcha_enabled + "-" + body.captcha_key + "-" + body.openid_allow_signup);
-
             return self.setState({
                 config: {
                     openid_name: body.openid_name,
