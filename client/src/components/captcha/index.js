@@ -45,6 +45,14 @@ export default class Captcha extends React.Component {
     componentWillUnmount() {
         //Clear the ready check interval
         clearInterval(this.ref.readyCheck);
+        //Unmount the Captcha element
+        if (this.ref.captcha !== null) {
+            let wrapper = this.ref.wrapper.current;
+            while (wrapper.firstChild) {
+                wrapper.removeChild(wrapper.firstChild);
+            }
+            grecaptcha.reset(this.ref.captcha);
+        }
     }
 
     componentDidUpdate() {
@@ -54,7 +62,7 @@ export default class Captcha extends React.Component {
     renderCaptcha() {
         let self = this;
         //Check if the captcha is ready
-        if (this.state.ready === true) {
+        if (this.state.ready === true && this.ref.captcha === null) {
             //Render the captcha and save the captcha widget
             this.ref.captcha = grecaptcha.render(this.ref.wrapper.current, {
                 "sitekey": self.props.sitekey,
