@@ -54,7 +54,7 @@ export default class Captcha extends React.Component {
     renderCaptcha() {
         let self = this;
         //Check if the captcha is ready
-        if (this.state.ready === false) {
+        if (this.state.ready === true) {
             //Render the captcha and save the captcha widget
             this.ref.captcha = grecaptcha.render(this.ref.wrapper.current, {
                 "sitekey": self.props.sitekey,
