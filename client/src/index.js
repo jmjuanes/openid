@@ -7,6 +7,9 @@ import Login from "./pages/login/index.js";
 import Authorize from "./pages/authorize/index.js";
 import Register from "./pages/register/index.js";
 import {Spinner} from "neutrine";
+import Dashboard from "./pages/dashboard/index";
+
+import "./styles.scss";
 
 
 //Main app class
@@ -47,8 +50,7 @@ class App extends React.Component {
     // Save the user token from the login
     saveToken(token) {
         return this.setState({token: token}, function () {
-            console.log("Correct login. You'd be redirected to dashboard if it was implemented.")
-            // return Router.redirect("/dashboard");
+            return Router.redirect("/dashboard");
         });
     }
 
@@ -62,6 +64,7 @@ class App extends React.Component {
     render() {
         // Custom props for each route
         let loginProps = Object.assign({saveToken: this.saveToken}, this.state.config);
+        let dashboardProps = Object.assign({is_admin: true, token: this.state.token}, this.state.config);
 
         if (this.state.config === null) {
             return (
@@ -73,6 +76,7 @@ class App extends React.Component {
                     <Router.Route exact path="/login" component={Login} props={loginProps}/>
                     <Router.Route exact path="/authorize" component={Authorize} props={this.state.config}/>
                     <Router.Route exact path="/register" component={Register} props={this.state.config}/>
+                    <Router.Route exact path="/dashboard" component={Dashboard} props={dashboardProps}/>
                 </Router.Switch>
             );
     }
