@@ -6,7 +6,7 @@
         "babel-preset-react": "^6.24.1",
         "kofi": "^0.1.2",
         "neutrine": "^0.0.3",
-        "neutrine-router": "^0.0.1",
+        "rouct": "^0.1.0",
         "react": "^16.3.1",
         "react-dom": "^16.3.1"
     },
