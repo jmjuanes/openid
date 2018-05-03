@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import {hyperscript as h, ready, request} from "neutrine-utils";
-import * as Router from "neutrine-router";
+import * as Router from "rouct";
 
 import Login from "./pages/login/index.js";
 import Authorize from "./pages/authorize/index.js";
@@ -13,7 +13,7 @@ import "./styles.scss";
 
 
 //Main app class
-class App extends React.Component {
+class Main extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -50,21 +50,21 @@ class App extends React.Component {
     // Save the user token from the login
     saveToken(token) {
         return this.setState({token: token}, function () {
-            return Router.redirect("/dashboard");
+            return Router.redirectHashbang("/dashboard");
         });
     }
 
     // Delete the user token and return to the login
     deleteToken() {
         return this.setState({token: null}, function () {
-            return Router.redirect("/login");
+            return Router.redirectHashbang("/login");
         });
     }
 
     render() {
         // Custom props for each route
         let loginProps = Object.assign({saveToken: this.saveToken}, this.state.config);
-        let dashboardProps = Object.assign({is_admin: true, token: this.state.token}, this.state.config);
+        let dashboardProps = Object.assign({token: this.state.token}, this.state.config);
 
         if (this.state.config === null) {
             return (
@@ -72,12 +72,15 @@ class App extends React.Component {
             );
         } else
             return (
-                <Router.Switch>
-                    <Router.Route exact path="/login" component={Login} props={loginProps}/>
-                    <Router.Route exact path="/authorize" component={Authorize} props={this.state.config}/>
-                    <Router.Route exact path="/register" component={Register} props={this.state.config}/>
-                    <Router.Route exact path="/dashboard" component={Dashboard} props={dashboardProps}/>
-                </Router.Switch>
+                <Router.HashbangRouter>
+                    <Router.Switch>
+                        {/*Home route*/}
+                        <Router.Route exact path="/login" component={Login} props={loginProps}/>
+                        <Router.Route exact path="/authorize" component={Authorize} props={this.state.config}/>
+                        <Router.Route exact path="/register" component={Register} props={this.state.config}/>
+                        <Router.Route path="/dashboard" component={Dashboard} props={dashboardProps}/>
+                    </Router.Switch>
+                </Router.HashbangRouter>
             );
     }
 }
@@ -85,6 +88,6 @@ class App extends React.Component {
 //Load when dom is ready
 ready(function () {
     //Mount the app component 
-    ReactDOM.render(h(App, {}), document.getElementById("root"));
+    ReactDOM.render(h(Main, {}), document.getElementById("root"));
 });
 
