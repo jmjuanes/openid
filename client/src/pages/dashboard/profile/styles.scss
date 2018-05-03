@@ -1,3 +1,5 @@
-.profile-form{
-    max-width: 365px;
+$general-width: 365px;
+
+.profile-content{
+    max-width: $general-width;
 }
