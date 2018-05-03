@@ -19,6 +19,7 @@ class Login extends React.Component {
         //Bind methods 
         this.handleSignInClick = this.handleSignInClick.bind(this);
         this.captchaError = this.captchaError.bind(this);
+        this.redirectLogin = this.redirectLogin.bind(this);
     }
 
     // Callback for the captcha in case of error
@@ -80,10 +81,14 @@ class Login extends React.Component {
                     <FieldLabel align="center">
                         New to {this.props.openid_name}?
                     </FieldLabel>
-                    <Btn color={"green"} fluid> Create an account </Btn>
+                    <Btn color={"green"} onClick={this.redirectLogin} fluid> Create an account</Btn>
                 </Field>
             );
         }
+    }
+
+    redirectLogin() {
+        return Router.redirectHashbang("/register");
     }
 
 
