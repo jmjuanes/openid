@@ -1,6 +1,7 @@
 import React from "react";
 import {Heading, Alert, Field, FieldLabel, FieldHelper, Input, Btn} from "neutrine";
 import {request} from "neutrine-utils";
+import {redirectHashbang as redirect} from "rouct";
 
 import "./styles.scss";
 import Captcha from "../../components/captcha/index.js";
@@ -30,6 +31,12 @@ class Login extends React.Component {
             </Alert>
         );
     }
+
+    // Redirect to the login when register is successful
+    redirectLogin() {
+        return redirect("/register");
+    }
+
 
     // Try to login with the information provided
     handleSignInClick() {
@@ -85,10 +92,6 @@ class Login extends React.Component {
                 </Field>
             );
         }
-    }
-
-    redirectLogin() {
-        return Router.redirectHashbang("/register");
     }
 
 
