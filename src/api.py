@@ -114,8 +114,11 @@ class RouteUsersById(webapp2.RequestHandler):
         if u is None:
             return response.sendError(self, 404, 'This user does not exist')
 
-        if isinstance(data['is_active'], bool):
-            u.is_active = data['is_active']
+        # Update the info
+        # if isinstance(data['is_active'], bool):
+        #     u.is_active = data['is_active']
+        if isinstance(data['name'], basestring):
+            u.name = data['name']
 
         try:
             u.put()
@@ -127,39 +130,39 @@ class RouteUsersById(webapp2.RequestHandler):
 # User over his own information route
 class RouteUser(webapp2.RequestHandler):
     # The user updates his own info
-    def put(self):
-        # Parse the body to JSON
-        try:
-            data = json.loads(self.request.body)
-        except:
-            return response.sendError(self, 400, 'Bad request')
-
-        # Extract the user token from the header
-        header = self.request.headers['Authorization']
-        t = token.extract(header)
-        if t is None:
-            return response.sendError(self, 400, 'Invalid authorization type')
-
-        # Decode the token
-        payload = token.decode(t, config.openid_secret, config.token_algorithm)
-        if payload is None:
-            return response.sendError(self, 401, 'Invalid authentication credentials')
-
-        # Get the user
-        u = user.get(id=payload['id'])
-        if u is None:
-            return response.sendError(self, 400, 'Invalid user information')
-
-        # Update his information
-        u.is_active = data['is_active']
-
-        # Update the db information
-        try:
-            u.put()
-            return response.sendJson(self, {'message': 'Info was updated succesfully',
-                                            'is_active': u.is_active})
-        except:
-            return response.sendError(self, 500, 'Unable to udpate your information')
+    # def put(self):
+    #     # Parse the body to JSON
+    #     try:
+    #         data = json.loads(self.request.body)
+    #     except:
+    #         return response.sendError(self, 400, 'Bad request')
+    #
+    #     # Extract the user token from the header
+    #     header = self.request.headers['Authorization']
+    #     t = token.extract(header)
+    #     if t is None:
+    #         return response.sendError(self, 400, 'Invalid authorization type')
+    #
+    #     # Decode the token
+    #     payload = token.decode(t, config.openid_secret, config.token_algorithm)
+    #     if payload is None:
+    #         return response.sendError(self, 401, 'Invalid authentication credentials')
+    #
+    #     # Get the user
+    #     u = user.get(id=payload['id'])
+    #     if u is None:
+    #         return response.sendError(self, 400, 'Invalid user information')
+    #
+    #     # Update his information
+    #     u.is_active = data['is_active']
+    #
+    #     # Update the db information
+    #     try:
+    #         u.put()
+    #         return response.sendJson(self, {'message': 'Info was updated succesfully',
+    #                                         'is_active': u.is_active})
+    #     except:
+    #         return response.sendError(self, 500, 'Unable to udpate your information')
 
     # The user sees his own information
     def get(self):
