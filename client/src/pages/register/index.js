@@ -1,6 +1,7 @@
 import React from "react";
 import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input} from "neutrine";
 import {request} from "neutrine-utils";
+import {redirectHashbang as redirect} from "rouct";
 
 import './styles.scss';
 import Captcha from "../../components/captcha/index.js";
@@ -23,6 +24,7 @@ class Register extends React.Component {
         //Bind functions
         this.handleRegisterClick = this.handleRegisterClick.bind(this);
         this.captchaError = this.captchaError.bind(this);
+        this.redirectRegister = this.redirectRegister.bind(this);
     }
 
     // Display the error message
@@ -82,6 +84,11 @@ class Register extends React.Component {
             });
     }
 
+    // Redirect to the login when register is successful
+    redirectRegister() {
+        return redirect("/login");
+    }
+
 
     render() {
         if (this.state.done === true) {
@@ -93,7 +100,7 @@ class Register extends React.Component {
                         Thanks for creating an account in <b>{this.props.openid_name}</b>. You can now continue with
                         your signup:
                     </div>
-                    <Btn color={"green"} fluid>Continue</Btn>
+                    <Btn color={"green"} onClick={this.redirectRegister} fluid>Continue</Btn>
                 </div>
             );
         }
@@ -159,7 +166,7 @@ class Register extends React.Component {
                             <FieldLabel align="center">
                                 Are you already registered?
                             </FieldLabel>
-                            <Btn color={"green"} fluid> Log in </Btn>
+                            <Btn color={"green"} onClick={this.redirectRegister} fluid>Log in</Btn>
                         </Field>
                     </div>
                 </div>
