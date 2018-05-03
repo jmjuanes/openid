@@ -53,7 +53,8 @@ def exists(value):
 # Generate Json from user
 def getInfo(self, u):
     self.response.headers['Content-Type'] = 'application/json'
-    obj = {'name': u.name,
+    obj = {"id": u.key.id(),
+           'name': u.name,
            'email': u.email,
            'is_admin': u.is_admin,
            'is_active': u.is_active}
