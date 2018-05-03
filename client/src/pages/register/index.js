@@ -93,7 +93,7 @@ class Register extends React.Component {
                         Thanks for creating an account in <b>{this.props.openid_name}</b>. You can now continue with
                         your signup:
                     </div>
-                    <Btn color={"green"} fluid onClick={this.redirect()}>Continue</Btn>
+                    <Btn color={"green"} fluid>Continue</Btn>
                 </div>
             );
         }
