@@ -153,8 +153,11 @@ class RouteUser(webapp2.RequestHandler):
         if u is None:
             return response.sendError(self, 400, 'Invalid user information')
 
-        # Update his information
-        u.is_active = data['is_active']
+        # Update the info
+        # if isinstance(data['is_active'], bool):
+        #     u.is_active = data['is_active']
+        if isinstance(data['name'], basestring):
+            u.name = data['name']
 
         # Update the db information
         try:
