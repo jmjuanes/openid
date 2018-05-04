@@ -77,7 +77,6 @@ class Profile extends React.Component {
         }
 
         let url = "/api/users/" + this.state.user.id;
-        console.log("The id is: " + this.state.user.id);
         request({url: url, method: "put", json: true, body: credentials}, function (err, res, body) {
             if (err) {
                 return self.setState({error: err.message, done: null});
@@ -118,7 +117,7 @@ class Profile extends React.Component {
                         {/*Name input*/}
                         <Field>
                             <FieldLabel>Name</FieldLabel>
-                            <Input className="login-input"
+                            <Input className="profile-input"
                                    type={"text"}
                                    defaultValue={this.state.user.name}
                                    inputRef={this.ref.nameInput}/>
@@ -126,7 +125,7 @@ class Profile extends React.Component {
                         {/*Email input*/}
                         <Field>
                             <FieldLabel>Email</FieldLabel>
-                            <Input className="login-input"
+                            <Input className="profile-input"
                                    type={"text"}
                                    defaultValue={this.state.user.email}
                                    readOnly/>
