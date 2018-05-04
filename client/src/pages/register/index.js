@@ -53,10 +53,12 @@ class Register extends React.Component {
         let credentials = {
             name: this.ref.nameInput.current.value,
             email: this.ref.emailInput.current.value,
-            pwd: this.ref.pwdInput.current.value,
-            recaptcha: this.ref.captchaInput.current.getResponse()
+            pwd: this.ref.pwdInput.current.value
         };
-
+        // If the captcha is enabled check it
+        if (this.props.captcha_enabled) {
+            credentials = Object.assign({recaptcha: this.ref.captchaInput.current.getResponse()}, credentials);
+        }
         // Check if the email is valid
         if (credentials.email.indexOf("@") === -1) {
             return this.setState({error: "Invalid email provided"});
