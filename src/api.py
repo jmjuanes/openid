@@ -90,79 +90,78 @@ class RouteUsersById(webapp2.RequestHandler):
         return user.getInfo(self, u)
 
     # Delete a user
-    def delete(self, user_id):
-        u = user.get(id=user_id)
-        if u is None:
-            return response.sendError(self, 404, 'This user does not exist')
-
-        try:
-            u.key.delete()
-            return user.getInfo(self, u)
-        except:
-            return response.sendError(self, 500, 'The user could not be deleted')
-
-    # Modify user info
-    def put(self, user_id):
-        # Parse the body to JSON
-        try:
-            data = json.loads(self.request.body)
-        except:
-            return response.sendError(self, 400, 'Bad request')
-
-        # Edit the user information
-        u = user.get(id=user_id)
-        if u is None:
-            return response.sendError(self, 404, 'This user does not exist')
-
-        # Update the info
-        # if isinstance(data['is_active'], bool):
-        #     u.is_active = data['is_active']
-        if isinstance(data['name'], basestring):
-            u.name = data['name']
-
-        try:
-            u.put()
-            return user.getInfo(self, u)
-        except:
-            return response.sendError(self, 500, 'The user could not be modified')
-
-
-# User over his own information route
-class RouteUser(webapp2.RequestHandler):
-    # The user updates his own info
-    # def put(self):
+    # def delete(self, user_id):
+    #     u = user.get(id=user_id)
+    #     if u is None:
+    #         return response.sendError(self, 404, 'This user does not exist')
+    #
+    #     try:
+    #         u.key.delete()
+    #         return user.getInfo(self, u)
+    #     except:
+    #         return response.sendError(self, 500, 'The user could not be deleted')
+    #
+    # # Modify user info
+    # def put(self, user_id):
     #     # Parse the body to JSON
     #     try:
     #         data = json.loads(self.request.body)
     #     except:
     #         return response.sendError(self, 400, 'Bad request')
     #
-    #     # Extract the user token from the header
-    #     header = self.request.headers['Authorization']
-    #     t = token.extract(header)
-    #     if t is None:
-    #         return response.sendError(self, 400, 'Invalid authorization type')
-    #
-    #     # Decode the token
-    #     payload = token.decode(t, config.openid_secret, config.token_algorithm)
-    #     if payload is None:
-    #         return response.sendError(self, 401, 'Invalid authentication credentials')
-    #
-    #     # Get the user
-    #     u = user.get(id=payload['id'])
+    #     # Edit the user information
+    #     u = user.get(id=user_id)
     #     if u is None:
-    #         return response.sendError(self, 400, 'Invalid user information')
+    #         return response.sendError(self, 404, 'This user does not exist')
     #
-    #     # Update his information
-    #     u.is_active = data['is_active']
+    #     # Update the info
+    #     # if isinstance(data['is_active'], bool):
+    #     #     u.is_active = data['is_active']
+    #     if isinstance(data['name'], basestring):
+    #         u.name = data['name']
     #
-    #     # Update the db information
     #     try:
     #         u.put()
-    #         return response.sendJson(self, {'message': 'Info was updated succesfully',
-    #                                         'is_active': u.is_active})
+    #         return user.getInfo(self, u)
     #     except:
-    #         return response.sendError(self, 500, 'Unable to udpate your information')
+    #         return response.sendError(self, 500, 'The user could not be modified')
+
+
+# User over his own information route
+class RouteUser(webapp2.RequestHandler):
+    # The user updates his own info
+    def put(self):
+        # Parse the body to JSON
+        try:
+            data = json.loads(self.request.body)
+        except:
+            return response.sendError(self, 400, 'Bad request')
+
+        # Extract the user token from the header
+        header = self.request.headers['Authorization']
+        t = token.extract(header)
+        if t is None:
+            return response.sendError(self, 400, 'Invalid authorization type')
+
+        # Decode the token
+        payload = token.decode(t, config.openid_secret, config.token_algorithm)
+        if payload is None:
+            return response.sendError(self, 401, 'Invalid authentication credentials')
+
+        # Get the user
+        u = user.get(id=payload['id'])
+        if u is None:
+            return response.sendError(self, 400, 'Invalid user information')
+
+        # Update his information
+        u.is_active = data['is_active']
+
+        # Update the db information
+        try:
+            u.put()
+            return user.getInfo(self, u)
+        except:
+            return response.sendError(self, 500, 'Unable to update your information')
 
     # The user sees his own information
     def get(self):
@@ -183,6 +182,57 @@ class RouteUser(webapp2.RequestHandler):
             return response.sendError(self, 400, 'Invalid user information')
 
         return user.getInfo(self, u)
+
+
+# User modifying his own password
+class RouteUserPassword(webapp2.RequestHandler):
+    # Modify the password
+    def put(self):
+        # Parse the body to JSON
+        try:
+            data = json.loads(self.request.body)
+        except:
+            return response.sendError(self, 400, 'Bad request')
+
+        # Extract the user token from the header
+        header = self.request.headers['Authorization']
+        t = token.extract(header)
+        if t is None:
+            return response.sendError(self, 400, 'Invalid authorization type')
+
+        # Decode the token
+        payload = token.decode(t, config.openid_secret, config.token_algorithm)
+        if payload is None:
+            return response.sendError(self, 401, 'Invalid authentication credentials')
+
+        # Check the 3 passwords
+        old_pwd = data['old_pwd']
+        new_pwd = data['new_pwd']
+        repeat_pwd = data['repeat_pwd']
+
+        # Compare the 2 new passwords
+        if new_pwd != repeat_pwd:
+            return response.sendError(self, 400, 'Passwords do not match')
+
+        if len(new_pwd) < 6:
+                return response.sendError(self, 400, 'New password too short')
+
+        # Get the user
+        u = user.get(id=payload['id'])
+        if u is None:
+            return response.sendError(self, 400, 'Invalid user information')
+
+        # Compare old pass with database pass
+        if pbkdf2_sha256.verify(old_pwd, u.pwd) is True:
+            # Encrypt the new password
+            u.pwd = pbkdf2_sha256.hash(new_pwd)
+
+        # Update the db information
+        try:
+            u.put()
+            return user.getInfo(self, u)
+        except:
+            return response.sendError(self, 500, 'Unable to update your information')
 
 
 # General applications route
@@ -378,6 +428,7 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/api/users', handler=RouteUsers),
     webapp2.Route('/api/users/<user_id>', handler=RouteUsersById),
     webapp2.Route('/api/user', handler=RouteUser),
+    webapp2.Route('/api/user/password', handler=RouteUserPassword),
     # Applications routes
     webapp2.Route('/api/applications', handler=RouteApplications),
     webapp2.Route('/api/applications/<app_id>', handler=RouteApplicationsById),
