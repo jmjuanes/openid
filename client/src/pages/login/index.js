@@ -17,6 +17,7 @@ class Login extends React.Component {
             pwdInput: React.createRef(),
             captchaInput: React.createRef()
         };
+
         //Bind methods 
         this.handleSignInClick = this.handleSignInClick.bind(this);
         this.captchaError = this.captchaError.bind(this);
@@ -45,9 +46,12 @@ class Login extends React.Component {
         // User login info
         let credentials = {
             email: this.ref.emailInput.current.value,
-            pwd: this.ref.pwdInput.current.value,
-            recaptcha: this.ref.captchaInput.current.getResponse()
+            pwd: this.ref.pwdInput.current.value
         };
+        // If the captcha is enabled check it
+        if (this.props.captcha_enabled) {
+            credentials = Object.assign({recaptcha: this.ref.captchaInput.current.getResponse()}, credentials);
+        }
         // Check for a valid email
         if (credentials.email.indexOf("@") === -1) {
             return this.setState({error: "Invalid email provided"});
@@ -65,6 +69,7 @@ class Login extends React.Component {
             if (res.statusCode >= 300) {
                 return self.setState({error: body.message});
             }
+            console.log(body.token);
             return self.props.saveToken(body.token);
         });
     }
