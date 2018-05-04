@@ -1,10 +1,11 @@
 import React from "react";
 import * as Router from "rouct";
-
-import "./styles.scss";
-import Profile from "./profile/index";
 import {List, ListItem, ListTitle, Spinner} from "neutrine";
 import {request} from "neutrine-utils";
+
+import Account from "./account/index";
+import Profile from "./profile/index";
+import "./styles.scss";
 
 class Dashboard extends React.Component {
     constructor(props) {
@@ -12,7 +13,9 @@ class Dashboard extends React.Component {
         this.state = {
             ready: false,
             user: {}
-        }
+        };
+
+        this.dashboardRedirect = this.dashboardRedirect.bind(this);
     }
 
     // Get the user info using his access token
@@ -42,6 +45,11 @@ class Dashboard extends React.Component {
         });
     }
 
+    // Left panel redirects
+    dashboardRedirect(path) {
+        Router.redirectHashbang("/dashboard/" + path);
+    }
+
     render() {
         if (this.state.ready === false) {
             return (
@@ -57,10 +65,10 @@ class Dashboard extends React.Component {
                             <div className="dash-menu siimple-grid-col siimple-grid-col--3">
                                 {/*User panel*/}
                                 <List>
-                                    <ListItem>Profile</ListItem>
-                                    <ListItem>Authorised apps</ListItem>
-                                    <ListItem>Change password</ListItem>
-                                    <ListItem>Delete account</ListItem>
+                                    <ListItem onClick={() => {this.dashboardRedirect("")}}>Profile</ListItem>
+                                    <ListItem onClick={() => {this.dashboardRedirect("account")}}>Account</ListItem>
+                                    <ListItem>Email</ListItem>
+                                    <ListItem>Authorized apps</ListItem>
                                 </List>
                             </div>
                             {/*Content*/}
@@ -68,6 +76,9 @@ class Dashboard extends React.Component {
                                 <Router.Switch>
                                     <Router.Route exact path={"/dashboard/"}
                                                   component={Profile}
+                                                  props={{token: this.props.token}}/>
+                                    <Router.Route exact path={"/dashboard/account"}
+                                                  component={Account}
                                                   props={{token: this.props.token}}/>
                                 </Router.Switch>
                             </div>
