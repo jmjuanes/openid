@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {hyperscript as h, ready, request} from "neutrine-utils";
+import {hyperscript as h, ready} from "neutrine-utils";
+import {request} from "@kofijs/request";
 import * as Router from "rouct";
 
 import Login from "./pages/login/index.js";
