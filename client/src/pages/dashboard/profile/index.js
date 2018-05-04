@@ -1,6 +1,6 @@
 import React from "react";
 import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Spinner} from "neutrine";
-import {request} from "neutrine-utils";
+import {request} from "@kofijs/request";
 
 import "./styles.scss";
 
@@ -56,9 +56,9 @@ class Profile extends React.Component {
     }
 
     // Display the success message
-    renderDone(){
-        if(this.state.done){
-            return(
+    renderDone() {
+        if (this.state.done) {
+            return (
                 <Alert color={"green"} className={"profile-done"}>
                     {this.state.done}
                 </Alert>
@@ -76,8 +76,13 @@ class Profile extends React.Component {
             return this.setState({error: "Change the info before submitting", done: null});
         }
 
-        let url = "/api/users/" + this.state.user.id;
-        request({url: url, method: "put", json: true, body: credentials}, function (err, res, body) {
+        request({
+            url: "/api/user",
+            method: "put",
+            json: true,
+            body: credentials,
+            auth: {bearer: this.props.token}
+        }, function (err, res, body) {
             if (err) {
                 return self.setState({error: err.message, done: null});
             }

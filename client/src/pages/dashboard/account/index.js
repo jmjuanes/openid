@@ -1,6 +1,6 @@
 import React from "react";
-import {request} from "neutrine-utils";
-import {Alert, Btn, Field, FieldLabel, Heading, Input} from "neutrine";
+import {request} from "@kofijs/request";
+import {Alert, Btn, Field, FieldLabel, Heading, Input, Small} from "neutrine";
 
 import "./styles.scss";
 
@@ -117,6 +117,13 @@ class Account extends React.Component {
                     {/*Update password button*/}
                     <Btn color={"blue"} onClick={this.handlePwdUpdate}>Update password</Btn>
                 </div>
+                {/*Delete account*/}
+                <div className="account-delete">
+                    <Heading type={"h4"}>Delete account</Heading>
+                    <Small>Once you delete your account you can't get it back. Be certain about your decision.</Small>
+                    <Btn color={"grey"} className={"btn"}>Delete my account</Btn>
+                </div>
+
             </div>
         );
     }

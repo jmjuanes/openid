@@ -1,7 +1,7 @@
 import React from "react";
 import * as Router from "rouct";
 import {List, ListItem, ListTitle, Spinner} from "neutrine";
-import {request} from "neutrine-utils";
+import {request} from "@kofijs/request";
 
 import Account from "./account/index";
 import Profile from "./profile/index";

@@ -1,6 +1,6 @@
 import React from "react";
 import {Heading, Alert, Field, FieldLabel, FieldHelper, Input, Btn} from "neutrine";
-import {request} from "neutrine-utils";
+import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
 
 import "./styles.scss";

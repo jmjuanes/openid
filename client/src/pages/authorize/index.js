@@ -1,6 +1,6 @@
 import React from "react";
 import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Spinner} from 'neutrine';
-import {request} from "neutrine-utils";
+import {request} from "@kofijs/request";
 
 import "./styles.scss";
 import Captcha from "../../components/captcha/index";
