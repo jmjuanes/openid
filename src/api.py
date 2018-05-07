@@ -186,6 +186,46 @@ class RouteUser(webapp2.RequestHandler):
 
         return user.getInfo(self, u)
 
+    # The user deletes his own account
+    def delete(self):
+        # Parse the body to JSON
+        try:
+            data = json.loads(self.request.body)
+        except:
+            return response.sendError(self, 400, 'Bad request')
+
+        # Extract the user token from the header
+        header = self.request.headers['Authorization']
+        t = token.extract(header)
+        if t is None:
+            return response.sendError(self, 400, 'Invalid authorization type')
+
+        # Decode the token
+        payload = token.decode(t, config.openid_secret, config.token_algorithm)
+        if payload is None:
+            return response.sendError(self, 401, 'Invalid authentication credentials')
+
+        # Get the user
+        u = user.get(id=payload['id'])
+        if u is None:
+            return response.sendError(self, 400, 'Invalid user information')
+
+        del_email = data['email']
+        del_pwd = data['pwd']
+
+        # Compare input pass with user pass
+        if pbkdf2_sha256.verify(del_pwd, u.pwd) is False:
+            return response.sendError(self, 400, 'Invalid password')
+
+        # Compare input email with user email
+        if u.email != del_email:
+            return response.sendError(self, 400, 'Invalid email')
+
+        try:
+            u.key.delete()
+        except:
+            return response.sendError(self, 500, 'Unable to delete the account')
+
 
 # User modifying his own password
 class RouteUserPassword(webapp2.RequestHandler):
