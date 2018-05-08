@@ -1,6 +1,6 @@
 import React from "react";
 import {request} from "@kofijs/request";
-import {Alert, Btn, Field, FieldLabel, Heading, Input, Small} from "neutrine";
+import {Alert, Btn, Field, FieldLabel, Heading, Input, Small, Spinner} from "neutrine";
 import {redirectHashbang as redirect} from "rouct";
 
 import "./styles.scss";
@@ -13,7 +13,8 @@ class Account extends React.Component {
             done: null,
             modal: {
                 show: false,
-                error: null
+                error: null,
+                disableBtn: false
             }
         };
         this.ref = {
@@ -32,6 +33,7 @@ class Account extends React.Component {
         this.renderErrorModal = this.renderErrorModal.bind(this);
         this.showModal = this.showModal.bind(this);
         this.handleAccountDelete = this.handleAccountDelete.bind(this);
+        this.spinnerButton = this.spinnerButton.bind(this);
     }
 
     // Display the error message
@@ -70,6 +72,9 @@ class Account extends React.Component {
     // Render the modal to delete the account
     renderModal() {
         if (this.state.modal.show) {
+            // Disable button when deleting account
+            let disableBtn = this.state.disableBtn ? 'none' : 'auto';
+
             return (
                 <div className="account-modal">
                     <div className={"account-modal-content"}>
@@ -98,19 +103,36 @@ class Account extends React.Component {
                                    type={"password"}
                                    inputRef={this.ref.deletePwd}/>
                         </Field>
-                        <Btn color={"red"} onClick={this.handleAccountDelete}>Delete my account</Btn>
+                        {/*Render the button or if it's loading the spinner*/}
+                        {this.spinnerButton()}
                     </div>
                 </div>
             );
         }
     }
 
+    // Render the delete button/spinner
+    spinnerButton() {
+        if (!this.state.modal.disableBtn) {
+            return (
+                <Btn color={"red"} onClick={this.handleAccountDelete}>Delete my account</Btn>
+            );
+        } else {
+            return (
+                <Spinner/>
+            );
+        }
+    }
+
     // Show or hide the modal
     showModal() {
-        this.setState({modal: {
-            show: !this.state.modal.show,
-            error: null
-        }});
+        this.setState({
+            modal: {
+                show: !this.state.modal.show,
+                error: null,
+                disableBtn: false
+            }
+        });
     }
 
     // Update the user password
@@ -153,6 +175,7 @@ class Account extends React.Component {
     }
 
     handleAccountDelete() {
+        this.setState({modal: {show: true, error: null, disableBtn: true}});
         let self = this;
         let info = {
             email: this.ref.deleteEmail.current.value,
@@ -160,27 +183,33 @@ class Account extends React.Component {
             pwd: this.ref.deletePwd.current.value
         };
         if (info.text !== this.text_confirm) {
-            this.setState({modal: {show: true, error: "Please, type the exact confirmation text"}});
+            return this.setState({
+                modal: {
+                    show: true,
+                    error: "Please, type the exact confirmation text",
+                    disableBtn: false
+                }
+            });
         }
         if (info.email.indexOf("@") === -1) {
-            this.setState({modal: {show: true, error: "Enter a valid email"}});
+            return this.setState({modal: {show: true, error: "Enter a valid email", disableBtn: false}});
         }
         if (info.pwd.length < 6) {
-            this.setState({modal: {show: true, error: "Enter a valid password"}});
+            return this.setState({modal: {show: true, error: "Enter a valid password", disableBtn: false}});
         }
         request({
-                url: "/api/user",
-                method: "delete",
+                url: "/api/user/delete",
+                method: "post",
                 json: true,
                 body: info,
                 auth: {bearer: this.props.token}
             },
             function (err, res, body) {
                 if (err) {
-                    return self.setState({modal: {show: true, error: err.message}});
+                    return self.setState({modal: {show: true, error: err.message, disableBtn: false}});
                 }
                 if (res.statusCode >= 300) {
-                    return self.setState({modal: {show: true, error: body.message}});
+                    return self.setState({modal: {show: true, error: body.message, disableBtn: false}});
                 }
                 return redirect("/login");
             });
