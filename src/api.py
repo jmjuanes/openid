@@ -186,8 +186,10 @@ class RouteUser(webapp2.RequestHandler):
 
         return user.getInfo(self, u)
 
-    # The user deletes his own account
-    def delete(self):
+
+# User deleting his own account
+class RouteUserDelete(webapp2.RequestHandler):
+    def post(self):
         # Parse the body to JSON
         try:
             data = json.loads(self.request.body)
@@ -223,6 +225,7 @@ class RouteUser(webapp2.RequestHandler):
 
         try:
             u.key.delete()
+            return response.sendJson(self, {'message': "User deleted"})
         except:
             return response.sendError(self, 500, 'Unable to delete the account')
 
@@ -477,6 +480,7 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/api/users/<user_id>', handler=RouteUsersById),
     webapp2.Route('/api/user', handler=RouteUser),
     webapp2.Route('/api/user/password', handler=RouteUserPassword),
+    webapp2.Route('/api/user/delete', handler=RouteUserDelete),
     # Applications routes
     webapp2.Route('/api/applications', handler=RouteApplications),
     webapp2.Route('/api/applications/<app_id>', handler=RouteApplicationsById),
