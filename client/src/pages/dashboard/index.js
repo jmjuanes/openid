@@ -6,6 +6,7 @@ import {request} from "@kofijs/request";
 import Account from "./account/index";
 import Profile from "./profile/index";
 import "./styles.scss";
+import Applications from "./applications/index";
 
 class Dashboard extends React.Component {
     constructor(props) {
@@ -16,13 +17,13 @@ class Dashboard extends React.Component {
         };
 
         this.dashboardRedirect = this.dashboardRedirect.bind(this);
+        this.renderAdminPanel = this.renderAdminPanel.bind(this);
     }
 
     // Get the user info using his access token
     componentDidMount() {
         // Change to dashboard
         let self = this;
-        // let author_header = "Bearer " + this.props.token;
 
         request({
             url: "/api/user",
@@ -38,11 +39,27 @@ class Dashboard extends React.Component {
             }
             return self.setState({
                 user: {
-                    id: body.id
+                    id: body.id,
+                    admin: body.is_admin
                 },
                 ready: true
             });
         });
+    }
+
+    // Show the admin routes if the user is admin
+    renderAdminPanel() {
+        console.log(this.state.user.admin);
+        if (this.state.user.admin) {
+            return (
+                <List>
+                    <ListItem onClick={() => {
+                        this.dashboardRedirect("applications");
+                    }}>All applications</ListItem>
+                    <ListItem>Other admin</ListItem>
+                </List>
+            );
+        }
     }
 
     // Left panel redirects
@@ -65,11 +82,17 @@ class Dashboard extends React.Component {
                             <div className="dash-menu siimple-grid-col siimple-grid-col--3">
                                 {/*User panel*/}
                                 <List>
-                                    <ListItem onClick={() => {this.dashboardRedirect("")}}>Profile</ListItem>
-                                    <ListItem onClick={() => {this.dashboardRedirect("account")}}>Account</ListItem>
+                                    <ListItem onClick={() => {
+                                        this.dashboardRedirect("")
+                                    }}>Profile</ListItem>
+                                    <ListItem onClick={() => {
+                                        this.dashboardRedirect("account")
+                                    }}>Account</ListItem>
                                     <ListItem>Email</ListItem>
                                     <ListItem>Authorized apps</ListItem>
                                 </List>
+                                {/*Admin panel*/}
+                                {this.renderAdminPanel()}
                             </div>
                             {/*Content*/}
                             <div className="dash-content siimple-grid-col siimple-grid-col--9">
@@ -79,6 +102,9 @@ class Dashboard extends React.Component {
                                                   props={{token: this.props.token}}/>
                                     <Router.Route exact path={"/dashboard/account"}
                                                   component={Account}
+                                                  props={{token: this.props.token}}/>
+                                    <Router.Route exact path={"/dashboard/applications"}
+                                                  component={Applications}
                                                   props={{token: this.props.token}}/>
                                 </Router.Switch>
                             </div>
