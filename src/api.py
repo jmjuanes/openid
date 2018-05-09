@@ -303,6 +303,21 @@ class RouteApplications(webapp2.RequestHandler):
         #     if captcha.verify(captcha_value, config.captcha_secret, config.captcha_url) is False:
         #         return response.sendError(self, 400, 'Answer the captcha correctly')
 
+        # Only administrators authorized
+        # Extract the user token from the header
+        header = self.request.headers['Authorization']
+        t = token.extract(header)
+        if t is None:
+            return response.sendError(self, 400, 'Invalid authorization type')
+
+        # Decode the token
+        payload = token.decode(t, config.openid_secret, config.token_algorithm)
+        if payload is None:
+            return response.sendError(self, 401, 'Invalid authentication credentials')
+
+        if payload['is_admin'] is False:
+            return response.sendError(self, 401, 'Only allowed to administrators')
+
         # Create the application
         a = application.Application()
         a.name = data['name']
@@ -322,6 +337,35 @@ class RouteApplications(webapp2.RequestHandler):
                                      "redirect": a.redirect})
         except:
             return response.sendError(self, 500, 'The application could not be registered')
+
+    # Get the list of all the applications
+    def get(self):
+        # Only administrators authorized
+        # Extract the user token from the header
+        header = self.request.headers['Authorization']
+        t = token.extract(header)
+        if t is None:
+            return response.sendError(self, 400, 'Invalid authorization type')
+
+        # Decode the token
+        payload = token.decode(t, config.openid_secret, config.token_algorithm)
+        if payload is None:
+            return response.sendError(self, 401, 'Invalid authentication credentials')
+
+        if payload['is_admin'] is False:
+            return response.sendError(self, 401, 'Only allowed to administrators')
+
+        try:
+            # Get all the applications entities from the db
+            all = application.getAll()
+            apps = []
+            for i in range(0, len(all)):
+                apps.append({'id': all[i].key.id(), 'name': all[i].name})
+                # Retrieve more info if needed
+
+            response.sendJson(self, {'applications': apps})
+        except:
+            return response.sendError(self, 500, 'Applications could not be retrieved')
 
 
 # Specific application route
