@@ -7,6 +7,7 @@ import Account from "./account/index";
 import Profile from "./profile/index";
 import "./styles.scss";
 import Applications from "./applications/index";
+import EditApp from "./applications/edit/index";
 
 class Dashboard extends React.Component {
     constructor(props) {
@@ -97,14 +98,21 @@ class Dashboard extends React.Component {
                             {/*Content*/}
                             <div className="dash-content siimple-grid-col siimple-grid-col--9">
                                 <Router.Switch>
+                                    {/*Profile route*/}
                                     <Router.Route exact path={"/dashboard/"}
                                                   component={Profile}
                                                   props={{token: this.props.token}}/>
+                                    {/*Account route*/}
                                     <Router.Route exact path={"/dashboard/account"}
                                                   component={Account}
                                                   props={{token: this.props.token}}/>
+                                    {/*Applications route*/}
                                     <Router.Route exact path={"/dashboard/applications"}
                                                   component={Applications}
+                                                  props={{token: this.props.token}}/>
+                                    {/*Edit application route*/}
+                                    <Router.Route exact path={"/dashboard/applications/:id"}
+                                                  component={EditApp}
                                                   props={{token: this.props.token}}/>
                                 </Router.Switch>
                             </div>
