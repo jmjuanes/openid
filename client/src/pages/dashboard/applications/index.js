@@ -57,14 +57,18 @@ class Applications extends React.Component {
     }
 
     render() {
-        return (
-            <div className="applications-content">
-                {/*Title*/}
-                <Heading type={"h2"}>Applications</Heading>
-                {/*List of all the applications*/}
-                {this.listApplications()}
-            </div>
-        );
+        if (!this.state.ready) {
+            return (<Spinner/>);
+        }
+        else
+            return (
+                <div className="applications-content">
+                    {/*Title*/}
+                    <Heading type={"h2"}>Applications</Heading>
+                    {/*List of all the applications*/}
+                    {this.listApplications()}
+                </div>
+            );
     }
 }
 
