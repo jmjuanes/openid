@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {request} from "@kofijs/request";
-import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Spinner} from "neutrine";
+import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Small, Spinner} from "neutrine";
 
 import "./styles.scss";
 
@@ -146,6 +146,13 @@ class EditApp extends Component {
                         <Btn color={"blue"} onClick={() => {
                             this.updateApp();
                         }}>Update application</Btn>
+                    </div>
+                    {/*Delete application*/}
+                    <div className="edit-app-delete">
+                        <Heading type={"h5"}>Delete the application</Heading>
+                        <Small>Once the application is deleted all its information will be permanently removed.
+                        </Small>
+                        <Btn color={"grey"} className={"btn"}>Delete application</Btn>
                     </div>
                 </div>
             );
