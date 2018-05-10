@@ -16,7 +16,7 @@ $general-width: 365px;
     margin-top: 1em;
 }
 
-.account-modal {
+.modal {
     position: fixed;
     z-index: 1;
     left: 0;
@@ -27,7 +27,7 @@ $general-width: 365px;
     background-color: rgba(0, 0, 0, 0.4);
 }
 
-.account-modal-content {
+.modal-content {
     background-color: #fefefe;
     margin: 100px auto;
     padding: 20px;
@@ -35,19 +35,19 @@ $general-width: 365px;
     width: 420px;
 }
 
-.account-modal-hide {
+.modal-hide {
     color: #aaa;
     float: right;
     font-size: 30px;
     font-weight: bold;
 }
 
-.account-modal-hide:hover {
+.modal-hide:hover {
     color: black;
     text-decoration: none;
     cursor: pointer;
 }
 
-.account-modal-title {
+.modal-title {
     margin-top: 5px !important;
 }

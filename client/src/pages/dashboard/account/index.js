@@ -31,6 +31,7 @@ class Account extends React.Component {
         this.handlePwdUpdate = this.handlePwdUpdate.bind(this);
         this.renderError = this.renderError.bind(this);
         this.renderErrorModal = this.renderErrorModal.bind(this);
+        this.renderModal = this.renderModal.bind(this);
         this.showModal = this.showModal.bind(this);
         this.handleAccountDelete = this.handleAccountDelete.bind(this);
         this.spinnerButton = this.spinnerButton.bind(this);
@@ -76,10 +77,10 @@ class Account extends React.Component {
             let disableBtn = this.state.disableBtn ? 'none' : 'auto';
 
             return (
-                <div className="account-modal">
-                    <div className={"account-modal-content"}>
-                        <span className="account-modal-hide" onClick={this.showModal}>&times;</span>
-                        <Heading type={"h4"} className={"account-modal-title"}>Are you sure?</Heading>
+                <div className="modal">
+                    <div className={"modal-content"}>
+                        <span className="modal-hide" onClick={this.showModal}>&times;</span>
+                        <Heading type={"h4"} className={"modal-title"}>Are you sure?</Heading>
                         {this.renderErrorModal()}
                         <p className="siimple-p">After you confirm this action we will delete permanently all your
                             information from our database. You'll have to create a new account to access this
@@ -229,7 +230,7 @@ class Account extends React.Component {
                     {this.renderError()}
                     {/*Change password*/}
                     <div className="account-password-form">
-                        <Heading type={"h4"}>Change password</Heading>
+                        <Heading type={"h5"}>Change password</Heading>
                         {/*Old pass input*/}
                         <Field>
                             <FieldLabel>Old password</FieldLabel>
