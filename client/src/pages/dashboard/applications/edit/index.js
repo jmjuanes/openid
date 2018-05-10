@@ -11,16 +11,29 @@ class EditApp extends Component {
             app: {},
             error: null,
             ready: false,
-            done: null
+            done: null,
+            modal: {
+                show: false,
+                error: null,
+                disableBtn: false
+            }
         };
         this.ref = {
             nameInput: React.createRef(),
             detailInput: React.createRef(),
             redirectInput: React.createRef()
         };
+        this.text_confirm = "Yes, delete this app";
 
         this.renderAlert = this.renderAlert.bind(this);
         this.updateApp = this.updateApp.bind(this);
+
+        // Functions from the modal
+        this.showModal = this.showModal.bind(this);
+        this.renderModal = this.renderModal.bind(this);
+        this.renderErrorModal = this.renderErrorModal.bind(this);
+        this.spinnerButton = this.spinnerButton.bind(this);
+        this.handleAppDelete = this.handleAppDelete.bind(this);
     }
 
     componentWillMount() {
@@ -43,6 +56,59 @@ class EditApp extends Component {
                 ready: true
             });
         });
+    }
+
+    // Render the alert if there's an error
+    renderAlert() {
+        if (this.state.error) {
+            return (
+                <Alert color={"red"}>{this.state.error}</Alert>
+            );
+        } else if (this.state.done) {
+            return (
+                <Alert color={"green"}>{this.state.done}</Alert>
+            );
+        }
+    }
+
+    // Display the modal error message
+    renderErrorModal() {
+        if (this.state.modal.error) {
+            return (
+                <Alert color={"red"} className={"modal-error"}>
+                    {this.state.modal.error}
+                </Alert>
+            )
+        }
+    }
+
+    // Show or hide the modal
+    showModal() {
+        this.setState({
+            modal: {
+                show: !this.state.modal.show,
+                error: null,
+                disableBtn: false
+            }
+        });
+    }
+
+    // Render the delete button/spinner inside the modal
+    spinnerButton() {
+        if (!this.state.modal.disableBtn) {
+            return (
+                <Btn color={"red"} onClick={this.handleAppDelete}>Delete the application</Btn>
+            );
+        } else {
+            return (
+                <Spinner/>
+            );
+        }
+    }
+
+    // Delete the app
+    handleAppDelete() {
+
     }
 
     // Update the application info
@@ -89,15 +155,43 @@ class EditApp extends Component {
         });
     }
 
-    // Render the alert if there's an error
-    renderAlert() {
-        if (this.state.error) {
+    // Render the modal to delete the account
+    renderModal() {
+        if (this.state.modal.show) {
             return (
-                <Alert color={"red"}>{this.state.error}</Alert>
-            );
-        } else if (this.state.done) {
-            return (
-                <Alert color={"green"}>{this.state.done}</Alert>
+                <div className="modal">
+                    <div className={"modal-content"}>
+                        <span className="modal-hide" onClick={this.showModal}>&times;</span>
+                        <Heading type={"h4"} className={"modal-title"}>Are you sure?</Heading>
+                        {this.renderErrorModal()}
+                        <p className="siimple-p">After you confirm this action, all the information related to this
+                            application will be removed, and the list of users that allowed it to access their
+                            information will be lost. This action can not be undone.</p>
+                        <Field>
+                            <FieldLabel>Your email</FieldLabel>
+                            <Input className="edit-app-input"
+                                   type={"text"}
+                                // inputRef={this.ref.deleteEmail}
+                            />
+                        </Field>
+                        <Field>
+                            <FieldLabel>Verify this action by typing <i>{this.text_confirm}</i> below</FieldLabel>
+                            <Input className="edit-app-input"
+                                   type={"text"}
+                                // inputRef={this.ref.deleteText}
+                            />
+                        </Field>
+                        <Field>
+                            <FieldLabel>Your password</FieldLabel>
+                            <Input className="edit-app-input"
+                                   type={"password"}
+                                // inputRef={this.ref.deletePwd}
+                            />
+                        </Field>
+                        {/*Render the button or if it's loading the spinner*/}
+                        {this.spinnerButton()}
+                    </div>
+                </div>
             );
         }
     }
@@ -111,6 +205,8 @@ class EditApp extends Component {
         else
             return (
                 <div className={"edit-app-content"}>
+                    {/*Modal to delete apps*/}
+                    {this.renderModal()}
                     {/*Title*/}
                     <Heading type={"h2"}>{this.state.app.name}</Heading>
                     {/*Edit form*/}
@@ -152,7 +248,7 @@ class EditApp extends Component {
                         <Heading type={"h5"}>Delete the application</Heading>
                         <Small>Once the application is deleted all its information will be permanently removed.
                         </Small>
-                        <Btn color={"grey"} className={"btn"}>Delete application</Btn>
+                        <Btn color={"grey"} className={"btn"} onClick={this.showModal}>Delete application</Btn>
                     </div>
                 </div>
             );
