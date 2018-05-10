@@ -37,9 +37,12 @@ class Authorize extends React.Component {
         let credentials = {
             email: this.ref.emailInput.current.value,
             pwd: this.ref.pwdInput.current.value,
-            client: this.state.app.id,
-            recaptcha: this.ref.captchaInput.current.getResponse()
+            client: this.state.app.id
         };
+        // If the captcha is enabled check it
+        if (this.props.captcha_enabled) {
+            credentials = Object.assign({recaptcha: this.ref.captchaInput.current.getResponse()}, credentials);
+        }
 
         // Check if the email is valid
         if (credentials.email.indexOf("@") === -1) {
