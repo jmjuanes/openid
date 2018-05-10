@@ -50,7 +50,6 @@ class Dashboard extends React.Component {
 
     // Show the admin routes if the user is admin
     renderAdminPanel() {
-        console.log(this.state.user.admin);
         if (this.state.user.admin) {
             return (
                 <List>
