@@ -63,25 +63,32 @@ class Applications extends React.Component {
     }
 
     render() {
-        if (!this.state.ready) {
-            return (<Spinner/>);
-        }
-        else
-            return (
-                <div className="applications-content">
-                    {/*Title*/}
-                    <Heading type={"h2"}>Applications</Heading>
-                    {/*Create a new application*/}
-                    <div className="app-create-container">
-                        <Heading type={"h5"}>Create a new application</Heading>
-                        <Small>Add a new entity to the list of registered applications.</Small>
-                        <Btn color={"green"} className={"btn"} onClick={() => this.createRedirect()}>Create</Btn>
-                    </div>
-                    {/*List of all the applications*/}
-                    <Heading type={"h5"}>Registered applications</Heading>
-                    {this.listApplications()}
-                </div>
+        if(!this.props.admin){
+            return(
+                <Alert>You must be an administrator to access this route.</Alert>
             );
+        }
+        else {
+            if (!this.state.ready) {
+                return (<Spinner/>);
+            }
+            else
+                return (
+                    <div className="applications-content">
+                        {/*Title*/}
+                        <Heading type={"h2"}>Applications</Heading>
+                        {/*Create a new application*/}
+                        <div className="app-create-container">
+                            <Heading type={"h5"}>Create a new application</Heading>
+                            <Small>Add a new entity to the list of registered applications.</Small>
+                            <Btn color={"green"} className={"btn"} onClick={() => this.createRedirect()}>Create</Btn>
+                        </div>
+                        {/*List of all the applications*/}
+                        <Heading type={"h5"}>Registered applications</Heading>
+                        {this.listApplications()}
+                    </div>
+                );
+        }
     }
 }
 
