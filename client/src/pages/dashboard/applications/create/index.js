@@ -46,7 +46,7 @@ class CreateApp extends Component {
         if (info.name.length === 0 || info.detail.length === 0 || info.redirect.length === 0) {
             return this.setState({error: "No field can be empty", done: null});
         }
-        if(info.redirect.indexOf(".") === -1){
+        if (info.redirect.indexOf(".") === -1) {
             return this.setState({error: "Invalid URL", done: null});
         }
 
@@ -72,41 +72,47 @@ class CreateApp extends Component {
     }
 
     render() {
-        return (
-            <div className={"create-app-content"}>
-                {/*Title*/}
-                <Heading type={"h2"}>Create an application</Heading>
-                {/*Alert*/}
-                {this.renderAlert()}
-                <Small>Please check that all fields are correct before submitting.</Small>
-                {/*Form to create an app*/}
-                <div className="create-app-form">
-                    {/*Name input*/}
-                    <Field>
-                        <FieldLabel>Name of the application</FieldLabel>
-                        <Input className="create-app-input"
-                               type={"text"}
-                               inputRef={this.ref.nameInput}/>
-                    </Field>
-                    {/*Detail input*/}
-                    <Field>
-                        <FieldLabel>Detail of the application</FieldLabel>
-                        <Input className="create-app-input"
-                               type={"text"}
-                               inputRef={this.ref.detailInput}/>
-                    </Field>
-                    {/*Redirect input*/}
-                    <Field>
-                        <FieldLabel>Redirect URL</FieldLabel>
-                        <Input className="create-app-input"
-                               type={"text"}
-                               inputRef={this.ref.redirectInput}/>
-                        <FieldHelper>Must be a valid URL</FieldHelper>
-                    </Field>
-                    <Btn color={"blue"} onClick={() => this.handleCreateApp()}>Create application</Btn>
+        if (!this.props.admin) {
+            return (
+                <Alert>You must be an administrator to access this route.</Alert>
+            );
+        }
+        else
+            return (
+                <div className={"create-app-content"}>
+                    {/*Title*/}
+                    <Heading type={"h2"}>Create an application</Heading>
+                    {/*Alert*/}
+                    {this.renderAlert()}
+                    <Small>Please check that all fields are correct before submitting.</Small>
+                    {/*Form to create an app*/}
+                    <div className="create-app-form">
+                        {/*Name input*/}
+                        <Field>
+                            <FieldLabel>Name of the application</FieldLabel>
+                            <Input className="create-app-input"
+                                   type={"text"}
+                                   inputRef={this.ref.nameInput}/>
+                        </Field>
+                        {/*Detail input*/}
+                        <Field>
+                            <FieldLabel>Detail of the application</FieldLabel>
+                            <Input className="create-app-input"
+                                   type={"text"}
+                                   inputRef={this.ref.detailInput}/>
+                        </Field>
+                        {/*Redirect input*/}
+                        <Field>
+                            <FieldLabel>Redirect URL</FieldLabel>
+                            <Input className="create-app-input"
+                                   type={"text"}
+                                   inputRef={this.ref.redirectInput}/>
+                            <FieldHelper>Must be a valid URL</FieldHelper>
+                        </Field>
+                        <Btn color={"blue"} onClick={() => this.handleCreateApp()}>Create application</Btn>
+                    </div>
                 </div>
-            </div>
-        );
+            );
     }
 }
 
