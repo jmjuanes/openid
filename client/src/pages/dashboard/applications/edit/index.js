@@ -231,9 +231,9 @@ class EditApp extends Component {
                         {/*Edit form*/}
                         {/*Form title*/}
                         <Heading type={"h5"}>Edit the application information</Heading>
-                        {/*Done/error message*/}
-                        {this.renderAlert()}
                         <div className="edit-app-form">
+                            {/*Done/error message*/}
+                            {this.renderAlert()}
                             {/*Name input*/}
                             <Field>
                                 <FieldLabel>Application name</FieldLabel>

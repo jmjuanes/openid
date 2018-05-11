@@ -219,9 +219,9 @@ class Account extends React.Component {
     render() {
         return (
             <div className={"account-container"}>
-                {/*Modal to confirm the account deletion*/}
-                {this.renderModal()}
                 <div className="account-content">
+                    {/*Modal to confirm the account deletion*/}
+                    {this.renderModal()}
                     {/*Title*/}
                     <Heading type={"h2"}>Account</Heading>
                     {/*Done message*/}

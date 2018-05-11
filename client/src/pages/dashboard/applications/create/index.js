@@ -82,11 +82,11 @@ class CreateApp extends Component {
                 <div className={"create-app-content"}>
                     {/*Title*/}
                     <Heading type={"h2"}>Create an application</Heading>
-                    {/*Alert*/}
-                    {this.renderAlert()}
                     <Small>Please check that all fields are correct before submitting.</Small>
                     {/*Form to create an app*/}
                     <div className="create-app-form">
+                        {/*Alert*/}
+                        {this.renderAlert()}
                         {/*Name input*/}
                         <Field>
                             <FieldLabel>Name of the application</FieldLabel>
