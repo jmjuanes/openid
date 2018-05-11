@@ -392,7 +392,8 @@ class RouteApplicationsById(webapp2.RequestHandler):
             return response.sendError(self, 404, 'This application does not exist')
         return response.sendJson(self, {'name': a.name,
                                         'detail': a.detail,
-                                        'redirect': a.redirect})
+                                        'redirect': a.redirect,
+                                        'secret': a.secret})
 
     # Delete an application
     def delete(self, app_id):
