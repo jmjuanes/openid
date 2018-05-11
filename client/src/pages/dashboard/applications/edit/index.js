@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {request} from "@kofijs/request";
-import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Small, Spinner} from "neutrine";
+import {Alert, Btn, Field, FieldLabel, Heading, Input, Small, Spinner} from "neutrine";
+import {redirectHashbang as redirect} from "rouct";
 
 import "./styles.scss";
 
@@ -21,7 +22,8 @@ class EditApp extends Component {
         this.ref = {
             nameInput: React.createRef(),
             detailInput: React.createRef(),
-            redirectInput: React.createRef()
+            redirectInput: React.createRef(),
+            modalConfirm: React.createRef()
         };
         this.text_confirm = "Yes, delete this app";
 
@@ -49,6 +51,7 @@ class EditApp extends Component {
             }
             self.setState({
                 app: {
+                    id: self.props.request.params.id,
                     name: body.name,
                     detail: body.detail,
                     redirect: body.redirect
@@ -97,7 +100,7 @@ class EditApp extends Component {
     spinnerButton() {
         if (!this.state.modal.disableBtn) {
             return (
-                <Btn color={"red"} onClick={this.handleAppDelete}>Delete the application</Btn>
+                <Btn color={"red"} onClick={() => this.handleAppDelete()}>Delete the application</Btn>
             );
         } else {
             return (
@@ -108,7 +111,25 @@ class EditApp extends Component {
 
     // Delete the app
     handleAppDelete() {
+        let self = this;
 
+        // Block the button meanwhile
+        this.setState({modal: {error: null, show: true, disableBtn: true}});
+        // Check text before calling the api
+        if(this.ref.modalConfirm.current.value !== this.text_confirm){
+            return this.setState({modal: {error: "Please type the exact confirmation text", show: true, disableBtn: false}});
+        }
+
+        let url = "/api/applications/" + this.state.app.id;
+        request({url: url, method: "delete", json: true, auth: {bearer: this.props.token}}, function (err, res, body) {
+            if (err) {
+                return self.setState({modal: {error: err.message, show: true, disableBtn: false}});
+            }
+            if (res.statusCode >= 300) {
+                return self.setState({modal: {error: body.message, show: true, disableBtn: false}});
+            }
+            return redirect("/dashboard/applications");
+        });
     }
 
     // Update the application info
@@ -145,6 +166,7 @@ class EditApp extends Component {
             // Set the new info
             return self.setState({
                 app: {
+                    id: self.state.app.id,
                     name: body.name,
                     detail: body.detail,
                     redirect: body.redirect
@@ -161,32 +183,17 @@ class EditApp extends Component {
             return (
                 <div className="modal">
                     <div className={"modal-content"}>
-                        <span className="modal-hide" onClick={this.showModal}>&times;</span>
+                        <span className="modal-hide" onClick={() => this.showModal()}>&times;</span>
                         <Heading type={"h4"} className={"modal-title"}>Are you sure?</Heading>
                         {this.renderErrorModal()}
                         <p className="siimple-p">After you confirm this action, all the information related to this
                             application will be removed, and the list of users that allowed it to access their
                             information will be lost. This action can not be undone.</p>
                         <Field>
-                            <FieldLabel>Your email</FieldLabel>
-                            <Input className="edit-app-input"
-                                   type={"text"}
-                                // inputRef={this.ref.deleteEmail}
-                            />
-                        </Field>
-                        <Field>
                             <FieldLabel>Verify this action by typing <i>{this.text_confirm}</i> below</FieldLabel>
                             <Input className="edit-app-input"
                                    type={"text"}
-                                // inputRef={this.ref.deleteText}
-                            />
-                        </Field>
-                        <Field>
-                            <FieldLabel>Your password</FieldLabel>
-                            <Input className="edit-app-input"
-                                   type={"password"}
-                                // inputRef={this.ref.deletePwd}
-                            />
+                                   inputRef={this.ref.modalConfirm}/>
                         </Field>
                         {/*Render the button or if it's loading the spinner*/}
                         {this.spinnerButton()}
@@ -248,7 +255,7 @@ class EditApp extends Component {
                         <Heading type={"h5"}>Delete the application</Heading>
                         <Small>Once the application is deleted all its information will be permanently removed.
                         </Small>
-                        <Btn color={"grey"} className={"btn"} onClick={this.showModal}>Delete application</Btn>
+                        <Btn color={"grey"} className={"btn"} onClick={() => this.showModal()}>Delete application</Btn>
                     </div>
                 </div>
             );
