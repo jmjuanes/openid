@@ -8,6 +8,8 @@ import Profile from "./profile/index";
 import "./styles.scss";
 import Applications from "./applications/index";
 import EditApp from "./applications/edit/index";
+import CreateApp from "./applications/create/index";
+
 
 class Dashboard extends React.Component {
     constructor(props) {
@@ -108,6 +110,10 @@ class Dashboard extends React.Component {
                                     {/*Applications route*/}
                                     <Router.Route exact path={"/dashboard/applications"}
                                                   component={Applications}
+                                                  props={{token: this.props.token}}/>
+                                    {/*New application route*/}
+                                    <Router.Route exact path={"/dashboard/applications/create"}
+                                                  component={CreateApp}
                                                   props={{token: this.props.token}}/>
                                     {/*Edit application route*/}
                                     <Router.Route exact path={"/dashboard/applications/:id"}
