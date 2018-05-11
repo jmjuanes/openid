@@ -29,23 +29,12 @@ class Account extends React.Component {
 
         // Bind functions
         this.handlePwdUpdate = this.handlePwdUpdate.bind(this);
-        this.renderError = this.renderError.bind(this);
+        this.renderAlert = this.renderAlert.bind(this);
         this.renderErrorModal = this.renderErrorModal.bind(this);
         this.renderModal = this.renderModal.bind(this);
         this.showModal = this.showModal.bind(this);
         this.handleAccountDelete = this.handleAccountDelete.bind(this);
         this.spinnerButton = this.spinnerButton.bind(this);
-    }
-
-    // Display the error message
-    renderError() {
-        if (this.state.error) {
-            return (
-                <Alert color={"red"} className={"account-error"}>
-                    {this.state.error}
-                </Alert>
-            )
-        }
     }
 
     // Display the modal error message
@@ -59,13 +48,15 @@ class Account extends React.Component {
         }
     }
 
-    // Display the success message
-    renderDone() {
-        if (this.state.done) {
+    // Render the alert if there's an error
+    renderAlert() {
+        if (this.state.error) {
             return (
-                <Alert color={"green"} className={"profile-done"}>
-                    {this.state.done}
-                </Alert>
+                <Alert color={"red"}>{this.state.error}</Alert>
+            );
+        } else if (this.state.done) {
+            return (
+                <Alert color={"green"}>{this.state.done}</Alert>
             );
         }
     }
@@ -219,18 +210,16 @@ class Account extends React.Component {
     render() {
         return (
             <div className={"account-container"}>
+                {/*Modal to confirm the account deletion*/}
+                {this.renderModal()}
                 <div className="account-content">
-                    {/*Modal to confirm the account deletion*/}
-                    {this.renderModal()}
                     {/*Title*/}
                     <Heading type={"h2"}>Account</Heading>
-                    {/*Done message*/}
-                    {this.renderDone()}
-                    {/*Error message*/}
-                    {this.renderError()}
                     {/*Change password*/}
                     <div className="account-password-form">
                         <Heading type={"h5"}>Change password</Heading>
+                        {/*Done/error message*/}
+                        {this.renderAlert()}
                         {/*Old pass input*/}
                         <Field>
                             <FieldLabel>Old password</FieldLabel>

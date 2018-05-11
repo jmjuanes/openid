@@ -17,8 +17,7 @@ class Profile extends React.Component {
         };
 
         this.handleInfoChange = this.handleInfoChange.bind(this);
-        this.renderError = this.renderError.bind(this);
-        this.renderDone = this.renderDone.bind(this);
+        this.renderAlert = this.renderAlert.bind(this);
     }
 
     // Get the user info using his access token
@@ -44,24 +43,15 @@ class Profile extends React.Component {
             });
     }
 
-    // Display the error message
-    renderError() {
+    // Render the alert if there's an error
+    renderAlert() {
         if (this.state.error) {
             return (
-                <Alert color={"red"} className={"profile-error"}>
-                    {this.state.error}
-                </Alert>
-            )
-        }
-    }
-
-    // Display the success message
-    renderDone() {
-        if (this.state.done) {
+                <Alert color={"red"}>{this.state.error}</Alert>
+            );
+        } else if (this.state.done) {
             return (
-                <Alert color={"green"} className={"profile-done"}>
-                    {this.state.done}
-                </Alert>
+                <Alert color={"green"}>{this.state.done}</Alert>
             );
         }
     }
@@ -113,12 +103,10 @@ class Profile extends React.Component {
                 <div className={"profile-content"}>
                     {/*Title*/}
                     <Heading type={"h2"}>Profile</Heading>
-                    {/*Done message*/}
-                    {this.renderDone()}
-                    {/*Error message*/}
-                    {this.renderError()}
                     {/*User info*/}
                     <div className={"profile-form"}>
+                        {/*Done/error message*/}
+                        {this.renderAlert()}
                         {/*Name input*/}
                         <Field>
                             <FieldLabel>Name</FieldLabel>
