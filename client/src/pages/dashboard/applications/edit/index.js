@@ -116,8 +116,14 @@ class EditApp extends Component {
         // Block the button meanwhile
         this.setState({modal: {error: null, show: true, disableBtn: true}});
         // Check text before calling the api
-        if(this.ref.modalConfirm.current.value !== this.text_confirm){
-            return this.setState({modal: {error: "Please type the exact confirmation text", show: true, disableBtn: false}});
+        if (this.ref.modalConfirm.current.value !== this.text_confirm) {
+            return this.setState({
+                modal: {
+                    error: "Please type the exact confirmation text",
+                    show: true,
+                    disableBtn: false
+                }
+            });
         }
 
         let url = "/api/applications/" + this.state.app.id;
@@ -204,61 +210,69 @@ class EditApp extends Component {
     }
 
     render() {
-        if (!this.state.ready) {
-            return (
-                <Spinner/>
+        if (!this.props.admin) {
+            return(
+                <Alert color={"red"}>You must be an administrator to access this route.</Alert>
             );
         }
-        else
-            return (
-                <div className={"edit-app-content"}>
-                    {/*Modal to delete apps*/}
-                    {this.renderModal()}
-                    {/*Title*/}
-                    <Heading type={"h2"}>{this.state.app.name}</Heading>
-                    {/*Edit form*/}
-                    {/*Form title*/}
-                    <Heading type={"h5"}>Edit the application information</Heading>
-                    {/*Done/error message*/}
-                    {this.renderAlert()}
-                    <div className="edit-app-form">
-                        {/*Name input*/}
-                        <Field>
-                            <FieldLabel>Application name</FieldLabel>
-                            <Input className="edit-app-input"
-                                   type={"text"}
-                                   defaultValue={this.state.app.name}
-                                   inputRef={this.ref.nameInput}/>
-                        </Field>
-                        {/*Detail input*/}
-                        <Field>
-                            <FieldLabel>Application detail</FieldLabel>
-                            <Input className="edit-app-input"
-                                   type={"text"}
-                                   defaultValue={this.state.app.detail}
-                                   inputRef={this.ref.detailInput}/>
-                        </Field>
-                        {/*Redirect input*/}
-                        <Field>
-                            <FieldLabel>Redirect URL</FieldLabel>
-                            <Input className="edit-app-input"
-                                   type={"text"}
-                                   defaultValue={this.state.app.redirect}
-                                   inputRef={this.ref.redirectInput}/>
-                        </Field>
-                        <Btn color={"blue"} onClick={() => {
-                            this.updateApp();
-                        }}>Update application</Btn>
+        else {
+            if (!this.state.ready) {
+                return (
+                    <Spinner/>
+                );
+            }
+            else
+                return (
+                    <div className={"edit-app-content"}>
+                        {/*Modal to delete apps*/}
+                        {this.renderModal()}
+                        {/*Title*/}
+                        <Heading type={"h2"}>{this.state.app.name}</Heading>
+                        {/*Edit form*/}
+                        {/*Form title*/}
+                        <Heading type={"h5"}>Edit the application information</Heading>
+                        {/*Done/error message*/}
+                        {this.renderAlert()}
+                        <div className="edit-app-form">
+                            {/*Name input*/}
+                            <Field>
+                                <FieldLabel>Application name</FieldLabel>
+                                <Input className="edit-app-input"
+                                       type={"text"}
+                                       defaultValue={this.state.app.name}
+                                       inputRef={this.ref.nameInput}/>
+                            </Field>
+                            {/*Detail input*/}
+                            <Field>
+                                <FieldLabel>Application detail</FieldLabel>
+                                <Input className="edit-app-input"
+                                       type={"text"}
+                                       defaultValue={this.state.app.detail}
+                                       inputRef={this.ref.detailInput}/>
+                            </Field>
+                            {/*Redirect input*/}
+                            <Field>
+                                <FieldLabel>Redirect URL</FieldLabel>
+                                <Input className="edit-app-input"
+                                       type={"text"}
+                                       defaultValue={this.state.app.redirect}
+                                       inputRef={this.ref.redirectInput}/>
+                            </Field>
+                            <Btn color={"blue"} onClick={() => {
+                                this.updateApp();
+                            }}>Update application</Btn>
+                        </div>
+                        {/*Delete application*/}
+                        <div className="edit-app-delete">
+                            <Heading type={"h5"}>Delete the application</Heading>
+                            <Small>Once the application is deleted all its information will be permanently removed.
+                            </Small>
+                            <Btn color={"grey"} className={"btn"} onClick={() => this.showModal()}>Delete
+                                application</Btn>
+                        </div>
                     </div>
-                    {/*Delete application*/}
-                    <div className="edit-app-delete">
-                        <Heading type={"h5"}>Delete the application</Heading>
-                        <Small>Once the application is deleted all its information will be permanently removed.
-                        </Small>
-                        <Btn color={"grey"} className={"btn"} onClick={() => this.showModal()}>Delete application</Btn>
-                    </div>
-                </div>
-            );
+                );
+        }
     }
 }
 
