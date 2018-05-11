@@ -1,5 +1,5 @@
 import React from "react";
-import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Spinner, List, ListItem} from "neutrine";
+import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Spinner, List, ListItem, Small} from "neutrine";
 import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
 
@@ -14,6 +14,7 @@ class Applications extends React.Component {
         };
         this.listApplications = this.listApplications.bind(this);
         this.editRedirect = this.editRedirect.bind(this);
+        this.createRedirect = this.createRedirect.bind(this);
     }
 
     componentDidMount() {
@@ -34,6 +35,11 @@ class Applications extends React.Component {
     editRedirect(i) {
         let url = "/dashboard/applications/" + this.state.applications[i].id;
         return redirect(url);
+    }
+
+    // Redirect the user to edit the specific application
+    createRedirect() {
+        return redirect("/dashboard/applications/create");
     }
 
     // Render a list with all the applications
@@ -65,7 +71,14 @@ class Applications extends React.Component {
                 <div className="applications-content">
                     {/*Title*/}
                     <Heading type={"h2"}>Applications</Heading>
+                    {/*Create a new application*/}
+                    <div className="app-create-container">
+                        <Heading type={"h5"}>Create a new application</Heading>
+                        <Small>Add a new entity to the list of registered applications.</Small>
+                        <Btn color={"green"} className={"btn"} onClick={() => this.createRedirect()}>Create</Btn>
+                    </div>
                     {/*List of all the applications*/}
+                    <Heading type={"h5"}>Registered applications</Heading>
                     {this.listApplications()}
                 </div>
             );
