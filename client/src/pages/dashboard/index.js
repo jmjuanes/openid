@@ -110,15 +110,15 @@ class Dashboard extends React.Component {
                                     {/*Applications route*/}
                                     <Router.Route exact path={"/dashboard/applications"}
                                                   component={Applications}
-                                                  props={{token: this.props.token}}/>
+                                                  props={{token: this.props.token, admin: this.state.user.admin}}/>
                                     {/*New application route*/}
                                     <Router.Route exact path={"/dashboard/applications/create"}
                                                   component={CreateApp}
-                                                  props={{token: this.props.token}}/>
+                                                  props={{token: this.props.token, admin: this.state.user.admin}}/>
                                     {/*Edit application route*/}
                                     <Router.Route exact path={"/dashboard/applications/:id"}
                                                   component={EditApp}
-                                                  props={{token: this.props.token}}/>
+                                                  props={{token: this.props.token, admin: this.state.user.admin}}/>
                                 </Router.Switch>
                             </div>
                         </div>
