@@ -54,7 +54,8 @@ class EditApp extends Component {
                     id: self.props.request.params.id,
                     name: body.name,
                     detail: body.detail,
-                    redirect: body.redirect
+                    redirect: body.redirect,
+                    secret: body.secret
                 },
                 ready: true
             });
@@ -230,7 +231,7 @@ class EditApp extends Component {
                         <Heading type={"h2"}>{this.state.app.name}</Heading>
                         {/*Edit form*/}
                         {/*Form title*/}
-                        <Heading type={"h5"}>Edit the application information</Heading>
+                        <Heading type={"h5"}>Manage the application information</Heading>
                         <div className="edit-app-form">
                             {/*Done/error message*/}
                             {this.renderAlert()}
@@ -261,6 +262,16 @@ class EditApp extends Component {
                             <Btn color={"blue"} onClick={() => {
                                 this.updateApp();
                             }}>Update application</Btn>
+                        </div>
+                        {/*Key info from the application*/}
+                        <div className="edit-app-keys">
+                            <Heading type={"h5"}>Public & secret keys</Heading>
+                            {/*Public key (the id)*/}
+                            <p className={"key-header"}><b>Public key</b></p>
+                            <p>{this.state.app.id}</p>
+                            {/*Secret key*/}
+                            <p className={"key-header"}><b>Secret key</b></p>
+                            <p>{this.state.app.secret}</p>
                         </div>
                         {/*Delete application*/}
                         <div className="edit-app-delete">
