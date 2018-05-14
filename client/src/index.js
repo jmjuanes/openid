@@ -70,7 +70,7 @@ class Main extends React.Component {
     render() {
         // Custom props for each route
         let loginProps = Object.assign({saveToken: this.saveToken}, this.state.config);
-        let dashboardProps = Object.assign({token: this.state.token}, this.state.config);
+        let dashboardProps = Object.assign({token: this.state.token, deleteToken: this.deleteToken}, this.state.config);
 
         if (this.state.config === null) {
             return (
