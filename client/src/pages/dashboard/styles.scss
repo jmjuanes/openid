@@ -1,9 +1,19 @@
 .dash-menu {
-    min-width: 171px;
+    //min-width: 171px;
     padding-top: 6px;
 }
 
 .dash-menu div div:hover {
     background: #d9dfe7;
     cursor: pointer;
+}
+
+.dash-content {
+    //margin-left: 20px;
+}
+
+.log-out{
+    position: absolute;
+    top: 20px;
+    right: 40px;
 }

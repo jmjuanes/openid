@@ -225,6 +225,7 @@ class Account extends React.Component {
                             <FieldLabel>Old password</FieldLabel>
                             <Input className="account-input"
                                    type={"password"}
+                                   fluid={true}
                                    ref={this.ref.oldPwdInput}/>
                         </Field>
                         {/*New pass input*/}
@@ -232,6 +233,7 @@ class Account extends React.Component {
                             <FieldLabel>New password</FieldLabel>
                             <Input className="account-input"
                                    type={"password"}
+                                   fluid={true}
                                    ref={this.ref.newPwdInput}/>
                         </Field>
                         {/*Repeat pass input*/}
@@ -239,6 +241,7 @@ class Account extends React.Component {
                             <FieldLabel>Confirm new password</FieldLabel>
                             <Input className="account-input"
                                    type={"password"}
+                                   fluid={true}
                                    ref={this.ref.repeatPwdInput}/>
                         </Field>
                         {/*Update password button*/}

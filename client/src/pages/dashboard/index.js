@@ -1,6 +1,6 @@
 import React from "react";
 import * as Router from "rouct";
-import {List, ListItem, ListTitle, Spinner} from "neutrine";
+import {Btn, List, ListItem, ListTitle, Spinner} from "neutrine";
 import {request} from "@kofijs/request";
 
 import Account from "./account/index";
@@ -123,6 +123,8 @@ class Dashboard extends React.Component {
                             </div>
                         </div>
                     </div>
+                    {/*Log out button*/}
+                    <Btn color={"grey"} className={"log-out"} onClick={() => this.props.deleteToken()}>Log out</Btn>
                 </div>
             );
     }
