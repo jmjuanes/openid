@@ -49,6 +49,9 @@ class Main extends React.Component {
 
     // Save the user token from the login
     saveToken(token) {
+        // Save the token in local storage
+        localStorage.setItem("token", token);
+        // Redirect
         return this.setState({token: token}, function () {
             return Router.redirectHashbang("/dashboard");
         });
@@ -56,6 +59,9 @@ class Main extends React.Component {
 
     // Delete the user token and return to the login
     deleteToken() {
+        // Remove the token from the local storage
+        localStorage.removeItem("token");
+        // Redirect
         return this.setState({token: null}, function () {
             return Router.redirectHashbang("/login");
         });
