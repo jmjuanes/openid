@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {hyperscript as h, ready} from "neutrine-utils";
 import {request} from "@kofijs/request";
 import * as Router from "rouct";
 
@@ -91,9 +90,7 @@ class Main extends React.Component {
     }
 }
 
-//Load when dom is ready
-ready(function () {
-    //Mount the app component 
-    ReactDOM.render(h(Main, {}), document.getElementById("root"));
-});
+
+//Mount the app component
+ReactDOM.render(React.createElement(Main, {}), document.getElementById("root"));
 

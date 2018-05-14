@@ -6,10 +6,11 @@
         "@kofijs/request": "0.0.1",
         "babel-preset-react": "^6.24.1",
         "kofi": "^0.1.2",
-        "neutrine": "^0.0.3",
+        "neutrine": "^0.0.4",
         "react": "^16.3.1",
         "react-dom": "^16.3.1",
-        "rouct": "^0.1.0"
+        "rouct": "^0.1.0",
+        "siimple-colors": "1.0.0-beta"
     },
     "devDependencies": {
         "babel-core": "^6.26.0",
