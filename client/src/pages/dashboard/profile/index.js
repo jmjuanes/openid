@@ -25,7 +25,7 @@ class Profile extends React.Component {
         // Change to dashboard
         let self = this;
 
-        request({url: "/api/user", method: "get", json: true, auth: {bearer: this.props.token}},
+        request({url: "/api/user", method: "get", json: true, auth: {bearer: localStorage.getItem("token")}},
             function (err, res, body) {
                 if (err) {
                     return self.setState({error: err.message});
@@ -71,7 +71,7 @@ class Profile extends React.Component {
             method: "put",
             json: true,
             body: credentials,
-            auth: {bearer: this.props.token}
+            auth: {bearer: localStorage.getItem("token")}
         }, function (err, res, body) {
             if (err) {
                 return self.setState({error: err.message, done: null});

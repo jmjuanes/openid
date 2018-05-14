@@ -55,7 +55,7 @@ class CreateApp extends Component {
             method: "post",
             json: true,
             body: info,
-            auth: {bearer: this.props.token}
+            auth: {bearer: localStorage.getItem("token")}
         }, function (err, res, body) {
             if (err) {
                 return self.setState({error: err.message, done: null});

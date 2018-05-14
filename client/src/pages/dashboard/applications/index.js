@@ -19,7 +19,7 @@ class Applications extends React.Component {
 
     componentDidMount() {
         let self = this;
-        request({url: "/api/applications", method: "get", json: true, auth: {bearer: this.props.token}},
+        request({url: "/api/applications", method: "get", json: true, auth: {bearer: localStorage.getItem("token")}},
             function (err, res, body) {
                 if (err) {
                     return self.setState({error: err.message});

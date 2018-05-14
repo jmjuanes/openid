@@ -150,7 +150,7 @@ class Account extends React.Component {
                 method: "put",
                 json: true,
                 body: credentials,
-                auth: {bearer: this.props.token}
+                auth: {bearer: localStorage.getItem("token")}
             },
             function (err, res, body) {
                 if (err) {
@@ -194,7 +194,7 @@ class Account extends React.Component {
                 method: "post",
                 json: true,
                 body: info,
-                auth: {bearer: this.props.token}
+                auth: {bearer: localStorage.getItem("token")}
             },
             function (err, res, body) {
                 if (err) {

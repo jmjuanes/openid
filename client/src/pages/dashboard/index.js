@@ -32,7 +32,7 @@ class Dashboard extends React.Component {
             url: "/api/user",
             method: "get",
             json: true,
-            auth: {bearer: this.props.token}
+            auth: {bearer: localStorage.getItem("token")}
         }, function (err, res, body) {
             if (err) {
                 return self.setState({error: err.message});

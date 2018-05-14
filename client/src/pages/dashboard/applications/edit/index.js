@@ -42,7 +42,7 @@ class EditApp extends Component {
         let self = this;
         // Get the id from the params object of the request
         let url = "/api/applications/" + this.props.request.params.id;
-        request({url: url, method: "get", json: true, auth: {bearer: this.props.token}}, function (err, res, body) {
+        request({url: url, method: "get", json: true, auth: {bearer: localStorage.getItem("token")}}, function (err, res, body) {
             if (err) {
                 return self.setState({error: err.message, done: null});
             }
@@ -128,7 +128,7 @@ class EditApp extends Component {
         }
 
         let url = "/api/applications/" + this.state.app.id;
-        request({url: url, method: "delete", json: true, auth: {bearer: this.props.token}}, function (err, res, body) {
+        request({url: url, method: "delete", json: true, auth: {bearer: localStorage.getItem("token")}}, function (err, res, body) {
             if (err) {
                 return self.setState({modal: {error: err.message, show: true, disableBtn: false}});
             }
@@ -162,7 +162,7 @@ class EditApp extends Component {
             method: "put",
             json: true,
             body: info,
-            auth: {bearer: this.props.token}
+            auth: {bearer: localStorage.getItem("token")}
         }, function (err, res, body) {
             if (err) {
                 return self.setState({error: err.message, done: null});
