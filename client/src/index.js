@@ -75,11 +75,16 @@ class Main extends React.Component {
             return (
                 <Router.HashbangRouter>
                     <Router.Switch>
-                        {/*Home route*/}
+                        {/*Login route*/}
                         <Router.Route exact path="/login" component={Login} props={loginProps}/>
+                        {/*Authorize route*/}
                         <Router.Route exact path="/authorize" component={Authorize} props={this.state.config}/>
+                        {/*Register route*/}
                         <Router.Route exact path="/register" component={Register} props={this.state.config}/>
+                        {/*Dashboard route*/}
                         <Router.Route path="/dashboard" component={Dashboard} props={dashboardProps}/>
+                        {/*Default route*/}
+                        <Router.Route path="/" component={Login} props={loginProps}/>
                     </Router.Switch>
                 </Router.HashbangRouter>
             );
