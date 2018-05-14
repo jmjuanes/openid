@@ -146,7 +146,7 @@ class Authorize extends React.Component {
                         <Field>
                             <FieldLabel>Email</FieldLabel>
                             <Input className="authorize-input"
-                                   inputRef={this.ref.emailInput}
+                                   ref={this.ref.emailInput}
                                    required/>
                             <FieldHelper>Please enter a valid email</FieldHelper>
                         </Field>
@@ -155,7 +155,7 @@ class Authorize extends React.Component {
                             <FieldLabel>Password</FieldLabel>
                             <Input className="authorize-input"
                                    type={"password"}
-                                   inputRef={this.ref.pwdInput}
+                                   ref={this.ref.pwdInput}
                                    required/>
                         </Field>
                         {/*Captcha*/}

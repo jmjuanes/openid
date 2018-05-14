@@ -200,7 +200,7 @@ class EditApp extends Component {
                             <FieldLabel>Verify this action by typing <i>{this.text_confirm}</i> below</FieldLabel>
                             <Input className="edit-app-input"
                                    type={"text"}
-                                   inputRef={this.ref.modalConfirm}/>
+                                   ref={this.ref.modalConfirm}/>
                         </Field>
                         {/*Render the button or if it's loading the spinner*/}
                         {this.spinnerButton()}
@@ -241,7 +241,7 @@ class EditApp extends Component {
                                 <Input className="edit-app-input"
                                        type={"text"}
                                        defaultValue={this.state.app.name}
-                                       inputRef={this.ref.nameInput}/>
+                                       ref={this.ref.nameInput}/>
                             </Field>
                             {/*Detail input*/}
                             <Field>
@@ -249,7 +249,7 @@ class EditApp extends Component {
                                 <Input className="edit-app-input"
                                        type={"text"}
                                        defaultValue={this.state.app.detail}
-                                       inputRef={this.ref.detailInput}/>
+                                       ref={this.ref.detailInput}/>
                             </Field>
                             {/*Redirect input*/}
                             <Field>
@@ -257,7 +257,7 @@ class EditApp extends Component {
                                 <Input className="edit-app-input"
                                        type={"text"}
                                        defaultValue={this.state.app.redirect}
-                                       inputRef={this.ref.redirectInput}/>
+                                       ref={this.ref.redirectInput}/>
                             </Field>
                             <Btn color={"blue"} onClick={() => {
                                 this.updateApp();

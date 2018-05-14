@@ -92,21 +92,21 @@ class CreateApp extends Component {
                             <FieldLabel>Name of the application</FieldLabel>
                             <Input className="create-app-input"
                                    type={"text"}
-                                   inputRef={this.ref.nameInput}/>
+                                   ref={this.ref.nameInput}/>
                         </Field>
                         {/*Detail input*/}
                         <Field>
                             <FieldLabel>Detail of the application</FieldLabel>
                             <Input className="create-app-input"
                                    type={"text"}
-                                   inputRef={this.ref.detailInput}/>
+                                   ref={this.ref.detailInput}/>
                         </Field>
                         {/*Redirect input*/}
                         <Field>
                             <FieldLabel>Redirect URL</FieldLabel>
                             <Input className="create-app-input"
                                    type={"text"}
-                                   inputRef={this.ref.redirectInput}/>
+                                   ref={this.ref.redirectInput}/>
                             <FieldHelper>Must be a valid URL</FieldHelper>
                         </Field>
                         <Btn color={"blue"} onClick={() => this.handleCreateApp()}>Create application</Btn>

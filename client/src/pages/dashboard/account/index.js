@@ -81,19 +81,19 @@ class Account extends React.Component {
                             <FieldLabel>Your email</FieldLabel>
                             <Input className="account-input"
                                    type={"text"}
-                                   inputRef={this.ref.deleteEmail}/>
+                                   ref={this.ref.deleteEmail}/>
                         </Field>
                         <Field>
                             <FieldLabel>Verify this action by typing <i>{this.text_confirm}</i> below</FieldLabel>
                             <Input className="account-input"
                                    type={"text"}
-                                   inputRef={this.ref.deleteText}/>
+                                   ref={this.ref.deleteText}/>
                         </Field>
                         <Field>
                             <FieldLabel>Your password</FieldLabel>
                             <Input className="account-input"
                                    type={"password"}
-                                   inputRef={this.ref.deletePwd}/>
+                                   ref={this.ref.deletePwd}/>
                         </Field>
                         {/*Render the button or if it's loading the spinner*/}
                         {this.spinnerButton()}
@@ -225,21 +225,21 @@ class Account extends React.Component {
                             <FieldLabel>Old password</FieldLabel>
                             <Input className="account-input"
                                    type={"password"}
-                                   inputRef={this.ref.oldPwdInput}/>
+                                   ref={this.ref.oldPwdInput}/>
                         </Field>
                         {/*New pass input*/}
                         <Field>
                             <FieldLabel>New password</FieldLabel>
                             <Input className="account-input"
                                    type={"password"}
-                                   inputRef={this.ref.newPwdInput}/>
+                                   ref={this.ref.newPwdInput}/>
                         </Field>
                         {/*Repeat pass input*/}
                         <Field>
                             <FieldLabel>Confirm new password</FieldLabel>
                             <Input className="account-input"
                                    type={"password"}
-                                   inputRef={this.ref.repeatPwdInput}/>
+                                   ref={this.ref.repeatPwdInput}/>
                         </Field>
                         {/*Update password button*/}
                         <Btn color={"blue"} onClick={this.handlePwdUpdate}>Update password</Btn>

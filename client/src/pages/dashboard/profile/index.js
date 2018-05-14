@@ -113,7 +113,7 @@ class Profile extends React.Component {
                             <Input className="profile-input"
                                    type={"text"}
                                    defaultValue={this.state.user.name}
-                                   inputRef={this.ref.nameInput}/>
+                                   ref={this.ref.nameInput}/>
                         </Field>
                         {/*Email input*/}
                         <Field>

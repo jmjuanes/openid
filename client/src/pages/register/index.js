@@ -125,7 +125,7 @@ class Register extends React.Component {
                         <Field>
                             <FieldLabel>Name</FieldLabel>
                             <Input className="register-input"
-                                   inputRef={this.ref.nameInput}
+                                   ref={this.ref.nameInput}
                                    maxLength={"16"}
                                    required/>
                         </Field>
@@ -133,14 +133,14 @@ class Register extends React.Component {
                         <Field>
                             <FieldLabel>Email</FieldLabel>
                             <Input className="register-input"
-                                   inputRef={this.ref.emailInput}
+                                   ref={this.ref.emailInput}
                                    required/>
                         </Field>
                         {/*Password input*/}
                         <Field>
                             <FieldLabel>Password</FieldLabel>
                             <Input className="register-input"
-                                   inputRef={this.ref.pwdInput}
+                                   ref={this.ref.pwdInput}
                                    type={"password"}
                                    required/>
                             <FieldHelper>6 characters minimum</FieldHelper>
@@ -149,7 +149,7 @@ class Register extends React.Component {
                         <Field>
                             <FieldLabel>Repeat password</FieldLabel>
                             <Input className="register-input"
-                                   inputRef={this.ref.pwdRepeatInput}
+                                   ref={this.ref.pwdRepeatInput}
                                    type={"password"}
                                    required/>
                         </Field>

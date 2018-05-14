@@ -48,6 +48,8 @@ class Login extends React.Component {
             email: this.ref.emailInput.current.value,
             pwd: this.ref.pwdInput.current.value
         };
+
+
         // If the captcha is enabled check it
         if (this.props.captcha_enabled) {
             credentials = Object.assign({recaptcha: this.ref.captchaInput.current.getResponse()}, credentials);
@@ -115,7 +117,7 @@ class Login extends React.Component {
                     <Field>
                         <FieldLabel>Email</FieldLabel>
                         <Input className="login-input"
-                               inputRef={this.ref.emailInput}
+                               ref={this.ref.emailInput}
                                required/>
                         <FieldHelper>Please enter a valid email</FieldHelper>
                     </Field>
@@ -123,7 +125,7 @@ class Login extends React.Component {
                     <Field>
                         <FieldLabel>Password</FieldLabel>
                         <Input className="login-input"
-                               inputRef={this.ref.pwdInput}
+                               ref={this.ref.pwdInput}
                                type={"password"}
                                required/>
                     </Field>
