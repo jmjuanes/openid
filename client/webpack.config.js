@@ -29,6 +29,16 @@ module.exports = {
                 ]
             },
             {
+                "test": /\.(png|jpg|gif|svg)$/,
+                "use": {
+                    "loader": "file-loader",
+                    "options": {
+                        "name": "[name].[ext]",
+                        "outputPath": "img/"
+                    }
+                }
+            },
+            {
                 "test": /\.js$/,
                 "include": [
                     path.resolve(__dirname, "./src")
