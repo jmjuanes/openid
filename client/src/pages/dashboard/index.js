@@ -86,14 +86,22 @@ class Dashboard extends React.Component {
                             <div className="dash-menu siimple-grid-col siimple-grid-col--3">
                                 {/*User panel*/}
                                 <List>
-                                    <ListItem onClick={() => {
-                                        this.dashboardRedirect("")
-                                    }}>Profile</ListItem>
-                                    <ListItem onClick={() => {
-                                        this.dashboardRedirect("account")
-                                    }}>Account</ListItem>
-                                    <ListItem>Email</ListItem>
-                                    <ListItem>Authorized apps</ListItem>
+                                    <ListItem onClick={() => { this.dashboardRedirect(""); }}>
+                                        <ListTitle>Profile</ListTitle>
+                                        Edit your personal info
+                                    </ListItem>
+                                    <ListItem onClick={() => { this.dashboardRedirect("account"); }}>
+                                        <ListTitle>Account</ListTitle>
+                                        Manage your account settings
+                                    </ListItem>
+                                    <ListItem>
+                                        <ListTitle>Email</ListTitle>
+                                        Manage your emails and notifications
+                                    </ListItem>
+                                    <ListItem>
+                                        <ListTitle>Authorized apps</ListTitle>
+                                        Configure which applications can access to your account data
+                                    </ListItem>
                                 </List>
                                 {/*Admin panel*/}
                                 {this.renderAdminPanel()}
