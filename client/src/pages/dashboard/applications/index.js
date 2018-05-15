@@ -3,6 +3,8 @@ import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Spinner, Lis
 import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
 
+import Table from "../../../components/table/index.js";
+
 import "./styles.scss";
 
 class Applications extends React.Component {
@@ -45,8 +47,20 @@ class Applications extends React.Component {
     // Render a list with all the applications
     listApplications() {
         if (this.state.ready) {
+            let customTitle = function (item) {
+                return item.name;
+            };
+            let customDetail = function (item) {
+                return "Application created on xxxxxxxxx";
+            };
             return (
                 <div className="apps-list">
+                    <Table data={this.state.applications} 
+                        icon="application" 
+                        actionText="Manage"
+                        customTitle={customTitle} 
+                        customDetail={customDetail} />
+                    {/*
                     <List>
                         {this.state.applications.map((app, i) =>
                             <ListItem key={i} className={"app-item"}>
@@ -57,6 +71,7 @@ class Applications extends React.Component {
                             </ListItem>
                         )}
                     </List>
+                    */}
                 </div>
             );
         }
