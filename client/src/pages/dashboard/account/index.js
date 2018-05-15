@@ -213,6 +213,7 @@ class Account extends React.Component {
                 <div className="account-content">
                     {/*Title*/}
                     <Heading type={"h2"}>Account</Heading>
+                    <Heading type={"h5"}>Your personal information</Heading>
                     {/*Change password*/}
                     <div className="account-password-form">
                         <Heading type={"h5"}>Change password</Heading>
