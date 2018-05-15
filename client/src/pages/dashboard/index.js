@@ -25,9 +25,11 @@ class Dashboard extends React.Component {
 
     // Get the user info using his access token
     componentDidMount() {
-        // Change to dashboard
+        // If there's no access token, redirect to login
+        if(localStorage.getItem("token") === null){
+            return Router.redirectHashbang("/login");
+        }
         let self = this;
-
         request({
             url: "/api/user",
             method: "get",
@@ -50,6 +52,11 @@ class Dashboard extends React.Component {
         });
     }
 
+    // Left panel redirects
+    dashboardRedirect(path) {
+        Router.redirectHashbang("/dashboard/" + path);
+    }
+
     // Show the admin routes if the user is admin
     renderAdminPanel() {
         if (this.state.user.admin) {
@@ -62,11 +69,6 @@ class Dashboard extends React.Component {
                 </List>
             );
         }
-    }
-
-    // Left panel redirects
-    dashboardRedirect(path) {
-        Router.redirectHashbang("/dashboard/" + path);
     }
 
     render() {
