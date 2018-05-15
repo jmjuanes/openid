@@ -38,6 +38,31 @@ class Login extends React.Component {
         return redirect("/register");
     }
 
+    // Display the error message
+    renderError() {
+        if (this.state.error) {
+            return (
+                <Alert color={"red"} className={"login-error"}>
+                    {this.state.error}
+                </Alert>
+            )
+        }
+    }
+
+    // Display the register link
+    renderRegisterField() {
+        if (this.props.openid_allow_signup) {
+            return (
+                <Field className={"login-register"}>
+                    <FieldLabel align="center">
+                        New to {this.props.openid_name}?
+                    </FieldLabel>
+                    <Btn color={"green"} onClick={this.redirectLogin} fluid> Create an account</Btn>
+                </Field>
+            );
+        }
+    }
+
 
     // Try to login with the information provided
     handleSignInClick() {
@@ -71,36 +96,9 @@ class Login extends React.Component {
             if (res.statusCode >= 300) {
                 return self.setState({error: body.message});
             }
-            console.log(body.token);
             return self.props.saveToken(body.token);
         });
     }
-
-    // Display the error message
-    renderError() {
-        if (this.state.error) {
-            return (
-                <Alert color={"red"} className={"login-error"}>
-                    {this.state.error}
-                </Alert>
-            )
-        }
-    }
-
-    // Display the register link
-    renderRegisterField() {
-        if (this.props.openid_allow_signup) {
-            return (
-                <Field className={"login-register"}>
-                    <FieldLabel align="center">
-                        New to {this.props.openid_name}?
-                    </FieldLabel>
-                    <Btn color={"green"} onClick={this.redirectLogin} fluid> Create an account</Btn>
-                </Field>
-            );
-        }
-    }
-
 
     render() {
         return (

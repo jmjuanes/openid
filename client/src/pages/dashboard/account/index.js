@@ -61,48 +61,6 @@ class Account extends React.Component {
         }
     }
 
-    // Render the modal to delete the account
-    renderModal() {
-        if (this.state.modal.show) {
-            // Disable button when deleting account
-            let disableBtn = this.state.disableBtn ? 'none' : 'auto';
-
-            return (
-                <div className="modal">
-                    <div className={"modal-content"}>
-                        <span className="modal-hide" onClick={this.showModal}>&times;</span>
-                        <Heading type={"h4"} className={"modal-title"}>Are you sure?</Heading>
-                        {this.renderErrorModal()}
-                        <p className="siimple-p">After you confirm this action we will delete permanently all your
-                            information from our database. You'll have to create a new account to access this
-                            application
-                            again.</p>
-                        <Field>
-                            <FieldLabel>Your email</FieldLabel>
-                            <Input className="account-input"
-                                   type={"text"}
-                                   ref={this.ref.deleteEmail}/>
-                        </Field>
-                        <Field>
-                            <FieldLabel>Verify this action by typing <i>{this.text_confirm}</i> below</FieldLabel>
-                            <Input className="account-input"
-                                   type={"text"}
-                                   ref={this.ref.deleteText}/>
-                        </Field>
-                        <Field>
-                            <FieldLabel>Your password</FieldLabel>
-                            <Input className="account-input"
-                                   type={"password"}
-                                   ref={this.ref.deletePwd}/>
-                        </Field>
-                        {/*Render the button or if it's loading the spinner*/}
-                        {this.spinnerButton()}
-                    </div>
-                </div>
-            );
-        }
-    }
-
     // Render the delete button/spinner
     spinnerButton() {
         if (!this.state.modal.disableBtn) {
@@ -125,6 +83,46 @@ class Account extends React.Component {
                 disableBtn: false
             }
         });
+    }
+
+
+    // Render the modal to delete the account
+    renderModal() {
+        if (this.state.modal.show) {
+            return (
+                <div className="modal">
+                    <div className={"modal-content"}>
+                        <span className="modal-hide" onClick={this.showModal}>&times;</span>
+                        <Heading type={"h4"} className={"modal-title"}>Are you sure?</Heading>
+                        {this.renderErrorModal()}
+                        <p className="siimple-p">After you confirm this action we will delete permanently all your
+                            information from our database. You'll have to create a new account to access this
+                            application
+                            again.</p>
+                        <Field>
+                            <FieldLabel>Your email</FieldLabel>
+                            <Input className="modal-input"
+                                   type={"text"}
+                                   ref={this.ref.deleteEmail}/>
+                        </Field>
+                        <Field>
+                            <FieldLabel>Verify this action by typing <i>{this.text_confirm}</i> below</FieldLabel>
+                            <Input className="modal-input"
+                                   type={"text"}
+                                   ref={this.ref.deleteText}/>
+                        </Field>
+                        <Field>
+                            <FieldLabel>Your password</FieldLabel>
+                            <Input className="modal-input"
+                                   type={"password"}
+                                   ref={this.ref.deletePwd}/>
+                        </Field>
+                        {/*Render the button or if it's loading the spinner*/}
+                        {this.spinnerButton()}
+                    </div>
+                </div>
+            );
+        }
     }
 
     // Update the user password

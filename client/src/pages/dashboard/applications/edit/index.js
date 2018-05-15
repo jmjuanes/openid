@@ -198,7 +198,7 @@ class EditApp extends Component {
                             information will be lost. This action can not be undone.</p>
                         <Field>
                             <FieldLabel>Verify this action by typing <i>{this.text_confirm}</i> below</FieldLabel>
-                            <Input className="edit-app-input"
+                            <Input className="modal-input"
                                    type={"text"}
                                    ref={this.ref.modalConfirm}/>
                         </Field>
