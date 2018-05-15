@@ -1,0 +1,60 @@
+@import "siimple-colors/scss/_all.scss";
+
+//Table class
+.table {
+    display: block;
+    color: $siimple-navy;
+    //Table item
+    &-item {
+        display: table;
+        padding-top: 15px !important;
+        padding-bottom: 15px !important;
+        border-top: 1px solid $siimple-grey;
+        &:last-child {
+            border-bottom: 1px solid $siimple-grey;
+        }
+    }
+    //Table item cell
+    &-cell {
+        display: table-cell;
+        vertical-align: middle;
+        width: 1%;
+        //Primary table cell 
+        &--primary {
+            width: 99%;
+            padding-right: 15px !important;
+            padding-left: 15px !important;
+        }
+    }
+    //Cell title 
+    &-title {
+        display: block;
+        font-weight: bold;
+        font-size: 15px;
+    }
+    //Cell detail 
+    &-detail {
+        display: block;
+        font-size: 13px;
+        color: $siimple-navy-light;
+    }
+    //Table logo
+    &-logo {
+        width: 55px;
+        height: 55px;
+        background-color: $siimple-navy-light;
+        background-size: 55px 55px;
+        background-repeat: no-repeat;
+        background-position: center;
+        border-radius: 100px;
+        //Applications icon
+        &--application {
+            background-image: url('./img/application.png');
+        }
+        //User icon
+        &--user {
+            background-image: url('./img/user.png');
+        }
+    }
+}
+
