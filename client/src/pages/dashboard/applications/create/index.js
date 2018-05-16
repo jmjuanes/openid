@@ -82,7 +82,7 @@ class CreateApp extends Component {
                 <div className={"create-app-content"}>
                     {/*Title*/}
                     <Heading type={"h2"}>Create an application</Heading>
-                    <Small>Please check that all fields are correct before submitting.</Small>
+                    <p className={"p-small"}>Please check that all fields are correct before submitting.</p>
                     {/*Form to create an app*/}
                     <div className="create-app-form">
                         {/*Alert*/}
@@ -92,6 +92,7 @@ class CreateApp extends Component {
                             <FieldLabel>Name of the application</FieldLabel>
                             <Input className="create-app-input"
                                    type={"text"}
+                                   fluid
                                    ref={this.ref.nameInput}/>
                         </Field>
                         {/*Detail input*/}
@@ -99,6 +100,7 @@ class CreateApp extends Component {
                             <FieldLabel>Detail of the application</FieldLabel>
                             <Input className="create-app-input"
                                    type={"text"}
+                                   fluid
                                    ref={this.ref.detailInput}/>
                         </Field>
                         {/*Redirect input*/}
@@ -106,6 +108,7 @@ class CreateApp extends Component {
                             <FieldLabel>Redirect URL</FieldLabel>
                             <Input className="create-app-input"
                                    type={"text"}
+                                   fluid
                                    ref={this.ref.redirectInput}/>
                             <FieldHelper>Must be a valid URL</FieldHelper>
                         </Field>

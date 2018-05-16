@@ -27,7 +27,7 @@ class Dashboard extends React.Component {
     // Get the user info using his access token
     componentDidMount() {
         // If there's no access token, redirect to login
-        if(localStorage.getItem("token") === null){
+        if (localStorage.getItem("token") === null) {
             return Router.redirectHashbang("/login");
         }
         let self = this;
@@ -80,66 +80,52 @@ class Dashboard extends React.Component {
         }
         else
             return (
-                <div>
-                    <Navbar size="medium" color="light">
-                        <NavbarTitle>OpenID</NavbarTitle>
-                        <NavbarSubtitle>Dashboard</NavbarSubtitle>
-                        <NavbarItem style={{float: "right"}}>
-                            Logout
-                        </NavbarItem>
-                    </Navbar>
-                    <div className="siimple-content siimple-content--medium">
-                        <div className="siimple-grid">
-                            <div className="siimple-grid-row">
-                                {/*Side menu*/}
-                                <div className="dash-menu siimple-grid-col siimple-grid-col--3">
-                                    {/*User panel*/}
+                <div className="siimple-content siimple-content--medium">
+                    <div className="siimple-grid">
+                        <div className="siimple-grid-row">
+                            {/*Side menu*/}
+                            <div className="dash-menu siimple-grid-col siimple-grid-col--3">
+                                {/*User panel*/}
+                                <div className="dash-menu-list">
                                     <List>
-                                        <ListItem onClick={() => { this.dashboardRedirect(""); }}>
-                                            <ListTitle>Profile</ListTitle>
-                                            Edit your personal info
-                                        </ListItem>
-                                        <ListItem onClick={() => { this.dashboardRedirect("account"); }}>
-                                            <ListTitle>Account</ListTitle>
-                                            Manage your account settings
-                                        </ListItem>
-                                        <ListItem>
-                                            <ListTitle>Email</ListTitle>
-                                            Manage your emails and notifications
-                                        </ListItem>
-                                        <ListItem>
-                                            <ListTitle>Authorized apps</ListTitle>
-                                            Configure which applications can access to your account data
-                                        </ListItem>
+                                        <ListItem onClick={() => {
+                                            this.dashboardRedirect("")
+                                        }}>Profile</ListItem>
+                                        <ListItem onClick={() => {
+                                            this.dashboardRedirect("account")
+                                        }}>Account</ListItem>
+                                        <ListItem>Email</ListItem>
+                                        <ListItem>Authorized apps</ListItem>
                                     </List>
+
                                     {/*Admin panel*/}
                                     {this.renderAdminPanel()}
                                 </div>
-                                {/*Content*/}
-                                <div className="dash-content siimple-grid-col siimple-grid-col--9">
-                                    <Router.Switch>
-                                        {/*Profile route*/}
-                                        <Router.Route exact path={"/dashboard/"}
-                                            component={Profile}
-                                            props={{token: this.props.token}}/>
-                                        {/*Account route*/}
-                                        <Router.Route exact path={"/dashboard/account"}
-                                            component={Account}
-                                            props={{token: this.props.token}}/>
-                                        {/*Applications route*/}
-                                        <Router.Route exact path={"/dashboard/applications"}
-                                            component={Applications}
-                                            props={{token: this.props.token, admin: this.state.user.admin}}/>
-                                        {/*New application route*/}
-                                        <Router.Route exact path={"/dashboard/applications/create"}
-                                            component={CreateApp}
-                                            props={{token: this.props.token, admin: this.state.user.admin}}/>
-                                        {/*Edit application route*/}
-                                        <Router.Route exact path={"/dashboard/applications/:id"}
-                                            component={EditApp}
-                                            props={{token: this.props.token, admin: this.state.user.admin}}/>
-                                    </Router.Switch>
-                                </div>
+                            </div>
+                            {/*Content*/}
+                            <div className="dash-content siimple-grid-col siimple-grid-col--9">
+                                <Router.Switch>
+                                    {/*Profile route*/}
+                                    <Router.Route exact path={"/dashboard/"}
+                                                  component={Profile}
+                                                  props={{token: this.props.token}}/>
+                                    {/*Account route*/}
+                                    <Router.Route exact path={"/dashboard/account"}
+                                                  component={Account}
+                                                  props={{token: this.props.token}}/>
+                                    {/*Applications route*/}
+                                    <Router.Route exact path={"/dashboard/applications"}
+                                                  component={Applications}
+                                                  props={{token: this.props.token, admin: this.state.user.admin}}/>
+                                    {/*New application route*/}
+                                    <Router.Route exact path={"/dashboard/applications/create"}
+                                                  component={CreateApp}
+                                                  props={{token: this.props.token, admin: this.state.user.admin}}/>
+                                    {/*Edit application route*/}
+                                    <Router.Route exact path={"/dashboard/applications/:id"}
+                                                  component={EditApp}
+                                                  props={{token: this.props.token, admin: this.state.user.admin}}/>
+                                </Router.Switch>
                             </div>
                         </div>
                         {/*Log out button*/}
@@ -148,7 +134,6 @@ class Dashboard extends React.Component {
                 </div>
             );
     }
-
 }
 
 export default Dashboard;

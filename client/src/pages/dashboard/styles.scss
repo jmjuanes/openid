@@ -3,13 +3,18 @@
     padding-top: 6px;
 }
 
-.dash-menu div div:hover {
+.dash-menu-list {
+    padding-right: 15px;
+}
+
+.dash-menu-list div div:hover {
     background: #d9dfe7;
     cursor: pointer;
 }
 
+//IMPORTANT
 .dash-content {
-    //margin-left: 20px;
+    max-width: 550px;
 }
 
 .log-out{
