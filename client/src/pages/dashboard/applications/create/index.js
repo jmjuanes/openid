@@ -1,5 +1,8 @@
 import React, {Component} from 'react';
-import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Spinner, List, ListItem, Small} from "neutrine";
+import {
+    Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Spinner, List, ListItem, Small,
+    Paragraph
+} from "neutrine";
 import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
 
@@ -82,7 +85,7 @@ class CreateApp extends Component {
                 <div className={"create-app-content"}>
                     {/*Title*/}
                     <Heading type={"h2"}>Create an application</Heading>
-                    <p className={"p-small"}>Please check that all fields are correct before submitting.</p>
+                    <Paragraph>Please check that all fields are correct before submitting.</Paragraph>
                     {/*Form to create an app*/}
                     <div className="create-app-form">
                         {/*Alert*/}

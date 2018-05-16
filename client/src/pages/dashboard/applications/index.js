@@ -1,5 +1,8 @@
 import React from "react";
-import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Spinner, List, ListItem, Small} from "neutrine";
+import {
+    Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Spinner, List, ListItem, Small,
+    Paragraph
+} from "neutrine";
 import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
 
@@ -95,7 +98,7 @@ class Applications extends React.Component {
                         {/*Create a new application*/}
                         <div className="app-create-container">
                             <Heading type={"h5"}>Create a new application</Heading>
-                            <p className={"p-small"}>Add a new entity to the list of registered applications.</p>
+                            <Paragraph>Add a new entity to the list of registered applications.</Paragraph>
                             <Btn color={"green"} className={"btn"} onClick={() => this.createRedirect()}>Create</Btn>
                         </div>
                         {/*List of all the applications*/}

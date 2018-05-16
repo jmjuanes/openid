@@ -1,6 +1,6 @@
 import React from "react";
 import {request} from "@kofijs/request";
-import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Small, Spinner} from "neutrine";
+import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Paragraph, Small, Spinner} from "neutrine";
 import {redirectHashbang as redirect} from "rouct";
 
 import "./styles.scss";
@@ -250,8 +250,8 @@ class Account extends React.Component {
                     {/*Delete account*/}
                     <div className="account-delete">
                         <Heading type={"h4"}>Delete account</Heading>
-                        <p className={"p-small"}>Once you delete your account you can't get it back. Be certain about
-                            your decision.</p>
+                        <Paragraph>Once you delete your account you can't get it back. Be certain about
+                            your decision.</Paragraph>
                         <Btn color={"red"} className={"btn"} onClick={this.showModal}>Delete my account</Btn>
                     </div>
                 </div>

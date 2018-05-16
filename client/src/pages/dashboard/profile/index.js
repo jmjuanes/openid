@@ -1,5 +1,5 @@
 import React from "react";
-import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Spinner} from "neutrine";
+import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Paragraph, Spinner} from "neutrine";
 import {request} from "@kofijs/request";
 
 import "./styles.scss";
@@ -103,7 +103,7 @@ class Profile extends React.Component {
                 <div className={"profile-content"}>
                     {/*Title*/}
                     <Heading type={"h2"}>Profile</Heading>
-                    <p className="p-small">This is your public user information.</p>
+                    <Paragraph>This is your public user information.</Paragraph>
                     {/*User info*/}
                     <div className={"profile-form"}>
                         {/*Done/error message*/}
