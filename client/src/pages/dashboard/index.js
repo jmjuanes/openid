@@ -1,6 +1,7 @@
 import React from "react";
 import * as Router from "rouct";
 import {Btn, List, ListItem, ListTitle, Spinner} from "neutrine";
+import {Navbar, NavbarTitle, NavbarSubtitle, NavbarItem} from "neutrine";
 import {request} from "@kofijs/request";
 
 import Account from "./account/index";
@@ -65,8 +66,8 @@ class Dashboard extends React.Component {
                     <ListItem onClick={() => {
                         this.dashboardRedirect("applications");
                     }}>All applications</ListItem>
-                    <ListItem>Other admin</ListItem>
-                </List>
+                <ListItem>Other admin</ListItem>
+            </List>
             );
         }
     }
@@ -79,62 +80,71 @@ class Dashboard extends React.Component {
         }
         else
             return (
-                <div className="siimple-content siimple-content--medium">
-                    <div className="siimple-grid">
-                        <div className="siimple-grid-row">
-                            {/*Side menu*/}
-                            <div className="dash-menu siimple-grid-col siimple-grid-col--3">
-                                {/*User panel*/}
-                                <List>
-                                    <ListItem onClick={() => { this.dashboardRedirect(""); }}>
-                                        <ListTitle>Profile</ListTitle>
-                                        Edit your personal info
-                                    </ListItem>
-                                    <ListItem onClick={() => { this.dashboardRedirect("account"); }}>
-                                        <ListTitle>Account</ListTitle>
-                                        Manage your account settings
-                                    </ListItem>
-                                    <ListItem>
-                                        <ListTitle>Email</ListTitle>
-                                        Manage your emails and notifications
-                                    </ListItem>
-                                    <ListItem>
-                                        <ListTitle>Authorized apps</ListTitle>
-                                        Configure which applications can access to your account data
-                                    </ListItem>
-                                </List>
-                                {/*Admin panel*/}
-                                {this.renderAdminPanel()}
-                            </div>
-                            {/*Content*/}
-                            <div className="dash-content siimple-grid-col siimple-grid-col--9">
-                                <Router.Switch>
-                                    {/*Profile route*/}
-                                    <Router.Route exact path={"/dashboard/"}
-                                                  component={Profile}
-                                                  props={{token: this.props.token}}/>
-                                    {/*Account route*/}
-                                    <Router.Route exact path={"/dashboard/account"}
-                                                  component={Account}
-                                                  props={{token: this.props.token}}/>
-                                    {/*Applications route*/}
-                                    <Router.Route exact path={"/dashboard/applications"}
-                                                  component={Applications}
-                                                  props={{token: this.props.token, admin: this.state.user.admin}}/>
-                                    {/*New application route*/}
-                                    <Router.Route exact path={"/dashboard/applications/create"}
-                                                  component={CreateApp}
-                                                  props={{token: this.props.token, admin: this.state.user.admin}}/>
-                                    {/*Edit application route*/}
-                                    <Router.Route exact path={"/dashboard/applications/:id"}
-                                                  component={EditApp}
-                                                  props={{token: this.props.token, admin: this.state.user.admin}}/>
-                                </Router.Switch>
+                <div>
+                    <Navbar size="medium" color="light">
+                        <NavbarTitle>OpenID</NavbarTitle>
+                        <NavbarSubtitle>Dashboard</NavbarSubtitle>
+                        <NavbarItem style={{float: "right"}}>
+                            Logout
+                        </NavbarItem>
+                    </Navbar>
+                    <div className="siimple-content siimple-content--medium">
+                        <div className="siimple-grid">
+                            <div className="siimple-grid-row">
+                                {/*Side menu*/}
+                                <div className="dash-menu siimple-grid-col siimple-grid-col--3">
+                                    {/*User panel*/}
+                                    <List>
+                                        <ListItem onClick={() => { this.dashboardRedirect(""); }}>
+                                            <ListTitle>Profile</ListTitle>
+                                            Edit your personal info
+                                        </ListItem>
+                                        <ListItem onClick={() => { this.dashboardRedirect("account"); }}>
+                                            <ListTitle>Account</ListTitle>
+                                            Manage your account settings
+                                        </ListItem>
+                                        <ListItem>
+                                            <ListTitle>Email</ListTitle>
+                                            Manage your emails and notifications
+                                        </ListItem>
+                                        <ListItem>
+                                            <ListTitle>Authorized apps</ListTitle>
+                                            Configure which applications can access to your account data
+                                        </ListItem>
+                                    </List>
+                                    {/*Admin panel*/}
+                                    {this.renderAdminPanel()}
+                                </div>
+                                {/*Content*/}
+                                <div className="dash-content siimple-grid-col siimple-grid-col--9">
+                                    <Router.Switch>
+                                        {/*Profile route*/}
+                                        <Router.Route exact path={"/dashboard/"}
+                                            component={Profile}
+                                            props={{token: this.props.token}}/>
+                                        {/*Account route*/}
+                                        <Router.Route exact path={"/dashboard/account"}
+                                            component={Account}
+                                            props={{token: this.props.token}}/>
+                                        {/*Applications route*/}
+                                        <Router.Route exact path={"/dashboard/applications"}
+                                            component={Applications}
+                                            props={{token: this.props.token, admin: this.state.user.admin}}/>
+                                        {/*New application route*/}
+                                        <Router.Route exact path={"/dashboard/applications/create"}
+                                            component={CreateApp}
+                                            props={{token: this.props.token, admin: this.state.user.admin}}/>
+                                        {/*Edit application route*/}
+                                        <Router.Route exact path={"/dashboard/applications/:id"}
+                                            component={EditApp}
+                                            props={{token: this.props.token, admin: this.state.user.admin}}/>
+                                    </Router.Switch>
+                                </div>
                             </div>
                         </div>
+                        {/*Log out button*/}
+                        {/*<Btn color={"grey"} className={"log-out"} onClick={() => this.props.deleteToken()}>Log out</Btn>*/}
                     </div>
-                    {/*Log out button*/}
-                    <Btn color={"grey"} className={"log-out"} onClick={() => this.props.deleteToken()}>Log out</Btn>
                 </div>
             );
     }
