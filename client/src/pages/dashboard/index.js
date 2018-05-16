@@ -1,6 +1,6 @@
 import React from "react";
 import * as Router from "rouct";
-import {Btn, List, ListItem, ListTitle, Spinner} from "neutrine";
+import {Btn, List, ListItem, ListTitle, Spinner, Small} from "neutrine";
 import {Navbar, NavbarTitle, NavbarSubtitle, NavbarItem} from "neutrine";
 import {request} from "@kofijs/request";
 
@@ -80,59 +80,73 @@ class Dashboard extends React.Component {
         }
         else
             return (
-                <div className="siimple-content siimple-content--medium">
-                    <div className="siimple-grid">
-                        <div className="siimple-grid-row">
-                            {/*Side menu*/}
-                            <div className="dash-menu siimple-grid-col siimple-grid-col--3">
-                                {/*User panel*/}
-                                <div className="dash-menu-list">
-                                    <List>
-                                        <ListItem onClick={() => {
-                                            this.dashboardRedirect("")
-                                        }}>Profile</ListItem>
-                                        <ListItem onClick={() => {
-                                            this.dashboardRedirect("account")
-                                        }}>Account</ListItem>
-                                        <ListItem>Email</ListItem>
-                                        <ListItem>Authorized apps</ListItem>
-                                    </List>
+                <div>
+                    <Navbar size="medium" color="light">
+                        <NavbarTitle>OpenID</NavbarTitle>
+                        <NavbarSubtitle>Dashboard</NavbarSubtitle>
+                        <NavbarItem style={{"float": "right"}}>Logout</NavbarItem>
+                    </Navbar>
+                    <div className="siimple-content siimple-content--medium">
+                        <div className="siimple-grid">
+                            <div className="siimple-grid-row">
+                                {/*Side menu*/}
+                                <div className="dash-menu siimple-grid-col siimple-grid-col--3">
+                                    {/*User panel*/}
+                                    <div className="dash-menu-list">
+                                        <List>
+                                            <ListItem onClick={() => {this.dashboardRedirect("");}}>
+                                                <ListTitle style={{marginBottom: "0px"}}>Profile</ListTitle>
+                                                <Small>Edit your personal info</Small>
+                                            </ListItem>
+                                            <ListItem onClick={() => {this.dashboardRedirect("account");}}>
+                                                <ListTitle>Account</ListTitle>
+                                                Manage your account settings
+                                            </ListItem>
+                                            <ListItem>
+                                                <ListTitle>Email</ListTitle>
+                                                Edit your notifications settings
+                                            </ListItem>
+                                            <ListItem>
+                                                <ListTitle>Authorized apps</ListTitle>
+                                                Manage which applications can access your personal data
+                                            </ListItem>
+                                        </List>
 
-                                    {/*Admin panel*/}
-                                    {this.renderAdminPanel()}
+                                        {/*Admin panel*/}
+                                        {this.renderAdminPanel()}
+                                    </div>
+                                </div>
+                                {/*Content*/}
+                                <div className="dash-content siimple-grid-col siimple-grid-col--9">
+                                    <Router.Switch>
+                                        {/*Profile route*/}
+                                        <Router.Route exact path={"/dashboard/"}
+                                            component={Profile}
+                                            props={{token: this.props.token}}/>
+                                        {/*Account route*/}
+                                        <Router.Route exact path={"/dashboard/account"}
+                                            component={Account}
+                                            props={{token: this.props.token}}/>
+                                        {/*Applications route*/}
+                                        <Router.Route exact path={"/dashboard/applications"}
+                                            component={Applications}
+                                            props={{token: this.props.token, admin: this.state.user.admin}}/>
+                                        {/*New application route*/}
+                                        <Router.Route exact path={"/dashboard/applications/create"}
+                                            component={CreateApp}
+                                            props={{token: this.props.token, admin: this.state.user.admin}}/>
+                                        {/*Edit application route*/}
+                                        <Router.Route exact path={"/dashboard/applications/:id"}
+                                            component={EditApp}
+                                            props={{token: this.props.token, admin: this.state.user.admin}}/>
+                                    </Router.Switch>
                                 </div>
                             </div>
-                            {/*Content*/}
-                            <div className="dash-content siimple-grid-col siimple-grid-col--9">
-                                <Router.Switch>
-                                    {/*Profile route*/}
-                                    <Router.Route exact path={"/dashboard/"}
-                                                  component={Profile}
-                                                  props={{token: this.props.token}}/>
-                                    {/*Account route*/}
-                                    <Router.Route exact path={"/dashboard/account"}
-                                                  component={Account}
-                                                  props={{token: this.props.token}}/>
-                                    {/*Applications route*/}
-                                    <Router.Route exact path={"/dashboard/applications"}
-                                                  component={Applications}
-                                                  props={{token: this.props.token, admin: this.state.user.admin}}/>
-                                    {/*New application route*/}
-                                    <Router.Route exact path={"/dashboard/applications/create"}
-                                                  component={CreateApp}
-                                                  props={{token: this.props.token, admin: this.state.user.admin}}/>
-                                    {/*Edit application route*/}
-                                    <Router.Route exact path={"/dashboard/applications/:id"}
-                                                  component={EditApp}
-                                                  props={{token: this.props.token, admin: this.state.user.admin}}/>
-                                </Router.Switch>
-                            </div>
+                            {/*Log out button*/}
+                            {/*<Btn color={"grey"} className={"log-out"} onClick={() => this.props.deleteToken()}>Log out</Btn>*/}
                         </div>
-                        {/*Log out button*/}
-                        {/*<Btn color={"grey"} className={"log-out"} onClick={() => this.props.deleteToken()}>Log out</Btn>*/}
                     </div>
-                </div>
-            );
+                </div>);
     }
 }
 
