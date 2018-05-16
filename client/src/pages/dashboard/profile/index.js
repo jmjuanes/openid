@@ -103,6 +103,7 @@ class Profile extends React.Component {
                 <div className={"profile-content"}>
                     {/*Title*/}
                     <Heading type={"h2"}>Profile</Heading>
+                    <p className="p-small">This is your public user information.</p>
                     {/*User info*/}
                     <div className={"profile-form"}>
                         {/*Done/error message*/}
@@ -112,6 +113,7 @@ class Profile extends React.Component {
                             <FieldLabel>Name</FieldLabel>
                             <Input className="profile-input"
                                    type={"text"}
+                                   fluid
                                    defaultValue={this.state.user.name}
                                    ref={this.ref.nameInput}/>
                         </Field>
@@ -120,6 +122,7 @@ class Profile extends React.Component {
                             <FieldLabel>Email</FieldLabel>
                             <Input className="profile-input"
                                    type={"text"}
+                                   fluid
                                    defaultValue={this.state.user.email}
                                    readOnly/>
                             <FieldHelper>Email used to log in the application</FieldHelper>

@@ -26,7 +26,7 @@ class Dashboard extends React.Component {
     // Get the user info using his access token
     componentDidMount() {
         // If there's no access token, redirect to login
-        if(localStorage.getItem("token") === null){
+        if (localStorage.getItem("token") === null) {
             return Router.redirectHashbang("/login");
         }
         let self = this;
@@ -85,18 +85,21 @@ class Dashboard extends React.Component {
                             {/*Side menu*/}
                             <div className="dash-menu siimple-grid-col siimple-grid-col--3">
                                 {/*User panel*/}
-                                <List>
-                                    <ListItem onClick={() => {
-                                        this.dashboardRedirect("")
-                                    }}>Profile</ListItem>
-                                    <ListItem onClick={() => {
-                                        this.dashboardRedirect("account")
-                                    }}>Account</ListItem>
-                                    <ListItem>Email</ListItem>
-                                    <ListItem>Authorized apps</ListItem>
-                                </List>
-                                {/*Admin panel*/}
-                                {this.renderAdminPanel()}
+                                <div className="dash-menu-list">
+                                    <List>
+                                        <ListItem onClick={() => {
+                                            this.dashboardRedirect("")
+                                        }}>Profile</ListItem>
+                                        <ListItem onClick={() => {
+                                            this.dashboardRedirect("account")
+                                        }}>Account</ListItem>
+                                        <ListItem>Email</ListItem>
+                                        <ListItem>Authorized apps</ListItem>
+                                    </List>
+
+                                    {/*Admin panel*/}
+                                    {this.renderAdminPanel()}
+                                </div>
                             </div>
                             {/*Content*/}
                             <div className="dash-content siimple-grid-col siimple-grid-col--9">
@@ -130,7 +133,6 @@ class Dashboard extends React.Component {
                 </div>
             );
     }
-
 }
 
 export default Dashboard;
