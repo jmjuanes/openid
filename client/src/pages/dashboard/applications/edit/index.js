@@ -240,6 +240,7 @@ class EditApp extends Component {
                                 <FieldLabel>Application name</FieldLabel>
                                 <Input className="edit-app-input"
                                        type={"text"}
+                                       fluid
                                        defaultValue={this.state.app.name}
                                        ref={this.ref.nameInput}/>
                             </Field>
@@ -248,6 +249,7 @@ class EditApp extends Component {
                                 <FieldLabel>Application detail</FieldLabel>
                                 <Input className="edit-app-input"
                                        type={"text"}
+                                       fluid
                                        defaultValue={this.state.app.detail}
                                        ref={this.ref.detailInput}/>
                             </Field>
@@ -256,6 +258,7 @@ class EditApp extends Component {
                                 <FieldLabel>Redirect URL</FieldLabel>
                                 <Input className="edit-app-input"
                                        type={"text"}
+                                       fluid
                                        defaultValue={this.state.app.redirect}
                                        ref={this.ref.redirectInput}/>
                             </Field>
@@ -276,8 +279,8 @@ class EditApp extends Component {
                         {/*Delete application*/}
                         <div className="edit-app-delete">
                             <Heading type={"h5"}>Delete the application</Heading>
-                            <Small>Once the application is deleted all its information will be permanently removed.
-                            </Small>
+                            <p className={"p-small"}>Once the application is deleted all its information will be permanently removed.
+                            </p>
                             <Btn color={"grey"} className={"btn"} onClick={() => this.showModal()}>Delete
                                 application</Btn>
                         </div>

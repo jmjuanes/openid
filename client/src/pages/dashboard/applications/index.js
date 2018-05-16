@@ -52,7 +52,7 @@ class Applications extends React.Component {
                             <ListItem key={i} className={"app-item"}>
                                 <div className={"app-title"}>{app.name}</div>
                                 <div className={"app-btn-group"}>
-                                    <Btn color={"blue"} onClick={() => this.editRedirect(i)}>Edit</Btn>
+                                    <Btn color={"blue"} onClick={() => this.editRedirect(i)}>Manage</Btn>
                                 </div>
                             </ListItem>
                         )}
@@ -80,7 +80,7 @@ class Applications extends React.Component {
                         {/*Create a new application*/}
                         <div className="app-create-container">
                             <Heading type={"h5"}>Create a new application</Heading>
-                            <Small>Add a new entity to the list of registered applications.</Small>
+                            <p className={"p-small"}>Add a new entity to the list of registered applications.</p>
                             <Btn color={"green"} className={"btn"} onClick={() => this.createRedirect()}>Create</Btn>
                         </div>
                         {/*List of all the applications*/}

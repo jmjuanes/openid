@@ -1,6 +1,6 @@
 import React from "react";
 import {request} from "@kofijs/request";
-import {Alert, Btn, Field, FieldLabel, Heading, Input, Small, Spinner} from "neutrine";
+import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Small, Spinner} from "neutrine";
 import {redirectHashbang as redirect} from "rouct";
 
 import "./styles.scss";
@@ -65,7 +65,7 @@ class Account extends React.Component {
     spinnerButton() {
         if (!this.state.modal.disableBtn) {
             return (
-                <Btn color={"red"} onClick={this.handleAccountDelete}>Delete my account</Btn>
+                <Btn color={"red"} fluid style={{marginTop: "10px"}} onClick={this.handleAccountDelete}>Delete my account</Btn>
             );
         } else {
             return (
@@ -213,7 +213,6 @@ class Account extends React.Component {
                 <div className="account-content">
                     {/*Title*/}
                     <Heading type={"h2"}>Account</Heading>
-                    <Heading type={"h5"}>Your personal information</Heading>
                     {/*Change password*/}
                     <div className="account-password-form">
                         <Heading type={"h5"}>Change password</Heading>
@@ -234,7 +233,9 @@ class Account extends React.Component {
                                    type={"password"}
                                    fluid={true}
                                    ref={this.ref.newPwdInput}/>
+                            <FieldHelper>Minimum 6 characters</FieldHelper>
                         </Field>
+
                         {/*Repeat pass input*/}
                         <Field>
                             <FieldLabel>Confirm new password</FieldLabel>
@@ -249,9 +250,9 @@ class Account extends React.Component {
                     {/*Delete account*/}
                     <div className="account-delete">
                         <Heading type={"h4"}>Delete account</Heading>
-                        <Small>Once you delete your account you can't get it back. Be certain about your
-                            decision.</Small>
-                        <Btn color={"grey"} className={"btn"} onClick={this.showModal}>Delete my account</Btn>
+                        <p className={"p-small"}>Once you delete your account you can't get it back. Be certain about
+                            your decision.</p>
+                        <Btn color={"red"} className={"btn"} onClick={this.showModal}>Delete my account</Btn>
                     </div>
                 </div>
             </div>
