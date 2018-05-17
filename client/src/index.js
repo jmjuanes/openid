@@ -10,6 +10,8 @@ import Register from "./pages/register/index.js";
 import {Spinner} from "neutrine";
 import Dashboard from "./pages/dashboard/index";
 
+import * as notification from "./notification.js";
+
 import "./styles.scss";
 
 
@@ -100,4 +102,7 @@ class Main extends React.Component {
 
 //Mount the app component
 ReactDOM.render(React.createElement(Main, {}), document.getElementById("root"));
+
+//Mount the notifications
+notification.init();
 
