@@ -55,7 +55,7 @@ class Toast extends React.Component {
         let self = this;
         let close = React.createElement(Close, {onClick: self.close}, null);
         let alert = React.createElement(Alert, {color: self.state.color}, close, self.state.text);
-        var myclass = [ 'toast' ];
+        var myclass = ["toast"];
         if (this.state.display === true) {
             myclass.push("toast--visible");
         }
@@ -65,7 +65,7 @@ class Toast extends React.Component {
 
 //Initialize the notification
 export function init () {
-    let parent = document.getElementById("notification");
+    let parent = document.getElementById("notifications");
     notification = ReactDOM.render(React.createElement(Toast, {}, null), parent);
 }
 
