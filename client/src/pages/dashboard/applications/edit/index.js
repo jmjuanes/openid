@@ -184,7 +184,7 @@ class EditApp extends Component {
         });
     }
 
-    // Render the modal to delete the account
+    // Render the modal to delete the application
     renderModal() {
         if (this.state.modal.show) {
             return (
