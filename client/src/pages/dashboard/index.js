@@ -10,6 +10,8 @@ import "./styles.scss";
 import Applications from "./applications/index";
 import EditApp from "./applications/edit/index";
 import CreateApp from "./applications/create/index";
+import Users from "./users/index";
+import EditUser from "./users/edit/index";
 
 
 class Dashboard extends React.Component {
@@ -63,16 +65,17 @@ class Dashboard extends React.Component {
         if (this.state.user.admin) {
             return (
                 <List>
-                    <ListItem onClick={() => {
+                    <ListItem className={"dash-menu-item"} onClick={() => {
                         this.dashboardRedirect("applications");
                     }}>
-                        <ListTitle>Applications</ListTitle>
+                        <ListTitle style={{marginBottom: "0px"}}>Applications</ListTitle>
                         <Small>Manage all the registered applications</Small>
                     </ListItem>
-                    <ListItem>
-                        <ListTitle>
-                            Other options
-                        </ListTitle>
+                    <ListItem className={"dash-menu-item"} onClick={() => {
+                        this.dashboardRedirect("users");
+                    }}>
+                        <ListTitle style={{marginBottom: "0px"}}>Users</ListTitle>
+                        <Small>Manage all the registered users</Small>
                     </ListItem>
                 </List>
             );
@@ -102,24 +105,24 @@ class Dashboard extends React.Component {
                                     {/*User panel*/}
                                     <div className="dash-menu-list">
                                         <List>
-                                            <ListItem onClick={() => {
+                                            <ListItem className={"dash-menu-item"} onClick={() => {
                                                 this.dashboardRedirect("");
                                             }}>
                                                 <ListTitle style={{marginBottom: "0px"}}>Profile</ListTitle>
                                                 <Small>Edit your personal info</Small>
                                             </ListItem>
-                                            <ListItem onClick={() => {
+                                            <ListItem className={"dash-menu-item"} onClick={() => {
                                                 this.dashboardRedirect("account");
                                             }}>
-                                                <ListTitle>Account</ListTitle>
+                                                <ListTitle style={{marginBottom: "0px"}}>Account</ListTitle>
                                                 <Small>Manage your account settings</Small>
                                             </ListItem>
-                                            <ListItem>
-                                                <ListTitle>Email</ListTitle>
+                                            <ListItem className={"dash-menu-item"}>
+                                                <ListTitle style={{marginBottom: "0px"}}>Email</ListTitle>
                                                 <Small>Edit your notifications settings</Small>
                                             </ListItem>
-                                            <ListItem>
-                                                <ListTitle>Authorized apps</ListTitle>
+                                            <ListItem className={"dash-menu-item"}>
+                                                <ListTitle style={{marginBottom: "0px"}}>Authorized apps</ListTitle>
                                                 <Small>Manage which applications can access your personal data</Small>
                                             </ListItem>
                                         </List>
@@ -150,6 +153,14 @@ class Dashboard extends React.Component {
                                         {/*Edit application route*/}
                                         <Router.Route exact path={"/dashboard/applications/:id"}
                                                       component={EditApp}
+                                                      props={{token: this.props.token, admin: this.state.user.admin}}/>
+                                        {/*Users route*/}
+                                        <Router.Route exact path={"/dashboard/users"}
+                                                      component={Users}
+                                                      props={{token: this.props.token, admin: this.state.user.admin}}/>
+                                        {/*Edit user route*/}
+                                        <Router.Route exact path={"/dashboard/users/:id"}
+                                                      component={EditUser}
                                                       props={{token: this.props.token, admin: this.state.user.admin}}/>
                                     </Router.Switch>
                                 </div>
