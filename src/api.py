@@ -78,6 +78,35 @@ class RouteUsers(webapp2.RequestHandler):
         # Return a JSON with the new user's info
         return user.getInfo(self, u)
 
+    # Get the list of all the users
+    def get(self):
+        # Only administrators authorized
+        # Extract the user token from the header
+        header = self.request.headers['Authorization']
+        t = token.extract(header)
+        if t is None:
+            return response.sendError(self, 400, 'Invalid authorization type')
+
+        # Decode the token
+        payload = token.decode(t, config.openid_secret, config.token_algorithm)
+        if payload is None:
+            return response.sendError(self, 401, 'Invalid authentication credentials')
+
+        if payload['is_admin'] is False:
+            return response.sendError(self, 401, 'Only allowed to administrators')
+
+        try:
+            # Get all the applications entities from the db
+            all = user.getAll()
+            users = []
+            for i in range(0, len(all)):
+                users.append({'id': all[i].key.id(), 'name': all[i].name})
+                # Retrieve more info if needed
+
+            response.sendJson(self, {'users': users})
+        except:
+            return response.sendError(self, 500, 'Users could not be retrieved')
+
 
 # Specific user route
 class RouteUsersById(webapp2.RequestHandler):
