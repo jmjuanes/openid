@@ -96,6 +96,7 @@ class Login extends React.Component {
             if (res.statusCode >= 300) {
                 return self.setState({error: body.message});
             }
+            // console.log(body.token);
             return self.props.saveToken(body.token);
         });
     }
