@@ -1,5 +1,9 @@
 import React from "react";
+import ReactDOM from "react-dom"; 
 import {Alert, Close} from "neutrine";
+
+//Mounted notification element
+let notification = null;
 
 //Toast class
 class Toast extends React.Component {
@@ -8,7 +12,6 @@ class Toast extends React.Component {
         this.state = {
             "color": "blue",
             "text": "Placeholder",
-            "time": 5000,
             "display": false,
         };
         this.timer = null;
@@ -26,10 +29,14 @@ class Toast extends React.Component {
 
     display(color, text, time) {
         let self = this;
+        //Check the time argument 
+        if (typeof time !== "number") {
+            time = 5000;
+        }
+        //Initialize the new state
         let newState = {
             "color": color,
             "text": text,
-            "time": time,
             "display": true
         };
         return this.setState(newState, function() {
@@ -39,34 +46,41 @@ class Toast extends React.Component {
             if (self.state.time !== -1) {    
                 self.timer = setTimeout(function () {
                     return self.close();
-                }, self.state.time);
+                }, time);
             }
         });
-    }
-
-    displayDone(text, time) {
-        return this.display("green", text, time);
-    }
-
-    displayWarning(text, time) {
-        return this.display("yellow", text, time);
-    }
-
-    displayError(text, time) {
-        return this.display("red", text, time);
     }
 
     render() {
         let self = this;
         let close = React.createElement(Close, {onClick: self.close}, null);
         let alert = React.createElement(Alert, {color: self.state.color}, close, self.state.text);
-        var myclass = [ 'mytoast' ];
+        var myclass = [ 'toast' ];
         if (this.state.display === true) {
-            myclass.push("up");
+            myclass.push("toast--visible");
         }
         return React.createElement("div", {"className": myclass.join(" ")}, alert);
     }
 }
 
+//Initialize the notification
+export function init () {
+    let parent = document.getElementById("notification");
+    notification = ReactDOM.render(React.createElement(Toast, {}, null), parent);
+}
 
+//Display an error alert
+export function error (text, time) {
+    return notification.display("error", text, time);
+}
+
+//Display a warning alert
+export function warning (text, time) {
+    return notification.display("warning", text, time);
+}
+
+//Display a success alert
+export function success (text, time) {
+    return notification.display("success", text, time);
+}
 
