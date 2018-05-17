@@ -36,9 +36,9 @@ class Applications extends React.Component {
             });
     }
 
-    // Redirect the user to edit the specific application
-    editRedirect(i) {
-        let url = "/dashboard/applications/" + this.state.applications[i].id;
+    // Redirect the admin to edit the specific application
+    editRedirect(item) {
+        let url = "/dashboard/applications/" + item.id;
         return redirect(url);
     }
 
@@ -56,25 +56,15 @@ class Applications extends React.Component {
             let customDetail = function (item) {
                 return "Application created on xxxxxxxxx";
             };
+            // Render the table
             return (
                 <div className="apps-list">
                     <Table data={this.state.applications} 
                         icon="application" 
                         actionText="Manage"
+                        onActionClick={this.editRedirect}
                         customTitle={customTitle} 
-                        customDetail={customDetail} />
-                    {/*
-                    <List>
-                        {this.state.applications.map((app, i) =>
-                            <ListItem key={i} className={"app-item"}>
-                                <div className={"app-title"}>{app.name}</div>
-                                <div className={"app-btn-group"}>
-                                    <Btn color={"blue"} onClick={() => this.editRedirect(i)}>Manage</Btn>
-                                </div>
-                            </ListItem>
-                        )}
-                    </List>
-                    */}
+                        customDetail={customDetail}/>
                 </div>
             );
         }
