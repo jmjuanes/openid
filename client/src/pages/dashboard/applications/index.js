@@ -5,6 +5,7 @@ import {
 } from "neutrine";
 import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
+import * as notification from "../../../commons/notification.js";
 
 import Table from "../../../components/table/index.js";
 
@@ -27,10 +28,10 @@ class Applications extends React.Component {
         request({url: "/api/applications", method: "get", json: true, auth: {bearer: localStorage.getItem("token")}},
             function (err, res, body) {
                 if (err) {
-                    return self.setState({error: err.message});
+                    return notification.error(err.message);
                 }
                 if (res.statusCode >= 300) {
-                    return self.setState({error: body.message});
+                    return notification.error(body.message);
                 }
                 return self.setState({applications: body.applications, ready: true});
             });
