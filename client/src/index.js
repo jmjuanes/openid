@@ -10,7 +10,7 @@ import Register from "./pages/register/index.js";
 import {Spinner} from "neutrine";
 import Dashboard from "./pages/dashboard/index";
 
-import * as notification from "./notification.js";
+import * as notification from "./commons/notification.js";
 
 import "./styles.scss";
 
