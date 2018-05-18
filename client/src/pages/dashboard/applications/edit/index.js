@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {request} from "@kofijs/request";
 import {Alert, Btn, Field, FieldLabel, Heading, Input, Small, Spinner} from "neutrine";
 import {redirectHashbang as redirect} from "rouct";
+import * as notification from "../../../../commons/notification.js";
 
 import "./styles.scss";
 
@@ -10,12 +11,9 @@ class EditApp extends Component {
         super(props);
         this.state = {
             app: {},
-            error: null,
             ready: false,
-            done: null,
             modal: {
                 show: false,
-                error: null,
                 disableBtn: false
             }
         };
@@ -27,13 +25,11 @@ class EditApp extends Component {
         };
         this.text_confirm = "Yes, delete this app";
 
-        this.renderAlert = this.renderAlert.bind(this);
         this.updateApp = this.updateApp.bind(this);
 
         // Functions from the modal
         this.showModal = this.showModal.bind(this);
         this.renderModal = this.renderModal.bind(this);
-        this.renderErrorModal = this.renderErrorModal.bind(this);
         this.spinnerButton = this.spinnerButton.bind(this);
         this.handleAppDelete = this.handleAppDelete.bind(this);
     }
@@ -42,12 +38,17 @@ class EditApp extends Component {
         let self = this;
         // Get the id from the params object of the request
         let url = "/api/applications/" + this.props.request.params.id;
-        request({url: url, method: "get", json: true, auth: {bearer: localStorage.getItem("token")}}, function (err, res, body) {
+        request({
+            url: url,
+            method: "get",
+            json: true,
+            auth: {bearer: localStorage.getItem("token")}
+        }, function (err, res, body) {
             if (err) {
-                return self.setState({error: err.message, done: null});
+                return notification.error(err.message);
             }
             if (res.statusCode >= 300) {
-                return self.setState({error: body.message, done: null});
+                return notification.error(body.message);
             }
             self.setState({
                 app: {
@@ -62,36 +63,11 @@ class EditApp extends Component {
         });
     }
 
-    // Render the alert if there's an error
-    renderAlert() {
-        if (this.state.error) {
-            return (
-                <Alert color={"red"}>{this.state.error}</Alert>
-            );
-        } else if (this.state.done) {
-            return (
-                <Alert color={"green"}>{this.state.done}</Alert>
-            );
-        }
-    }
-
-    // Display the modal error message
-    renderErrorModal() {
-        if (this.state.modal.error) {
-            return (
-                <Alert color={"red"} className={"modal-error"}>
-                    {this.state.modal.error}
-                </Alert>
-            )
-        }
-    }
-
     // Show or hide the modal
     showModal() {
         this.setState({
             modal: {
                 show: !this.state.modal.show,
-                error: null,
                 disableBtn: false
             }
         });
@@ -115,25 +91,33 @@ class EditApp extends Component {
         let self = this;
 
         // Block the button meanwhile
-        this.setState({modal: {error: null, show: true, disableBtn: true}});
+        this.setState({modal: {show: true, disableBtn: true}});
         // Check text before calling the api
         if (this.ref.modalConfirm.current.value !== this.text_confirm) {
+            notification.warning("Please type the exact confirmation text");
             return this.setState({
-                modal: {
-                    error: "Please type the exact confirmation text",
-                    show: true,
-                    disableBtn: false
-                }
+                modal: {show: true, disableBtn: false}
             });
         }
 
         let url = "/api/applications/" + this.state.app.id;
-        request({url: url, method: "delete", json: true, auth: {bearer: localStorage.getItem("token")}}, function (err, res, body) {
+        request({
+            url: url,
+            method: "delete",
+            json: true,
+            auth: {bearer: localStorage.getItem("token")}
+        }, function (err, res, body) {
             if (err) {
-                return self.setState({modal: {error: err.message, show: true, disableBtn: false}});
+                notification.error(err.message);
+                return this.setState({
+                    modal: {show: true, disableBtn: false}
+                });
             }
             if (res.statusCode >= 300) {
-                return self.setState({modal: {error: body.message, show: true, disableBtn: false}});
+                notification.error(body.message);
+                return this.setState({
+                    modal: {show: true, disableBtn: false}
+                });
             }
             return redirect("/dashboard/applications");
         });
@@ -149,11 +133,11 @@ class EditApp extends Component {
         };
         // Check that all the info is new
         if (info.name === this.state.app.name && info.detail === this.state.app.detail && info.redirect === this.state.app.redirect) {
-            return this.setState({error: "Change the app information before submitting", done: null});
+            return notification.warning("Change the app information before submitting");
         }
         // Check that there aren't empty fields
         if (info.name.length === 0 || info.detail.length === 0 || info.redirect.length === 0) {
-            return this.setState({error: "No field can be empty", done: null});
+            return notification.warning("No field can be empty");
         }
 
         let url = "/api/applications/" + this.props.request.params.id;
@@ -165,21 +149,21 @@ class EditApp extends Component {
             auth: {bearer: localStorage.getItem("token")}
         }, function (err, res, body) {
             if (err) {
-                return self.setState({error: err.message, done: null});
+                return notification.error(err.message);
             }
             if (res.statusCode >= 300) {
-                return self.setState({error: body.message, done: null});
+                return notification.error(body.message);
             }
             // Set the new info
+            notification.success("Application updated successfully");
             return self.setState({
                 app: {
                     id: self.state.app.id,
                     name: body.name,
                     detail: body.detail,
-                    redirect: body.redirect
-                },
-                done: "Application information successfully updated",
-                error: null
+                    redirect: body.redirect,
+                    secret: self.state.app.secret
+                }
             });
         });
     }
@@ -192,7 +176,6 @@ class EditApp extends Component {
                     <div className={"modal-content"}>
                         <span className="modal-hide" onClick={() => this.showModal()}>&times;</span>
                         <Heading type={"h4"} className={"modal-title"}>Are you sure?</Heading>
-                        {this.renderErrorModal()}
                         <p className="siimple-p">After you confirm this action, all the information related to this
                             application will be removed, and the list of users that allowed it to access their
                             information will be lost. This action can not be undone.</p>
@@ -212,7 +195,7 @@ class EditApp extends Component {
 
     render() {
         if (!this.props.admin) {
-            return(
+            return (
                 <Alert color={"red"}>You must be an administrator to access this route.</Alert>
             );
         }
@@ -233,8 +216,6 @@ class EditApp extends Component {
                         {/*Form title*/}
                         <Heading type={"h5"}>Manage the application information</Heading>
                         <div className="edit-app-form">
-                            {/*Done/error message*/}
-                            {this.renderAlert()}
                             {/*Name input*/}
                             <Field>
                                 <FieldLabel>Application name</FieldLabel>
@@ -279,7 +260,8 @@ class EditApp extends Component {
                         {/*Delete application*/}
                         <div className="edit-app-delete">
                             <Heading type={"h5"}>Delete the application</Heading>
-                            <p className={"p-small"}>Once the application is deleted all its information will be permanently removed.
+                            <p className={"p-small"}>Once the application is deleted all its information will be
+                                permanently removed.
                             </p>
                             <Btn color={"grey"} className={"btn"} onClick={() => this.showModal()}>Delete
                                 application</Btn>
