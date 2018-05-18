@@ -2,6 +2,7 @@ import React from "react";
 import {Heading, Alert, Field, FieldLabel, FieldHelper, Input, Btn} from "neutrine";
 import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
+import * as notification from "../../commons/notification.js";
 
 import "./styles.scss";
 import Captcha from "../../components/captcha/index.js";
@@ -9,9 +10,6 @@ import Captcha from "../../components/captcha/index.js";
 class Login extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            error: null
-        };
         this.ref = {
             emailInput: React.createRef(),
             pwdInput: React.createRef(),
@@ -26,27 +24,12 @@ class Login extends React.Component {
 
     // Callback for the captcha in case of error
     captchaError() {
-        return (
-            <Alert color={"red"} className={"register-error"}>
-                Captcha validation error
-            </Alert>
-        );
+        return notification.error("Captcha validation error");
     }
 
     // Redirect to the login when register is successful
     redirectLogin() {
         return redirect("/register");
-    }
-
-    // Display the error message
-    renderError() {
-        if (this.state.error) {
-            return (
-                <Alert color={"red"} className={"login-error"}>
-                    {this.state.error}
-                </Alert>
-            )
-        }
     }
 
     // Display the register link
@@ -67,34 +50,30 @@ class Login extends React.Component {
     // Try to login with the information provided
     handleSignInClick() {
         let self = this;
-
         // User login info
         let credentials = {
             email: this.ref.emailInput.current.value,
             pwd: this.ref.pwdInput.current.value
         };
-
-
         // If the captcha is enabled check it
         if (this.props.captcha_enabled) {
             credentials = Object.assign({recaptcha: this.ref.captchaInput.current.getResponse()}, credentials);
         }
         // Check for a valid email
         if (credentials.email.indexOf("@") === -1) {
-            return this.setState({error: "Invalid email provided"});
+            return notification.warning("Invalid email provided");
         }
         // Check the password
         if (credentials.pwd.length < 6) {
-            return this.setState({error: "Invalid password"});
+            return notification.warning("Invalid password");
         }
-
         // Do the request
-        request({url: "/api/login", method: "post", json: true, body: credentials}, function (error, res, body) {
-            if (error) {
-                return self.setState({error: error.message});
+        request({url: "/api/login", method: "post", json: true, body: credentials}, function (err, res, body) {
+            if (err) {
+                return notification.error(err.message);
             }
             if (res.statusCode >= 300) {
-                return self.setState({error: body.message});
+                return notification.error(body.message);
             }
             // console.log(body.token);
             return self.props.saveToken(body.token);
@@ -110,8 +89,6 @@ class Login extends React.Component {
                     <b> {this.props.openid_name}</b></div>
                 {/*Form*/}
                 <div id="login-form">
-                    {/*Error message*/}
-                    {this.renderError()}
                     {/*Email input*/}
                     <Field>
                         <FieldLabel>Email</FieldLabel>
