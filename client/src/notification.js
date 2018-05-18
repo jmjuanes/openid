@@ -16,9 +16,6 @@ class Toast extends React.Component {
         };
         this.timer = null;
         //Bind methods
-        this.displayDone = this.displayDone.bind(this);
-        this.displayWarning = this.displayWarning.bind(this);
-        this.displayError = this.displayError.bind(this);
         this.close = this.close.bind(this);
     }
 
