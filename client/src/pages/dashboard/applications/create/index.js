@@ -5,6 +5,7 @@ import {
 } from "neutrine";
 import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
+import * as notification from "../../../../commons/notification.js";
 
 import "./styles.scss";
 
@@ -21,20 +22,6 @@ class CreateApp extends Component {
             redirectInput: React.createRef()
         };
         this.handleCreateApp = this.handleCreateApp.bind(this);
-        this.renderAlert = this.renderAlert.bind(this);
-    }
-
-    // Render the alert if there's an error
-    renderAlert() {
-        if (this.state.error) {
-            return (
-                <Alert color={"red"}>{this.state.error}</Alert>
-            );
-        } else if (this.state.done) {
-            return (
-                <Alert color={"green"}>{this.state.done}</Alert>
-            );
-        }
     }
 
     // Create a new application
@@ -47,10 +34,10 @@ class CreateApp extends Component {
         };
         // Check that there aren't empty fields
         if (info.name.length === 0 || info.detail.length === 0 || info.redirect.length === 0) {
-            return this.setState({error: "No field can be empty", done: null});
+            return notification.warning("No field can be empty");
         }
         if (info.redirect.indexOf(".") === -1) {
-            return this.setState({error: "Invalid URL", done: null});
+            return notification.warning("Invalid URL");
         }
 
         request({
@@ -61,16 +48,16 @@ class CreateApp extends Component {
             auth: {bearer: localStorage.getItem("token")}
         }, function (err, res, body) {
             if (err) {
-                return self.setState({error: err.message, done: null});
+                return notification.error(err.message);
             }
             if (res.statusCode >= 300) {
-                return self.setState({error: body.message, done: null});
+                return notification.error(body.message);
             }
             // Reset the fields
             self.ref.nameInput.current.value = "";
             self.ref.detailInput.current.value = "";
             self.ref.redirectInput.current.value = "";
-            return self.setState({error: null, done: "Application successfully created"});
+            return notification.success("Application successfully created");
         });
     }
 
@@ -88,8 +75,6 @@ class CreateApp extends Component {
                     <Paragraph>Please check that all fields are correct before submitting.</Paragraph>
                     {/*Form to create an app*/}
                     <div className="create-app-form">
-                        {/*Alert*/}
-                        {this.renderAlert()}
                         {/*Name input*/}
                         <Field>
                             <FieldLabel>Name of the application</FieldLabel>
