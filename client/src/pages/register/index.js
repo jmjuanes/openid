@@ -2,6 +2,7 @@ import React from "react";
 import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input} from "neutrine";
 import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
+import * as notification from "../../commons/notification.js";
 
 import './styles.scss';
 import Captcha from "../../components/captcha/index.js";
@@ -11,7 +12,6 @@ class Register extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            error: null,
             done: false
         };
         this.ref = {
@@ -27,24 +27,9 @@ class Register extends React.Component {
         this.redirectRegister = this.redirectRegister.bind(this);
     }
 
-    // Display the error message
-    renderError() {
-        if (this.state.error) {
-            return (
-                <Alert color={"red"} className={"register-error"}>
-                    {this.state.error}
-                </Alert>
-            );
-        }
-    }
-
     // Callback for the captcha in case of error
     captchaError() {
-        return (
-            <Alert color={"red"} className={"register-error"}>
-                Captcha validation error
-            </Alert>
-        );
+        return notification.error("Captcha validation error");
     }
 
     // Register the user with the provided info
@@ -61,25 +46,25 @@ class Register extends React.Component {
         }
         // Check if the email is valid
         if (credentials.email.indexOf("@") === -1) {
-            return this.setState({error: "Invalid email provided"});
+            return notification.warning("Invalid email provided");
         }
         // Check if the password is valid
         if (credentials.pwd.length < 6) {
-            return this.setState({error: "Invalid password"})
+            return notification.warning("Invalid password");
         }
         // Check if passwords match
         if (credentials.pwd !== this.ref.pwdRepeatInput.current.value) {
-            return this.setState({error: "Passwords don't match"});
+            return notification.warning("Passwords don't match");
         }
 
         // Do the request
         request({url: "/api/users", method: "post", json: true, body: credentials},
             function (err, res, body) {
                 if (err) {
-                    return self.setState({error: err.message});
+                    return notification.error(err.message);
                 }
                 if (res.statusCode >= 300) {
-                    return self.setState({error: body.message});
+                    return notification.error(body.message);
                 }
                 // Show the successful register view
                 return self.setState({done: true});
@@ -119,8 +104,6 @@ class Register extends React.Component {
                     </div>
                     {/*Form*/}
                     <div className={"register-form"}>
-                        {/*Error*/}
-                        {this.renderError()}
                         {/*Name input*/}
                         <Field>
                             <FieldLabel>Name</FieldLabel>
