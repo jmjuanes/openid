@@ -2,22 +2,20 @@ import React from "react";
 import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Paragraph, Spinner} from "neutrine";
 import {request} from "@kofijs/request";
 
+import * as notification from "../../../commons/notification.js";
 import "./styles.scss";
 
 class Profile extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            user: null,
-            error: null,
-            done: null
+            user: null
         };
         this.ref = {
             nameInput: React.createRef()
         };
 
         this.handleInfoChange = this.handleInfoChange.bind(this);
-        this.renderAlert = this.renderAlert.bind(this);
     }
 
     // Get the user info using his access token
@@ -28,10 +26,10 @@ class Profile extends React.Component {
         request({url: "/api/user", method: "get", json: true, auth: {bearer: localStorage.getItem("token")}},
             function (err, res, body) {
                 if (err) {
-                    return self.setState({error: err.message});
+                    return notification.error(err.message);
                 }
                 if (res.statusCode >= 300) {
-                    return self.setState({error: body.message});
+                    return notification.error(body.message);
                 }
                 return self.setState({
                     user: {
@@ -43,19 +41,6 @@ class Profile extends React.Component {
             });
     }
 
-    // Render the alert if there's an error
-    renderAlert() {
-        if (this.state.error) {
-            return (
-                <Alert color={"red"}>{this.state.error}</Alert>
-            );
-        } else if (this.state.done) {
-            return (
-                <Alert color={"green"}>{this.state.done}</Alert>
-            );
-        }
-    }
-
     // Updates the user's information
     handleInfoChange() {
         let self = this;
@@ -63,7 +48,7 @@ class Profile extends React.Component {
             name: this.ref.nameInput.current.value
         };
         if (credentials.name === this.state.user.name) {
-            return this.setState({error: "Change the info before submitting", done: null});
+            return notification.warning("Change the info before submitting");
         }
 
         request({
@@ -74,20 +59,19 @@ class Profile extends React.Component {
             auth: {bearer: localStorage.getItem("token")}
         }, function (err, res, body) {
             if (err) {
-                return self.setState({error: err.message, done: null});
+                return notification.error(body.message);
             }
             if (res.statusCode >= 300) {
-                return self.setState({error: body.message, done: null});
+                return notification.error(body.message);
             }
+            notification.success("Information updated successfully");
             return self.setState({
                 // React only respects the 1st level: update the whole user
                 user: {
                     name: body.name,
                     id: self.state.user.id,
                     email: self.state.user.email
-                },
-                error: null,
-                done: "Information updated successfully"
+                }
             });
         });
     }
@@ -106,8 +90,6 @@ class Profile extends React.Component {
                     <Paragraph>This is your public user information.</Paragraph>
                     {/*User info*/}
                     <div className={"profile-form"}>
-                        {/*Done/error message*/}
-                        {this.renderAlert()}
                         {/*Name input*/}
                         <Field>
                             <FieldLabel>Name</FieldLabel>

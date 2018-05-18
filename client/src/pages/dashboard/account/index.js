@@ -2,6 +2,7 @@ import React from "react";
 import {request} from "@kofijs/request";
 import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Paragraph, Small, Spinner} from "neutrine";
 import {redirectHashbang as redirect} from "rouct";
+import * as notification from "../../../commons/notification.js";
 
 import "./styles.scss";
 
@@ -9,11 +10,8 @@ class Account extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            error: null,
-            done: null,
             modal: {
                 show: false,
-                error: null,
                 disableBtn: false
             }
         };
@@ -29,36 +27,10 @@ class Account extends React.Component {
 
         // Bind functions
         this.handlePwdUpdate = this.handlePwdUpdate.bind(this);
-        this.renderAlert = this.renderAlert.bind(this);
-        this.renderErrorModal = this.renderErrorModal.bind(this);
         this.renderModal = this.renderModal.bind(this);
         this.showModal = this.showModal.bind(this);
         this.handleAccountDelete = this.handleAccountDelete.bind(this);
         this.spinnerButton = this.spinnerButton.bind(this);
-    }
-
-    // Display the modal error message
-    renderErrorModal() {
-        if (this.state.modal.error) {
-            return (
-                <Alert color={"red"} className={"modal-error"}>
-                    {this.state.modal.error}
-                </Alert>
-            )
-        }
-    }
-
-    // Render the alert if there's an error
-    renderAlert() {
-        if (this.state.error) {
-            return (
-                <Alert color={"red"}>{this.state.error}</Alert>
-            );
-        } else if (this.state.done) {
-            return (
-                <Alert color={"green"}>{this.state.done}</Alert>
-            );
-        }
     }
 
     // Render the delete button/spinner
@@ -79,7 +51,6 @@ class Account extends React.Component {
         this.setState({
             modal: {
                 show: !this.state.modal.show,
-                error: null,
                 disableBtn: false
             }
         });
@@ -94,7 +65,6 @@ class Account extends React.Component {
                     <div className={"modal-content"}>
                         <span className="modal-hide" onClick={this.showModal}>&times;</span>
                         <Heading type={"h4"} className={"modal-title"}>Are you sure?</Heading>
-                        {this.renderErrorModal()}
                         <p className="siimple-p">After you confirm this action we will delete permanently all your
                             information from our database. You'll have to create a new account to access this
                             application
@@ -134,13 +104,13 @@ class Account extends React.Component {
             repeat_pwd: this.ref.repeatPwdInput.current.value
         };
         if (credentials.new_pwd !== credentials.repeat_pwd) {
-            return this.setState({error: "Passwords do not match", done: null});
+            return notification.warning("Passwords do not match");
         }
         if (credentials.new_pwd.length < 6) {
-            return this.setState({error: "Please use a 6 characters passwords", done: null});
+            return notification.warning("Please use a 6 character password");
         }
         if (credentials.new_pwd === credentials.old_pwd) {
-            return this.setState({error: "New and old passwords cannot be the same", done: null})
+            return notification.warning("New and old passwords cannot be the same");
         }
 
         request({
@@ -152,20 +122,20 @@ class Account extends React.Component {
             },
             function (err, res, body) {
                 if (err) {
-                    return self.setState({error: err.message, done: null});
+                    return notification.error(err.message);
                 }
                 if (res.statusCode >= 300) {
-                    return self.setState({error: body.message, done: null});
+                    return notification.error(body.message);
                 }
                 self.ref.oldPwdInput.current.value = "";
                 self.ref.newPwdInput.current.value = "";
                 self.ref.repeatPwdInput.current.value = "";
-                return self.setState({done: "Password updated successfully", error: null});
+                return notification.success("Password updated successfully");
             });
     }
 
     handleAccountDelete() {
-        this.setState({modal: {show: true, error: null, disableBtn: true}});
+        this.setState({modal: {show: true, disableBtn: true}});
         let self = this;
         let info = {
             email: this.ref.deleteEmail.current.value,
@@ -173,19 +143,16 @@ class Account extends React.Component {
             pwd: this.ref.deletePwd.current.value
         };
         if (info.text !== this.text_confirm) {
-            return this.setState({
-                modal: {
-                    show: true,
-                    error: "Please, type the exact confirmation text",
-                    disableBtn: false
-                }
-            });
+            this.setState({modal: {show: true, disableBtn: false}});
+            return notification.warning(("Type the exact confirmation text"))
         }
         if (info.email.indexOf("@") === -1) {
-            return this.setState({modal: {show: true, error: "Enter a valid email", disableBtn: false}});
+            this.setState({modal: {show: true, disableBtn: false}});
+            return notification.warning("Enter a valid email");
         }
         if (info.pwd.length < 6) {
-            return this.setState({modal: {show: true, error: "Enter a valid password", disableBtn: false}});
+            this.setState({modal: {show: true, disableBtn: false}});
+            return notification.warning("Enter a valid password");
         }
         request({
                 url: "/api/user/delete",
@@ -196,10 +163,12 @@ class Account extends React.Component {
             },
             function (err, res, body) {
                 if (err) {
-                    return self.setState({modal: {show: true, error: err.message, disableBtn: false}});
+                    self.setState({modal: {show: true, disableBtn: false}});
+                    return notification.error(err.message);
                 }
                 if (res.statusCode >= 300) {
-                    return self.setState({modal: {show: true, error: body.message, disableBtn: false}});
+                    self.setState({modal: {show: true, disableBtn: false}});
+                    return notification.error(body.message);
                 }
                 return redirect("/login");
             });
@@ -216,8 +185,6 @@ class Account extends React.Component {
                     {/*Change password*/}
                     <div className="account-password-form">
                         <Heading type={"h5"}>Change password</Heading>
-                        {/*Done/error message*/}
-                        {this.renderAlert()}
                         {/*Old pass input*/}
                         <Field>
                             <FieldLabel>Old password</FieldLabel>
