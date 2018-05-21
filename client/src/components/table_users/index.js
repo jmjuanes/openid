@@ -19,11 +19,10 @@ export default class TableUsers extends React.Component {
 
     handleActiveClick(e) {
         let index = String(e.nativeEvent.target.dataset.index);
-
+        // Check whether if the checkbox is checked or not
         let isChecked = typeof this.state.checked[index] !== "undefined" && this.state.checked[index] !== false;
-
+        // Create an object with the changes in the checkbox (dynamic key)
         let obj = Object.assign(this.state.checked, {[index]: !isChecked});
-
         this.setState({
             checked: obj
         });
