@@ -100,7 +100,11 @@ class RouteUsers(webapp2.RequestHandler):
             all = user.getAll()
             users = []
             for i in range(0, len(all)):
-                users.append({'id': all[i].key.id(), 'name': all[i].name})
+                users.append({'id': all[i].key.id(),
+                              'name': all[i].name,
+                              'email': all[i].email,
+                              'is_active': all[i].is_active,
+                              'is_admin': all[i].is_admin})
                 # Retrieve more info if needed
 
             response.sendJson(self, {'users': users})
@@ -118,42 +122,78 @@ class RouteUsersById(webapp2.RequestHandler):
 
         return user.getInfo(self, u)
 
-        # Delete a user
-        # def delete(self, user_id):
-        #     u = user.get(id=user_id)
-        #     if u is None:
-        #         return response.sendError(self, 404, 'This user does not exist')
-        #
-        #     try:
-        #         u.key.delete()
-        #         return user.getInfo(self, u)
-        #     except:
-        #         return response.sendError(self, 500, 'The user could not be deleted')
-        #
-        # # Modify user info
-        # def put(self, user_id):
-        #     # Parse the body to JSON
-        #     try:
-        #         data = json.loads(self.request.body)
-        #     except:
-        #         return response.sendError(self, 400, 'Bad request')
-        #
-        #     # Edit the user information
-        #     u = user.get(id=user_id)
-        #     if u is None:
-        #         return response.sendError(self, 404, 'This user does not exist')
-        #
-        #     # Update the info
-        #     # if isinstance(data['is_active'], bool):
-        #     #     u.is_active = data['is_active']
-        #     if isinstance(data['name'], basestring):
-        #         u.name = data['name']
-        #
-        #     try:
-        #         u.put()
-        #         return user.getInfo(self, u)
-        #     except:
-        #         return response.sendError(self, 500, 'The user could not be modified')
+    # # Delete a user
+    # def delete(self, user_id):
+    #     # Parse the body to JSON
+    #     try:
+    #         data = json.loads(self.request.body)
+    #     except:
+    #         return response.sendError(self, 400, 'Bad request')
+    #     # Only administrators authorized
+    #     # Extract the user token from the header
+    #     header = self.request.headers['Authorization']
+    #     t = token.extract(header)
+    #     if t is None:
+    #         return response.sendError(self, 400, 'Invalid authorization type')
+    #
+    #     # Decode the token
+    #     payload = token.decode(t, config.openid_secret, config.token_algorithm)
+    #     if payload is None:
+    #         return response.sendError(self, 401, 'Invalid authentication credentials')
+    #
+    #     if payload['is_admin'] is False:
+    #         return response.sendError(self, 401, 'Only allowed to administrators')
+    #
+    #     u = user.get(id=user_id)
+    #     if u is None:
+    #         return response.sendError(self, 404, 'This user does not exist')
+    #
+    #     try:
+    #         u.key.delete()
+    #         return user.getInfo(self, u)
+    #     except:
+    #         return response.sendError(self, 500, 'The user could not be deleted')
+
+    # Modify user info
+    def put(self, user_id):
+        # Parse the body to JSON
+        try:
+            data = json.loads(self.request.body)
+        except:
+            return response.sendError(self, 400, 'Bad request')
+
+        # Only administrators authorized
+        # Extract the user token from the header
+        header = self.request.headers['Authorization']
+        t = token.extract(header)
+        if t is None:
+            return response.sendError(self, 400, 'Invalid authorization type')
+
+        # Decode the token
+        payload = token.decode(t, config.openid_secret, config.token_algorithm)
+        if payload is None:
+            return response.sendError(self, 401, 'Invalid authentication credentials')
+
+        if payload['is_admin'] is False:
+            return response.sendError(self, 401, 'Only allowed to administrators')
+
+        # Edit the user information
+        u = user.get(id=user_id)
+        if u is None:
+            return response.sendError(self, 404, 'This user does not exist')
+
+        # Update the info
+        # if isinstance(data['is_active'], bool):
+        u.is_active = data['is_active']
+        u.is_admin = data['is_admin']
+        # if isinstance(data['name'], basestring):
+        #     u.name = data['name']
+
+        try:
+            u.put()
+            return user.getInfo(self, u)
+        except:
+            return response.sendError(self, 500, 'The user could not be modified')
 
 
 # User over his own information route
