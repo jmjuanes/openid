@@ -181,9 +181,9 @@ class Users extends Component {
         if(this.textConfirm !== this.ref.deleteConfirm.current.value){
             return notification.warning("Type the exact confirmation text");
         }
-        let url = "/api/users/" + this.modal.user.id;
+        let url = "/api/users/" + this.state.modal.user.id;
         //Do the request
-        request({url: url, method: "delete", json: true},
+        request({url: url, method: "delete", json: true, auth: {bearer: localStorage.getItem("token")}},
             function(err, res, body){
                 if (err) {
                     return notification.error(err.message);
