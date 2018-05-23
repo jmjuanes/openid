@@ -27,6 +27,7 @@ class Users extends Component {
 
         this.showModal = this.showModal.bind(this);
         this.updateUser = this.updateUser.bind(this);
+        this.deleteUser = this.deleteUser.bind(this);
     }
 
     componentWillMount() {
@@ -61,7 +62,7 @@ class Users extends Component {
                 return item.name;
             };
             let customDetail = function (item) {
-                return "User registered on xxxxxxxxx";
+                return item.email;
             };
             // Render the table
             return (
@@ -135,7 +136,7 @@ class Users extends Component {
                                        type={"text"}
                                        ref={this.ref.deleteConfirm}/>
                             </Field>
-                            <Btn color={"red"} fluid>Delete user</Btn>
+                            <Btn color={"red"} fluid onClick={this.deleteUser}>Delete user</Btn>
                         </div>
                     </div>
                 );
@@ -170,6 +171,28 @@ class Users extends Component {
                         show: false
                     }
                 });
+            });
+    }
+
+    //Delete the user
+    deleteUser(){
+        let self = this;
+        //Check the text confirmation
+        if(this.textConfirm !== this.ref.deleteConfirm.current.value){
+            return notification.warning("Type the exact confirmation text");
+        }
+        let url = "/api/users/" + this.modal.user.id;
+        //Do the request
+        request({url: url, method: "delete", json: true},
+            function(err, res, body){
+                if (err) {
+                    return notification.error(err.message);
+                }
+                if (res.statusCode >= 300) {
+                    return notification.error(body.message);
+                }
+                notification.success("The user was deleted successfully");
+                return redirect("/dashboard/users");
             });
     }
 
