@@ -1,5 +1,5 @@
 import React from "react";
-import {Btn, Checkbox} from "neutrine";
+import {Btn, Checkbox, Tag} from "neutrine";
 
 import "./style.scss";
 
@@ -40,14 +40,38 @@ export default class TableUsers extends React.Component {
         return h("div", {className: "table-cell table-cell--primary"}, title, detail);
     }
 
-    renderItemAction(item, index) {
-        let checkboxProps = {
-            onChange: this.handleActiveClick,
-            defaultChecked: false,
-            "data-index": index.toString()
+    renderItemActive(item, index){
+        let tagProps = {"className": "table-active-tag"};
+        let tagText;
+        if(item.is_active){
+            tagProps.color = "green";
+            tagText = "Active";
+        } else {
+            tagProps.color = "light";
+            tagText = "Inactive";
+        }
+        let tag = h(Tag, tagProps, tagText);
+        return h("div", {className: "table-cell"}, tag);
+    }
+
+    renderEditBtn(item, index){
+        let self = this;
+        let btnProps = {
+            "onClick": ()=> self.props.editUser(item, "edit"),
+            "className": "table-btn table-btn--edit"
         };
-        let checkbox = h(Checkbox, checkboxProps);
-        return h("div", {className: "table-cell"}, checkbox);
+        let button = h("div", btnProps);
+        return h("div", {className: "table-cell"}, button);
+    }
+
+    renderDeleteBtn(item, index){
+        let self = this;
+        let btnProps = {
+            "onClick": ()=> self.props.editUser(item, "delete"),
+            "className": "table-btn table-btn--delete"
+        };
+        let button = h("div", btnProps);
+        return h("div", {className: "table-cell"}, button);
     }
 
     render() {
@@ -56,13 +80,15 @@ export default class TableUsers extends React.Component {
         let children = this.props.data.map(function (item, index) {
             let itemContent = self.renderItemContent(item, index);
             let itemLogo = self.renderItemLogo(item, index);
-            let itemAction = self.renderItemAction(item, index);
+            let itemActive = self.renderItemActive(item, index);
+            let itemEditBtn = self.renderEditBtn(item, index);
+            let itemDeleteBtn = self.renderDeleteBtn(item, index);
             let itemProps = {
                 "className": "table-item",
                 "key": index
             };
             //Return the item element
-            return h("div", itemProps, itemLogo, itemContent, itemAction);
+            return h("div", itemProps, itemLogo, itemContent, itemActive, itemEditBtn, itemDeleteBtn);
         });
         //Return the applications table
         return h("div", {className: "table"}, children);
