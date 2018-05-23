@@ -9,6 +9,7 @@
         display: table;
         padding-top: 15px !important;
         padding-bottom: 15px !important;
+        padding-right: 15px !important;
         border-top: 1px solid $siimple-grey;
         &:last-child {
             border-bottom: 1px solid $siimple-grey;
@@ -56,5 +57,37 @@
             background-image: url('./img/user.png');
         }
     }
+    //Table buttons
+    &-btn {
+        width: 20px;
+        height: 20px;
+        //background-color: $siimple-navy-light;
+        background-size: 20px 20px;
+        background-repeat: no-repeat;
+        background-position: center;
+        &:hover{
+            cursor: pointer;
+        }
+        //Edit button
+        &--edit {
+            background-image: url('./img/edit.png');
+            margin-right: 5px;
+        }
+        //Delete button
+        &--delete {
+            background-image: url('./img/delete.png');
+        }
+    }
 }
 
+.table-users-buttons {
+    margin-bottom: 1em;
+}
+
+.table-users-buttons div {
+    margin-right: 0.5em;
+}
+
+.table-active-tag {
+    margin-right: 20px;
+}
