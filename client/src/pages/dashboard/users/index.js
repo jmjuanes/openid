@@ -45,11 +45,12 @@ class Users extends Component {
     }
 
     //Show the modal and set the user to display
-    showModal(item, action) {
+    showModal(item, index, action) {
         this.setState({
             modal: {
                 show: !this.state.modal.show,
                 user: item,
+                index: index,
                 action: action
             }
         });
@@ -67,10 +68,6 @@ class Users extends Component {
             // Render the table
             return (
                 <div className="users-list">
-                    <div className="table-users-buttons">
-                        <Btn color={"green"}>Activate</Btn>
-                        <Btn color={"light"} onClick={this.test}>Deactivate</Btn>
-                    </div>
                     <TableUsers data={this.state.users}
                                 icon="user"
                                 editUser={this.showModal}
@@ -85,15 +82,17 @@ class Users extends Component {
     renderModal() {
         if (this.state.modal.show) {
             if (this.state.modal.action === "edit") {
+                //Prepare the tag and the initial state of the switch
                 let info = this.state.modal.user.is_active ?
                     {color: "green", text: "Active", switch: true} :
                     {color: "light", text: "Inactive", switch: false};
+                //To set the default select value
                 info.role = this.state.modal.user.is_admin ? "admin" : "user";
                 return (
                     <div className="modal">
                         <div className={"modal-content"}>
                             {/*Close button*/}
-                            <span className="modal-hide" onClick={() => this.showModal(null, null)}>&times;</span>
+                            <span className="modal-hide" onClick={() => this.showModal(null, null, null)}>&times;</span>
                             {/*Title*/}
                             <Heading type={"h4"} className={"modal-title"}>Edit user</Heading>
                             {/*Subtitle*/}
@@ -115,7 +114,7 @@ class Users extends Component {
                             {/*Buttons*/}
                             <div className="modal-btn-section">
                                 <Btn color={"blue"} onClick={this.updateUser}>Save</Btn>
-                                <Btn color={"light"} onClick={() => this.showModal(null, null)}>Cancel</Btn>
+                                <Btn color={"light"} onClick={() => this.showModal(null, null, null)}>Cancel</Btn>
                             </div>
                         </div>
                     </div>
@@ -125,7 +124,7 @@ class Users extends Component {
                 return (
                     <div className="modal">
                         <div className={"modal-content"}>
-                            <span className="modal-hide" onClick={() => this.showModal(null, null)}>&times;</span>
+                            <span className="modal-hide" onClick={() => this.showModal(null, null, null)}>&times;</span>
                             <Heading type={"h4"} className={"modal-title"}>Are you sure?</Heading>
                             <p className="siimple-p">Once you delete this user all his data will be permanently lost,
                                 and the only way he'll be able to use the application again will be by creating a new
@@ -165,8 +164,15 @@ class Users extends Component {
                 if (res.statusCode >= 300) {
                     return notification.error(body.message);
                 }
+                //Update the state users array
+                let new_users = self.state.users;
+                new_users[self.state.modal.index].is_admin = info.is_admin;
+                new_users[self.state.modal.index].is_active = info.is_active;
+                //Confirm success
                 notification.success("User information updated");
+                //Update the users array and close the modal
                 return self.setState({
+                    users: new_users,
                     modal: {
                         show: false
                     }
@@ -191,8 +197,19 @@ class Users extends Component {
                 if (res.statusCode >= 300) {
                     return notification.error(body.message);
                 }
+                //Delete the user from the array of users
+                let new_users = self.state.users;
+                new_users.splice(self.state.modal.index, 1);
+                //Confirm success
                 notification.success("The user was deleted successfully");
-                return redirect("/dashboard/users");
+
+                //Close the modal and update the users
+                return self.setState({
+                    users: new_users,
+                    modal: {
+                        show: false
+                    }
+                });
             });
     }
 
