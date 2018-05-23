@@ -11,7 +11,6 @@ import Applications from "./applications/index";
 import EditApp from "./applications/edit/index";
 import CreateApp from "./applications/create/index";
 import Users from "./users/index";
-import EditUser from "./users/edit/index";
 
 
 class Dashboard extends React.Component {
@@ -157,10 +156,6 @@ class Dashboard extends React.Component {
                                         {/*Users route*/}
                                         <Router.Route exact path={"/dashboard/users"}
                                                       component={Users}
-                                                      props={{token: this.props.token, admin: this.state.user.admin}}/>
-                                        {/*Edit user route*/}
-                                        <Router.Route exact path={"/dashboard/users/:id"}
-                                                      component={EditUser}
                                                       props={{token: this.props.token, admin: this.state.user.admin}}/>
                                     </Router.Switch>
                                 </div>
