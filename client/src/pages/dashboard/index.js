@@ -156,7 +156,7 @@ class Dashboard extends React.Component {
                                         {/*Users route*/}
                                         <Router.Route exact path={"/dashboard/users"}
                                                       component={Users}
-                                                      props={{token: this.props.token, admin: this.state.user.admin}}/>
+                                                      props={{token: this.props.token, user: this.state.user}}/>
                                     </Router.Switch>
                                 </div>
                             </div>
