@@ -54,6 +54,20 @@ export default class TableUsers extends React.Component {
         return h("div", {className: "table-cell"}, tag);
     }
 
+    renderItemAdmin(item, index){
+        let tagProps = {"className": "table-admin-tag"};
+        let tagText;
+        if(item.is_admin){
+            tagProps.color = "blue";
+            tagText = "Admin";
+        } else {
+            tagProps.color = "light";
+            tagText = "User";
+        }
+        let tag = h(Tag, tagProps, tagText);
+        return h("div", {className: "table-cell"}, tag);
+    }
+
     renderEditBtn(item, index){
         let self = this;
         let btnProps = {
@@ -81,6 +95,7 @@ export default class TableUsers extends React.Component {
             let itemContent = self.renderItemContent(item, index);
             let itemLogo = self.renderItemLogo(item, index);
             let itemActive = self.renderItemActive(item, index);
+            let itemAdmin = self.renderItemAdmin(item, index);
             let itemEditBtn = self.renderEditBtn(item, index);
             let itemDeleteBtn = self.renderDeleteBtn(item, index);
             let itemProps = {
@@ -88,7 +103,7 @@ export default class TableUsers extends React.Component {
                 "key": index
             };
             //Return the item element
-            return h("div", itemProps, itemLogo, itemContent, itemActive, itemEditBtn, itemDeleteBtn);
+            return h("div", itemProps, itemLogo, itemContent, itemAdmin, itemActive, itemEditBtn, itemDeleteBtn);
         });
         //Return the applications table
         return h("div", {className: "table"}, children);
