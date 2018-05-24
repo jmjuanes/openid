@@ -41,7 +41,7 @@ export default class TableUsers extends React.Component {
     }
 
     renderItemActive(item, index){
-        let tagProps = {"className": "table-active-tag"};
+        let tagProps = {};
         let tagText;
         if(item.is_active){
             tagProps.color = "green";
@@ -51,11 +51,11 @@ export default class TableUsers extends React.Component {
             tagText = "Inactive";
         }
         let tag = h(Tag, tagProps, tagText);
-        return h("div", {className: "table-cell"}, tag);
+        return h("div", {className: "table-cell table-cell--tag table-cell-tag--last"}, tag);
     }
 
     renderItemAdmin(item, index){
-        let tagProps = {"className": "table-admin-tag"};
+        let tagProps = {};
         let tagText;
         if(item.is_admin){
             tagProps.color = "blue";
@@ -65,7 +65,7 @@ export default class TableUsers extends React.Component {
             tagText = "User";
         }
         let tag = h(Tag, tagProps, tagText);
-        return h("div", {className: "table-cell"}, tag);
+        return h("div", {className: "table-cell table-cell--tag"}, tag);
     }
 
     renderEditBtn(item, index){
