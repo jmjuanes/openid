@@ -80,10 +80,8 @@
     }
 }
 
-.table-active-tag {
-    margin-right: 20px;
-}
-
-.table-admin-tag{
-    margin-right: 5px;
+.table-cell--tag {
+    min-width: 56px;
+    //margin-right: 5px;
+    text-align: center;
 }
