@@ -160,8 +160,6 @@ class Dashboard extends React.Component {
                                     </Router.Switch>
                                 </div>
                             </div>
-                            {/*Log out button*/}
-                            {/*<Btn color={"grey"} className={"log-out"} onClick={() => this.props.deleteToken()}>Log out</Btn>*/}
                         </div>
                     </div>
                 </div>);
