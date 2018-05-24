@@ -46,6 +46,13 @@ class Users extends Component {
 
     //Show the modal and set the user to display
     showModal(item, index, action) {
+        //The user cannot delete himself
+        if(item !== null){
+            if(this.props.user.id === item.id){
+                return;
+            }
+        }
+
         this.setState({
             modal: {
                 show: !this.state.modal.show,
@@ -214,7 +221,7 @@ class Users extends Component {
     }
 
     render() {
-        if (!this.props.admin) {
+        if (!this.props.user.admin) {
             return (
                 <Alert>You must be an administrator to access this route.</Alert>
             );
