@@ -28,6 +28,7 @@ class Users extends Component {
         this.showModal = this.showModal.bind(this);
         this.updateUser = this.updateUser.bind(this);
         this.deleteUser = this.deleteUser.bind(this);
+        this.renderRoleSelect = this.renderRoleSelect.bind(this);
     }
 
     componentWillMount() {
@@ -47,8 +48,8 @@ class Users extends Component {
     //Show the modal and set the user to display
     showModal(item, index, action) {
         //The user cannot delete himself
-        if(item !== null){
-            if(this.props.user.id === item.id){
+        if (item !== null) {
+            if (this.props.user.id === item.id) {
                 return;
             }
         }
@@ -86,6 +87,20 @@ class Users extends Component {
         }
     }
 
+    renderRoleSelect(info) {
+        if (this.props.user.owner) {
+            return (
+                <Field className="modal-role-section">
+                    <FieldLabel>Role of the user:</FieldLabel>
+                    <Select defaultValue={info.role} ref={this.ref.roleSelect}>
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </Select>
+                </Field>
+            );
+        }
+    }
+
     // Render the modal to delete the application
     renderModal() {
         if (this.state.modal.show) {
@@ -109,16 +124,12 @@ class Users extends Component {
                             {/*Active tag*/}
                             <Field className="modal-active-section">
                                 <FieldLabel>Activate or deactivate the user:</FieldLabel>
-                                <Switch defaultChecked={info.switch} id={"active-switch"} ref={this.ref.activeSwitch}> </Switch>
+                                <Switch defaultChecked={info.switch} id={"active-switch"}
+                                        ref={this.ref.activeSwitch}>
+                                </Switch>
                             </Field>
-                            {/*Role*/}
-                            <Field className="modal-role-section">
-                                <FieldLabel>Role of the user:</FieldLabel>
-                                <Select defaultValue={info.role} ref={this.ref.roleSelect}>
-                                    <option value="user">User</option>
-                                    <option value="admin">Admin</option>
-                                </Select>
-                            </Field>
+                            {/*Role select*/}
+                            {this.renderRoleSelect(info)}
                             {/*Buttons*/}
                             <div className="modal-btn-section">
                                 <Btn color={"blue"} onClick={this.updateUser}>Save</Btn>
@@ -154,18 +165,22 @@ class Users extends Component {
     //Edit the user information
     updateUser() {
         let self = this;
+        let modUser = this.state.modal.user;
         let info = {
-            is_active: this.ref.activeSwitch.current.checked,
-            is_admin: this.ref.roleSelect.current.value === "admin"
+            is_active: this.ref.activeSwitch.current.checked
         };
-        //Check that a change has been made
-        if(info.is_active === this.state.modal.user.is_active && info.is_admin === this.state.modal.user.is_admin){
+        if(this.props.user.owner){
+            info.is_admin = this.ref.roleSelect.current.value === "admin";
+        }
+        //Check that a change has been made in the info to update
+        let hasChanged = this.props.user.owner ? info.is_active === modUser.is_active && info.is_admin === modUser.is_admin : info.is_active === modUser.is_active;
+        if (hasChanged) {
             return notification.warning("Change the user info before updating")
         }
         //Do the request
         let url = "/api/users/" + this.state.modal.user.id;
         request({url: url, method: "put", json: true, body: info, auth: {bearer: localStorage.getItem("token")}},
-            function(err, res, body){
+            function (err, res, body) {
                 if (err) {
                     return notification.error(err.message);
                 }
@@ -189,16 +204,16 @@ class Users extends Component {
     }
 
     //Delete the user
-    deleteUser(){
+    deleteUser() {
         let self = this;
         //Check the text confirmation
-        if(this.textConfirm !== this.ref.deleteConfirm.current.value){
+        if (this.textConfirm !== this.ref.deleteConfirm.current.value) {
             return notification.warning("Type the exact confirmation text");
         }
         let url = "/api/users/" + this.state.modal.user.id;
         //Do the request
         request({url: url, method: "delete", json: true, auth: {bearer: localStorage.getItem("token")}},
-            function(err, res, body){
+            function (err, res, body) {
                 if (err) {
                     return notification.error(err.message);
                 }
