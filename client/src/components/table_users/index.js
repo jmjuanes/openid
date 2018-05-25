@@ -74,6 +74,9 @@ export default class TableUsers extends React.Component {
             "onClick": ()=> self.props.editUser(item, index, "edit"),
             "className": "table-btn table-btn--edit"
         };
+        if(this.props.admin.id === item.id){
+            btnProps.className = btnProps.className.concat(" table-cell-btn--disable");
+        }
         let button = h("div", btnProps);
         return h("div", {className: "table-cell"}, button);
     }
@@ -84,6 +87,9 @@ export default class TableUsers extends React.Component {
             "onClick": ()=> self.props.editUser(item, index, "delete"),
             "className": "table-btn table-btn--delete"
         };
+        if(this.props.admin.id === item.id){
+            btnProps.className = btnProps.className.concat(" table-cell-btn--disable");
+        }
         let button = h("div", btnProps);
         return h("div", {className: "table-cell"}, button);
     }
