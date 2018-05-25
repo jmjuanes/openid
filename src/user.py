@@ -12,6 +12,7 @@ class User(ndb.Model):
     pwd = ndb.StringProperty(indexed=False)
     is_admin = ndb.BooleanProperty(indexed=False)
     is_active = ndb.BooleanProperty(indexed=False)
+    is_owner = ndb.BooleanProperty(indexed=False)
 
 
 # Get user via his id or email
@@ -57,5 +58,6 @@ def getInfo(self, u):
            'name': u.name,
            'email': u.email,
            'is_admin': u.is_admin,
-           'is_active': u.is_active}
+           'is_active': u.is_active,
+           'is_owner': u.is_owner}
     return self.response.out.write(json.dumps(obj))
