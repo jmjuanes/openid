@@ -49,12 +49,11 @@ class Users extends Component {
     showModal(item, index, action) {
         //The user cannot delete himself
         if (item !== null) {
-            if (this.props.user.id === item.id) {
+            if (this.props.user.id === item.id || (item.is_admin && !this.props.user.owner)) {
                 return;
             }
         }
-
-        this.setState({
+        return this.setState({
             modal: {
                 show: !this.state.modal.show,
                 user: item,
