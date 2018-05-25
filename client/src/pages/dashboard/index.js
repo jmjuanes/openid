@@ -48,8 +48,7 @@ class Dashboard extends React.Component {
                 user: {
                     id: body.id,
                     admin: body.is_admin,
-                    //TERRIBLE HACK!!!!!
-                    owner: false
+                    owner: body.is_owner
                 },
                 ready: true
             });
