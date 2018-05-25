@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Alert, Btn, Field, FieldLabel, Heading, Input, Paragraph, Select, Spinner, Switch, Tag} from "neutrine";
+import {Alert, Btn, Field, FieldLabel, Heading, Input, Label, Paragraph, Select, Spinner, Switch, Tag} from "neutrine";
 import Table from "../../../components/table/index.js";
 import TableUsers from "../../../components/table_users/index.js";
 import {redirectHashbang as redirect} from "rouct";
@@ -122,7 +122,7 @@ class Users extends Component {
                                 confirm them.</p>
                             {/*Active tag*/}
                             <Field className="modal-active-section">
-                                <FieldLabel>Activate or deactivate the user:</FieldLabel>
+                                <Label htmlFor="active-switch">User active</Label>
                                 <Switch defaultChecked={info.switch} id={"active-switch"}
                                         ref={this.ref.activeSwitch}>
                                 </Switch>
