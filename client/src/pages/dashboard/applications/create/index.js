@@ -57,7 +57,10 @@ class CreateApp extends Component {
             self.ref.nameInput.current.value = "";
             self.ref.detailInput.current.value = "";
             self.ref.redirectInput.current.value = "";
-            return notification.success("Application successfully created");
+
+            notification.success("Application successfully created");
+
+            return setTimeout(function(){return redirect("/dashboard/applications")}, 100);
         });
     }
 
