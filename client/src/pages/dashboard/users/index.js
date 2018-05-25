@@ -77,6 +77,7 @@ class Users extends Component {
                 <div className="users-list">
                     <TableUsers data={this.state.users}
                                 icon="user"
+                                admin={this.props.user}
                                 editUser={this.showModal}
                                 customTitle={customTitle}
                                 customDetail={customDetail}/>
