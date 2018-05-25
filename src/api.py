@@ -48,6 +48,7 @@ class RouteUsers(webapp2.RequestHandler):
         u.name = data['name']
         u.email = data['email']
         u.is_admin = False
+        u.is_owner = False
         u.is_active = config.openid_default_active
 
         # Encrypt the password
@@ -104,8 +105,8 @@ class RouteUsers(webapp2.RequestHandler):
                               'name': all[i].name,
                               'email': all[i].email,
                               'is_active': all[i].is_active,
-                              'is_admin': all[i].is_admin})
-                # Retrieve more info if needed
+                              'is_admin': all[i].is_admin,
+                              'is_owner': all[i].is_owner})
 
             response.sendJson(self, {'users': users})
         except:
