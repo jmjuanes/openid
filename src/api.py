@@ -179,10 +179,12 @@ class RouteUsersById(webapp2.RequestHandler):
 
         # Update the info
         # if isinstance(data['is_active'], bool):
-        u.is_active = data['is_active']
-        u.is_admin = data['is_admin']
-        # if isinstance(data['name'], basestring):
-        #     u.name = data['name']
+        if hasattr(data, 'is_active'):
+            u.is_active = data['is_active']
+        # if isinstance(data['is_active'], bool):
+        if hasattr(data, 'is_admin'):
+            u.is_admin = data['is_admin']
+
 
         try:
             u.put()
