@@ -47,7 +47,9 @@ class Dashboard extends React.Component {
             return self.setState({
                 user: {
                     id: body.id,
-                    admin: body.is_admin
+                    admin: body.is_admin,
+                    //TERRIBLE HACK!!!!!
+                    owner: false
                 },
                 ready: true
             });
