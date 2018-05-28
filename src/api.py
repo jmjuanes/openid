@@ -254,11 +254,36 @@ class RouteUser(webapp2.RequestHandler):
         if u is None:
             return response.sendError(self, 400, 'Invalid user information')
 
-        # Update the info
-        # if isinstance(data['is_active'], bool):
-        #     u.is_active = data['is_active']
-        if isinstance(data['name'], basestring):
-            u.name = data['name']
+        # Check if the user wants to update the password
+        if isinstance(data['old_pwd'], basestring):
+            # Check the 3 passwords
+            old_pwd = data['old_pwd']
+            new_pwd = data['new_pwd']
+            repeat_pwd = data['repeat_pwd']
+
+            # Check the new password
+            if new_pwd != repeat_pwd:
+                return response.sendError(self, 400, 'Passwords do not match')
+
+            if len(new_pwd) < 6:
+                return response.sendError(self, 400, 'New password too short')
+
+            if new_pwd == old_pwd:
+                return response.sendError(self, 400, 'New and old passwords cannot be the same')
+
+            # Compare old pass with database pass
+            if pbkdf2_sha256.verify(old_pwd, u.pwd) is False:
+                return response.sendError(self, 400, 'Invalid old password')
+
+            # Encrypt the new password
+            u.pwd = pbkdf2_sha256.hash(new_pwd)
+
+        elif isinstance(data['name'], basestring):
+            new_name = data['name']
+            if len(new_name) == 0:
+                return response.sendError(self, 400, 'Invalid name')
+            # Update the name
+            u.name = new_name
 
         # Update the db information
         try:
