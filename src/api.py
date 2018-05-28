@@ -493,8 +493,7 @@ class RouteApplicationsById(webapp2.RequestHandler):
             return response.sendError(self, 404, 'This application does not exist')
         return response.sendJson(self, {'name': a.name,
                                         'detail': a.detail,
-                                        'redirect': a.redirect,
-                                        'secret': a.secret})
+                                        'redirect': a.redirect})
 
     # Delete an application
     def delete(self, app_id):
@@ -566,6 +565,32 @@ class RouteApplicationsById(webapp2.RequestHandler):
                                             'redirect': a.redirect})
         except:
             return response.sendError(self, 500, 'The application could not be modified')
+
+
+# Application's secret route
+class RouteApplicationsSecret(webapp2.RequestHandler):
+    # Get the secret
+    def get(self, app_id):
+        # Only administrators authorized
+        # Extract the user token from the header
+        header = self.request.headers['Authorization']
+        t = token.extract(header)
+        if t is None:
+            return response.sendError(self, 400, 'Invalid authorization type')
+
+        # Decode the token
+        payload = token.decode(t, config.openid_secret, config.token_algorithm)
+        if payload is None:
+            return response.sendError(self, 401, 'Invalid authentication credentials')
+
+        if payload['is_admin'] is False:
+            return response.sendError(self, 401, 'Only allowed to administrators')
+
+        # Extract the secret from the db
+        a = application.get_application(app_id)
+        if a is None:
+            return response.sendError(self, 404, 'This application does not exist')
+        return response.sendJson(self, {'secret': a.secret})
 
 
 # Login route
@@ -674,6 +699,7 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/api/user/delete', handler=RouteUserDelete),
     # Applications routes
     webapp2.Route('/api/applications', handler=RouteApplications),
+    webapp2.Route('/api/applications/<app_id>/secret', handler=RouteApplicationsSecret),
     webapp2.Route('/api/applications/<app_id>', handler=RouteApplicationsById),
     # Login route
     webapp2.Route('/api/login', handler=RouteLogin),
