@@ -473,21 +473,6 @@ class RouteApplications(webapp2.RequestHandler):
 class RouteApplicationsById(webapp2.RequestHandler):
     # Get an application's information
     def get(self, app_id):
-        # Only administrators authorized
-        # Extract the user token from the header
-        header = self.request.headers['Authorization']
-        t = token.extract(header)
-        if t is None:
-            return response.sendError(self, 400, 'Invalid authorization type')
-
-        # Decode the token
-        payload = token.decode(t, config.openid_secret, config.token_algorithm)
-        if payload is None:
-            return response.sendError(self, 401, 'Invalid authentication credentials')
-
-        if payload['is_admin'] is False:
-            return response.sendError(self, 401, 'Only allowed to administrators')
-
         a = application.get_application(app_id)
         if a is None:
             return response.sendError(self, 404, 'This application does not exist')
