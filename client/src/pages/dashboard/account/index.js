@@ -114,7 +114,7 @@ class Account extends React.Component {
         }
 
         request({
-                url: "/api/user/password",
+                url: "/api/user",
                 method: "put",
                 json: true,
                 body: credentials,
