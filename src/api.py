@@ -255,7 +255,8 @@ class RouteUser(webapp2.RequestHandler):
             return response.sendError(self, 400, 'Invalid user information')
 
         # Check if the user wants to update the password
-        if isinstance(data['old_pwd'], basestring):
+
+        if data.get('old_pwd') is not None:
             # Check the 3 passwords
             old_pwd = data['old_pwd']
             new_pwd = data['new_pwd']
@@ -278,7 +279,7 @@ class RouteUser(webapp2.RequestHandler):
             # Encrypt the new password
             u.pwd = pbkdf2_sha256.hash(new_pwd)
 
-        elif isinstance(data['name'], basestring):
+        elif data.get('name') is not None:
             new_name = data['name']
             if len(new_name) == 0:
                 return response.sendError(self, 400, 'Invalid name')
