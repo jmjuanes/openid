@@ -117,6 +117,31 @@ class RouteUsers(webapp2.RequestHandler):
 class RouteUsersById(webapp2.RequestHandler):
     # Get the info from a user
     def get(self, user_id):
+        # Only administrators authorized
+        # Extract the user token from the header
+        header = self.request.headers['Authorization']
+        t = token.extract(header)
+        if t is None:
+            return response.sendError(self, 400, 'Invalid authorization type')
+
+        # Decode the token
+        payload = token.decode(t, config.openid_secret, config.token_algorithm)
+        if payload is None:
+            return response.sendError(self, 401, 'Invalid authentication credentials')
+
+        if payload['is_admin'] is False:
+            return response.sendError(self, 401, 'Only allowed to administrators')
+
+        u = user.get(id=user_id)
+        if u is None:
+            return response.sendError(self, 404, 'This user does not exist')
+
+        # If the user to delete is an admin, only the owner is allowed
+        if u.is_admin is True:
+            if payload['is_owner'] is False:
+                return response.sendError(self, 401, 'Only the owner can delete admins')
+
+        # Get the information
         u = user.get(id=user_id)
         if u is None:
             return response.sendError(self, 404, 'This user does not exist')
