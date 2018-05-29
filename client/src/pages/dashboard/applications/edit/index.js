@@ -1,8 +1,10 @@
 import React from 'react';
 import {request} from "@kofijs/request";
-import {Alert, Code, Btn, Heading, Input, Small, Spinner} from "neutrine";
+import {Alert, Code, Btn, Heading, Input, Small, Spinner, Paragraph} from "neutrine";
 import {Field, FieldLabel, FieldHelper} from "neutrine";
 import {redirectHashbang as redirect} from "rouct";
+
+import Subhead from "../../../../components/subhead/index.js";
 
 import * as auth from "../../../../commons/auth.js";
 import * as notification from "../../../../commons/notification.js";
@@ -14,10 +16,8 @@ export default class EditApp extends React.Component {
         super(props);
         this.state = {
             "app": null,
-            "modal": {
-                "show": false,
-                "disableBtn": false
-            },
+            "modalVisible": false,
+            "modalLoading": false,
             "keys": {
                 "public": null,
                 "secret": null,
@@ -31,13 +31,11 @@ export default class EditApp extends React.Component {
             "redirectInput": React.createRef(),
             "modalConfirm": React.createRef()
         };
-        this.text_confirm = "Yes, delete this app";
         //Bind update app functiom
         this.updateApp = this.updateApp.bind(this);
         // Functions from the modal
-        this.showModal = this.showModal.bind(this);
+        this.toggleModal = this.toggleModal.bind(this);
         this.renderModal = this.renderModal.bind(this);
-        this.spinnerButton = this.spinnerButton.bind(this);
         this.handleAppDelete = this.handleAppDelete.bind(this);
     }
 
@@ -56,7 +54,6 @@ export default class EditApp extends React.Component {
             if (res.statusCode >= 300) {
                 return notification.error(body.message);
             }
-            console.log(body);
             let newData = {
                 "id": self.props.request.params.id,
                 "name": body.name,
@@ -69,30 +66,22 @@ export default class EditApp extends React.Component {
     }
 
     // Show or hide the modal
-    showModal() {
-       return this.setState({
-            "modal": {
-                "show": !this.state.modal.show,
-                "disableBtn": false
-            }
-        });
-    }
-
-    // Render the delete button/spinner inside the modal
-    spinnerButton() {
-        if (!this.state.modal.disableBtn) {
-            return (
-                <Btn color={"red"} onClick={() => this.handleAppDelete()}>Delete the application</Btn>
-            );
-        } else {
-            return (
-                <Spinner/>
-            );
+    toggleModal() {
+        //Check if modal is loading 
+        if (this.state.modalLoading === true) {
+            return false;
         }
+        //Get the current status
+        let currentStatus = this.state.modalVisible;
+        return this.setState({"modalVisible": !currentStatus, "modalLoading": false});
     }
 
     //Handle public and secret keys
     handleShowKeys() {
+        //Check the current status of the application 
+        if (this.state.loading === true) {
+            return null;
+        }
         let self = this;
         let requestOptions = {
             "url": "/api/applications/" + this.state.app.id + "/secret",
@@ -100,6 +89,7 @@ export default class EditApp extends React.Component {
             "json": true,
             "auth": auth.generateAuth()
         };
+        //Import the secret key
         return request(requestOptions, function (error, res, body) {
             if (error) {
                 return notification.error(error.message);
@@ -119,47 +109,30 @@ export default class EditApp extends React.Component {
     // Delete the app
     handleAppDelete() {
         let self = this;
+        let appName = this.state.app.name;
         // Block the button meanwhile
-        this.setState({modal: {show: true, disableBtn: true}}, function () {
-            // Check text before calling the api
-            if (this.ref.modalConfirm.current.value !== this.text_confirm) {
-                notification.warning("Please type the exact confirmation text");
-                return this.setState({
-                    "modal": {
-                        "show": true, 
-                        "disableBtn": false
-                    }
-                });
-            }
-            //Request options
+        this.setState({"modalLoading": true}, function () {
             let requestOptions = {
                 "url": "/api/applications/" + this.state.app.id,
                 "method": "delete",
                 "json": true,
                 "auth": auth.generateAuth()
             };
+            //App delete request
             return request(requestOptions, function (err, res, body) {
                 if (err) {
                     notification.error(err.message);
-                    return this.setState({
-                        "modal": {
-                            "show": true, 
-                            "disableBtn": false
-                        }
-                    });
+                    return self.setState({"modalLoading": false});
                 }
                 if (res.statusCode >= 300) {
                     notification.error(body.message);
-                    return this.setState({
-                        "modal": {
-                            "show": true, 
-                            "disableBtn": false
-                        }
-                    });
+                    return self.setState({"modalLoading": true});
                 }
+                //Print confirmation and redirect to the applications list
+                notification.success("Application '" + appName + "' removed");
                 return setTimeout(function () {
                     return redirect("/dashboard/applications");
-                }, 1000);
+                }, 500);
             });
         });
     }
@@ -209,25 +182,30 @@ export default class EditApp extends React.Component {
         });
     }
 
+    //Render the delete button/spinner inside the modal
+    renderSpinnerButton() {
+        if (this.state.modalLoading === false) {
+            return (<Btn color={"error"} fluid onClick={() => this.handleAppDelete()}>Delete this application</Btn>);
+        } else {
+            return (<Spinner color="error"/>);
+        }
+    }
+
     // Render the modal to delete the application
     renderModal() {
-        if (this.state.modal.show) {
+        if (this.state.modalVisible === true) {
             return (
                 <div className="modal">
                     <div className={"modal-content"}>
-                        <span className="modal-hide" onClick={() => this.showModal()}>&times;</span>
+                        <span className="modal-hide" onClick={() => this.toggleModal()}>&times;</span>
                         <Heading type={"h4"} className={"modal-title"}>Are you sure?</Heading>
-                        <p className="siimple-p">After you confirm this action, all the information related to this
+                        <Paragraph>
+                            After you confirm this action, all the information related to this
                             application will be removed, and the list of users that allowed it to access their
-                            information will be lost. This action can not be undone.</p>
-                        <Field>
-                            <FieldLabel>Verify this action by typing <i>{this.text_confirm}</i> below</FieldLabel>
-                            <Input className="modal-input"
-                                   type={"text"}
-                                   ref={this.ref.modalConfirm}/>
-                        </Field>
+                            information will be lost. This action can not be undone.
+                        </Paragraph>
                         {/*Render the button or if it's loading the spinner*/}
-                        {this.spinnerButton()}
+                        {this.renderSpinnerButton()}
                     </div>
                 </div>
             );
@@ -259,75 +237,59 @@ export default class EditApp extends React.Component {
         }
     }
 
+    //Render the application information form
+    renderApplicationForm() {
+        //Check for loading state 
+        if (this.state.loading === true) {
+            return (<Spinner color="primary" style={{"marginTop": "20px"}}/>);
+        }
+        //Render the application form
+        return (
+           <div>
+               <Field>
+                   <FieldLabel>Application name</FieldLabel>
+                   <Input type={"text"} fluid defaultValue={this.state.app.name} ref={this.ref.nameInput}/>
+                   <FieldHelper>
+                       The name that all users will see.
+                   </FieldHelper>
+               </Field>
+               <Field>
+                   <FieldLabel>Application detail</FieldLabel>
+                   <Input type={"text"} fluid defaultValue={this.state.app.detail} ref={this.ref.detailInput}/>
+                   <FieldHelper>
+                       Brief description about your application.
+                   </FieldHelper>
+               </Field>
+               <Field>
+                   <FieldLabel>Redirect URL</FieldLabel>
+                   <Input type={"text"} fluid defaultValue={this.state.app.redirect} ref={this.ref.redirectInput}/>
+               </Field>
+               <Btn color={"blue"} onClick={() => this.updateApp()} style={{"marginRight":"5px"}}>
+                   Update application
+               </Btn>
+               <Btn color={"red"} className={"btn"} onClick={() => this.toggleModal()}>
+                   Delete this application
+               </Btn>
+           </div>
+        );
+    }
+
     render() {
-        if (!this.props.admin) {
-            return (
-                <Alert color={"red"}>You must be an administrator to access this route.</Alert>
-            );
+        if (this.props.admin === false) {
+            return (<Alert color={"error"}>You must be an administrator to access this route.</Alert>);
         }
         else {
-            if (this.state.loading === true) {
-                return (
-                    <div align="center" style={{"marginTop":"20px"}}>
-                        <Spinner color="blue"/>
-                    </div>
-                );
-            }
-            else
-                return (
-                    <div className={"edit-app-content"}>
-                        {/*Modal to delete apps*/}
-                        {this.renderModal()}
-                        {/*Title*/}
-                        <Heading type={"h2"}>{this.state.app.name}</Heading>
-                        {/*Edit form*/}
-                        {/*Key info from the application*/}
-                        <Heading type="h5">Public and secret keys</Heading>
-                        {this.renderKeys()}
-                        {/*Form title*/}
-                        <Heading type={"h5"}>Manage the application information</Heading>
-                        <div className="edit-app-form">
-                            {/*Name input*/}
-                            <Field>
-                                <FieldLabel>Application name</FieldLabel>
-                                <Input className="edit-app-input"
-                                       type={"text"}
-                                       fluid
-                                       defaultValue={this.state.app.name}
-                                       ref={this.ref.nameInput}/>
-                                <FieldHelper>
-                                    The name that all users will see.
-                                </FieldHelper>
-                            </Field>
-                            {/*Detail input*/}
-                            <Field>
-                                <FieldLabel>Application detail</FieldLabel>
-                                <Input className="edit-app-input"
-                                       type={"text"}
-                                       fluid
-                                       defaultValue={this.state.app.detail}
-                                       ref={this.ref.detailInput}/>
-                                <FieldHelper>
-                                    Brief description about your application.
-                                </FieldHelper>
-                            </Field>
-                            {/*Redirect input*/}
-                            <Field>
-                                <FieldLabel>Redirect URL</FieldLabel>
-                                <Input className="edit-app-input"
-                                       type={"text"}
-                                       fluid
-                                       defaultValue={this.state.app.redirect}
-                                       ref={this.ref.redirectInput}/>
-                            </Field>
-                            <Btn color={"blue"} onClick={() => this.updateApp()} style={{"marginRight":"5px"}}>
-                                Update application
-                            </Btn>
-                            <Btn color={"red"} className={"btn"} onClick={() => this.showModal()}>
-                                Delete this application</Btn>
-                        </div>
-                    </div>
-                );
+            return (
+                <div>
+                    {this.renderModal()}
+                    {/* Public ans secret keys of the application  */}
+                    <Subhead headerText="Public and secret keys"/>
+                    {this.renderKeys()}
+                    {/* Update the application information  */}
+                    <Subhead headerText="Application settings"/>
+                    {this.renderApplicationForm()}
+                </div>
+            );
         }
     }
 }
