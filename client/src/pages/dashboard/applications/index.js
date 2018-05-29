@@ -19,7 +19,6 @@ export default class Applications extends React.Component {
             "applications": [],
             "loading": true
         };
-        this.listApplications = this.listApplications.bind(this);
         this.editRedirect = this.editRedirect.bind(this);
         this.createRedirect = this.createRedirect.bind(this);
     }
@@ -43,7 +42,7 @@ export default class Applications extends React.Component {
             //Update the state
             return self.setState({
                 "applications": body.applications, 
-                "loading": true
+                "loading": false
             });
         });
     }
@@ -62,7 +61,11 @@ export default class Applications extends React.Component {
     renderApplications() {
         //Check for loading
         if (this.state.loading === true) {
-            return (<Spinner color="primary"/>);
+            return (
+                <div style={{"marginTop": "20px"}}>
+                    <Spinner color="primary"/>
+                </div>
+            );
         } 
         let customTitle = function (item) {
             return item.name;
