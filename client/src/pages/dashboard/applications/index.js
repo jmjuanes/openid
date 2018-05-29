@@ -1,12 +1,10 @@
 import React from "react";
-import {
-    Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Spinner, List, ListItem, Small,
-    Paragraph
-} from "neutrine";
+import {Alert, Btn, Heading, Input, Spinner, Small, Paragraph} from "neutrine";
 import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
 import * as notification from "../../../commons/notification.js";
 
+import Subhead from "../../../components/subhead/index.js";
 import Table from "../../../components/table/index.js";
 
 import "./styles.scss";
@@ -84,16 +82,10 @@ class Applications extends React.Component {
             else
                 return (
                     <div className="applications-content">
-                        {/*Title*/}
-                        <Heading type={"h2"}>Applications</Heading>
-                        {/*Create a new application*/}
-                        <div className="app-create-container">
-                            <Heading type={"h5"}>Create a new application</Heading>
-                            <Paragraph>Add a new entity to the list of registered applications.</Paragraph>
-                            <Btn color={"green"} className={"btn"} onClick={() => this.createRedirect()}>Create</Btn>
-                        </div>
-                        {/*List of all the applications*/}
-                        <Heading type={"h5"}>Registered applications</Heading>
+                        <Subhead headerText="Applications" btnText="New Application" onBtnClick={() => this.createRedirect()}/>
+                        <Paragraph>
+                            You have <strong>{this.state.applications.length}</strong> applications registered. 
+                        </Paragraph>
                         {this.listApplications()}
                     </div>
                 );
