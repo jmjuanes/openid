@@ -8,6 +8,10 @@
     padding-bottom: 10px;
     padding-top: 10px;
     margin-bottom: 15px;
+    //Subhead not first children
+    &:not(:first-child) {
+        margin-top: 25px;
+    }
     //Subhead heading 
     &-heading {
         display: inline-block;
