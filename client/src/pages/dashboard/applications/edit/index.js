@@ -1,27 +1,29 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {request} from "@kofijs/request";
 import {Alert, Btn, Field, FieldLabel, Heading, Input, Small, Spinner} from "neutrine";
 import {redirectHashbang as redirect} from "rouct";
+
+import * as auth from "../../../commons/auth.js";
 import * as notification from "../../../../commons/notification.js";
 
 import "./styles.scss";
 
-class EditApp extends Component {
+class EditApp extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            app: {},
-            ready: false,
-            modal: {
-                show: false,
-                disableBtn: false
+            "app": {},
+            "ready": false,
+            "modal": {
+                "show": false,
+                "disableBtn": false
             }
         };
         this.ref = {
-            nameInput: React.createRef(),
-            detailInput: React.createRef(),
-            redirectInput: React.createRef(),
-            modalConfirm: React.createRef()
+            "nameInput": React.createRef(),
+            "detailInput": React.createRef(),
+            "redirectInput": React.createRef(),
+            "modalConfirm": React.createRef()
         };
         this.text_confirm = "Yes, delete this app";
 
@@ -36,39 +38,38 @@ class EditApp extends Component {
 
     componentWillMount() {
         let self = this;
-        // Get the id from the params object of the request
-        let url = "/api/applications/" + this.props.request.params.id;
-        request({
-            url: url,
-            method: "get",
-            json: true,
-            auth: {bearer: localStorage.getItem("token")}
-        }, function (err, res, body) {
+        let requestOptions = {
+            "url": "/api/applications/" + this.props.request.params.id, 
+            "json": true, 
+            "auth": auth.generateAuth()
+        };
+        //Get the application info
+        return request(requestOptions, function (err, res, body) {
             if (err) {
                 return notification.error(err.message);
             }
             if (res.statusCode >= 300) {
                 return notification.error(body.message);
             }
-            self.setState({
-                app: {
-                    id: self.props.request.params.id,
-                    name: body.name,
-                    detail: body.detail,
-                    redirect: body.redirect,
-                    secret: body.secret
+            //Save the application info
+            return self.setState({
+                "app": {
+                    "id": self.props.request.params.id,
+                    "name": body.name,
+                    "detail": body.detail,
+                    "redirect": body.redirect
                 },
-                ready: true
+                "ready": true
             });
         });
     }
 
     // Show or hide the modal
     showModal() {
-        this.setState({
-            modal: {
-                show: !this.state.modal.show,
-                disableBtn: false
+       return this.setState({
+            "modal": {
+                "show": !this.state.modal.show,
+                "disableBtn": false
             }
         });
     }
@@ -89,37 +90,48 @@ class EditApp extends Component {
     // Delete the app
     handleAppDelete() {
         let self = this;
-
         // Block the button meanwhile
-        this.setState({modal: {show: true, disableBtn: true}});
-        // Check text before calling the api
-        if (this.ref.modalConfirm.current.value !== this.text_confirm) {
-            notification.warning("Please type the exact confirmation text");
-            return this.setState({
-                modal: {show: true, disableBtn: false}
+        this.setState({modal: {show: true, disableBtn: true}}, function () {
+            // Check text before calling the api
+            if (this.ref.modalConfirm.current.value !== this.text_confirm) {
+                notification.warning("Please type the exact confirmation text");
+                return this.setState({
+                    "modal": {
+                        "show": true, 
+                        "disableBtn": false
+                    }
+                });
+            }
+            //Request options
+            let requestOptions = {
+                "url": "/api/applications/" + this.state.app.id,
+                "method": "delete",
+                "json": true,
+                "auth": auth.generateAuth()
+            };
+            return request(requestOptions, function (err, res, body) {
+                if (err) {
+                    notification.error(err.message);
+                    return this.setState({
+                        "modal": {
+                            "show": true, 
+                            "disableBtn": false
+                        }
+                    });
+                }
+                if (res.statusCode >= 300) {
+                    notification.error(body.message);
+                    return this.setState({
+                        "modal": {
+                            "show": true, 
+                            "disableBtn": false
+                        }
+                    });
+                }
+                return setTimeout(function () {
+                    return redirect("/dashboard/applications");
+                }, 1000);
             });
-        }
-
-        let url = "/api/applications/" + this.state.app.id;
-        request({
-            url: url,
-            method: "delete",
-            json: true,
-            auth: {bearer: localStorage.getItem("token")}
-        }, function (err, res, body) {
-            if (err) {
-                notification.error(err.message);
-                return this.setState({
-                    modal: {show: true, disableBtn: false}
-                });
-            }
-            if (res.statusCode >= 300) {
-                notification.error(body.message);
-                return this.setState({
-                    modal: {show: true, disableBtn: false}
-                });
-            }
-            return redirect("/dashboard/applications");
         });
     }
 
@@ -127,9 +139,9 @@ class EditApp extends Component {
     updateApp() {
         let self = this;
         let info = {
-            name: this.ref.nameInput.current.value,
-            detail: this.ref.detailInput.current.value,
-            redirect: this.ref.redirectInput.current.value
+            "name": this.ref.nameInput.current.value,
+            "detail": this.ref.detailInput.current.value,
+            "redirect": this.ref.redirectInput.current.value
         };
         // Check that all the info is new
         if (info.name === this.state.app.name && info.detail === this.state.app.detail && info.redirect === this.state.app.redirect) {
@@ -139,15 +151,14 @@ class EditApp extends Component {
         if (info.name.length === 0 || info.detail.length === 0 || info.redirect.length === 0) {
             return notification.warning("No field can be empty");
         }
-
-        let url = "/api/applications/" + this.props.request.params.id;
-        request({
-            url: url,
-            method: "put",
-            json: true,
-            body: info,
-            auth: {bearer: localStorage.getItem("token")}
-        }, function (err, res, body) {
+        let requestOptions = {
+            "url": "/api/applications/" + this.props.request.params.id,
+            "method": "put",
+            "json": true,
+            "body": info,
+            "auth": auth.generateAuth()
+        };
+        return request(requestOptions, function (err, res, body) {
             if (err) {
                 return notification.error(err.message);
             }
@@ -157,12 +168,11 @@ class EditApp extends Component {
             // Set the new info
             notification.success("Application updated successfully");
             return self.setState({
-                app: {
-                    id: self.state.app.id,
-                    name: body.name,
-                    detail: body.detail,
-                    redirect: body.redirect,
-                    secret: self.state.app.secret
+                "app": {
+                    "id": self.state.app.id,
+                    "name": body.name,
+                    "detail": body.detail,
+                    "redirect": body.redirect
                 }
             });
         });
