@@ -1,25 +1,27 @@
 import React, {Component} from 'react';
-import {
-    Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Spinner, List, ListItem, Small,
-    Paragraph
-} from "neutrine";
+import {Alert, Btn, Input, Spinner, Small, Paragraph} from "neutrine";
+import {Field, FieldHelper, FieldLabel} from "neutrine";
 import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
+
+import Subhead from "../../../../components/subhead/index.js";
+
+import * as auth from "../../../../commons/auth.js";
 import * as notification from "../../../../commons/notification.js";
 
 import "./styles.scss";
 
-class CreateApp extends Component {
+//Create app component
+export default class CreateApp extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            error: null,
-            done: null
+            "loading": false
         };
         this.ref = {
-            nameInput: React.createRef(),
-            detailInput: React.createRef(),
-            redirectInput: React.createRef()
+            "nameInput": React.createRef(),
+            "detailInput": React.createRef(),
+            "redirectInput": React.createRef()
         };
         this.handleCreateApp = this.handleCreateApp.bind(this);
     }
@@ -28,9 +30,9 @@ class CreateApp extends Component {
     handleCreateApp() {
         let self = this;
         let info = {
-            name: this.ref.nameInput.current.value,
-            detail: this.ref.detailInput.current.value,
-            redirect: this.ref.redirectInput.current.value
+            "name": this.ref.nameInput.current.value,
+            "detail": this.ref.detailInput.current.value,
+            "redirect": this.ref.redirectInput.current.value
         };
         // Check that there aren't empty fields
         if (info.name.length === 0 || info.detail.length === 0 || info.redirect.length === 0) {
@@ -39,75 +41,85 @@ class CreateApp extends Component {
         if (info.redirect.indexOf(".") === -1) {
             return notification.warning("Invalid URL");
         }
-
-        request({
-            url: "/api/applications",
-            method: "post",
-            json: true,
-            body: info,
-            auth: {bearer: localStorage.getItem("token")}
-        }, function (err, res, body) {
-            if (err) {
-                return notification.error(err.message);
-            }
-            if (res.statusCode >= 300) {
-                return notification.error(body.message);
-            }
-            // Reset the fields
-            self.ref.nameInput.current.value = "";
-            self.ref.detailInput.current.value = "";
-            self.ref.redirectInput.current.value = "";
-
-            notification.success("Application successfully created");
-
-            return setTimeout(function(){return redirect("/dashboard/applications")}, 100);
+        return this.setState({"loading": true}, function () {
+            //Initialize the request options
+            let requestOptions = {
+                "url": "/api/applications",
+                "method": "post",
+                "json": true,
+                "body": info,
+                "auth": auth.generateAuth()
+            };
+            //Register the new application
+            return request(requestOptions, function (err, res, body) {
+                if (err) {
+                    notification.error(err.message);
+                    return self.setState({"loading": false});
+                }
+                if (res.statusCode >= 300) {
+                    notification.error(body.message);
+                    return self.setState({"loading": false}); 
+                }
+                //Display application created message
+                notification.success("Application successfully created");
+                //Redirect to the applications list
+                return setTimeout(function() {
+                    return redirect("/dashboard/applications");
+                }, 500);
+            });
         });
     }
 
-    render() {
-        if (!this.props.admin) {
+    //Render the application form
+    renderForm() {
+        //Check for loading status
+        if (this.state.loading === true) {
             return (
-                <Alert>You must be an administrator to access this route.</Alert>
-            );
-        }
-        else
-            return (
-                <div className={"create-app-content"}>
-                    {/*Title*/}
-                    <Heading type={"h2"}>Create an application</Heading>
-                    <Paragraph>Please check that all fields are correct before submitting.</Paragraph>
-                    {/*Form to create an app*/}
-                    <div className="create-app-form">
-                        {/*Name input*/}
-                        <Field>
-                            <FieldLabel>Name of the application</FieldLabel>
-                            <Input className="create-app-input"
-                                   type={"text"}
-                                   fluid
-                                   ref={this.ref.nameInput}/>
-                        </Field>
-                        {/*Detail input*/}
-                        <Field>
-                            <FieldLabel>Detail of the application</FieldLabel>
-                            <Input className="create-app-input"
-                                   type={"text"}
-                                   fluid
-                                   ref={this.ref.detailInput}/>
-                        </Field>
-                        {/*Redirect input*/}
-                        <Field>
-                            <FieldLabel>Redirect URL</FieldLabel>
-                            <Input className="create-app-input"
-                                   type={"text"}
-                                   fluid
-                                   ref={this.ref.redirectInput}/>
-                            <FieldHelper>Must be a valid URL</FieldHelper>
-                        </Field>
-                        <Btn color={"blue"} onClick={() => this.handleCreateApp()}>Create application</Btn>
-                    </div>
+                <div align="center" style={{"marginTop":"20px"}}>
+                    <Spinner color="primary"/>
                 </div>
             );
+        } 
+        else {
+            return (
+                <div>
+                    <Paragraph>Please check that all fields are correct before submitting.</Paragraph>
+                    {/*Application name*/}
+                    <Field>
+                        <FieldLabel>Name of the application</FieldLabel>
+                        <Input type={"text"} fluid ref={this.ref.nameInput}/>
+                    </Field>
+                    {/*Application description*/}
+                    <Field>
+                        <FieldLabel>Detail of the application</FieldLabel>
+                        <Input type={"text"} fluid ref={this.ref.detailInput}/>
+                    </Field>
+                    {/*Application redirect url*/}
+                    <Field>
+                        <FieldLabel>Redirect URL</FieldLabel>
+                        <Input type={"text"} fluid ref={this.ref.redirectInput}/>
+                        <FieldHelper>Must be a valid URL</FieldHelper>
+                    </Field>
+                    <Btn color={"blue"} onClick={() => this.handleCreateApp()}>Create application</Btn>
+                </div>
+            );
+        }
+    }
+
+    render() {
+        if (this.props.admin === false) {
+            return (<Alert>You must be an administrator to access this route.</Alert>);
+        }
+        else {
+            return (
+                <div>
+                    {/* Subhead */}
+                    <Subhead headerText="Register a new application"/>
+                    {/* Render the create app form */}
+                    {this.renderForm()}
+                </div>
+            );
+        }
     }
 }
 
-export default CreateApp;
