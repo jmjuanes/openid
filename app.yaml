@@ -6,6 +6,14 @@ libraries:
 - name: webapp2
   version: "2.5.2"
 
+skip_files:
+- client/node_modules/
+- client/src
+- client/webpack.config.js
+- client/package.json
+- client/package-lock.json
+- client/README.md
+
 handlers:
 - url: /api/.*
   script: src.api.app
