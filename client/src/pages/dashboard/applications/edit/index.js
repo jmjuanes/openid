@@ -198,14 +198,18 @@ export default class EditApp extends React.Component {
             }
             // Set the new info
             notification.success("Application updated successfully");
-            return self.setState({
-                "app": {
-                    "id": self.state.app.id,
-                    "name": body.name,
-                    "detail": body.detail,
-                    "redirect": body.redirect
-                }
-            });
+            //New application data
+            let newData = {
+                "id": self.state.app.id,
+                "name": body.name,
+                "detail": body.detail,
+                "redirect": body.redirect
+            };
+            //Redirect to the applications list
+            return setTimeout(function () {
+                return redirect("/dashboard/applications"); 
+            }, 500);
+            //return self.setState({"app": newData});
         });
     }
 
