@@ -1,97 +1,211 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {Alert, Btn, Field, FieldLabel, Heading, Input, Label, Paragraph, Select, Spinner, Switch, Tag} from "neutrine";
-import Table from "../../../components/table/index.js";
-import TableUsers from "../../../components/table_users/index.js";
 import {redirectHashbang as redirect} from "rouct";
 import {request} from "@kofijs/request";
+
+import Subhead from "../../../components/subhead/index.js";
+import TableUsers from "../../../components/table_users/index.js";
+
+import * as auth from "../../../commons/auth.js";
 import * as notification from "../../../commons/notification.js";
 
 import "./styles.scss";
 
-class Users extends Component {
+//Users management component
+export default class Users extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            users: [],
-            ready: false,
-            modal: {
-                show: false
-            }
+            "users": [],
+            "loading": true,
+            "modalVisible": false,
+            "modalAction": null,
+            "moadlLoading": false,
+            "modalIndex": -1
         };
+        //Referenced components
         this.ref = {
-            deleteConfirm: React.createRef(),
-            activeSwitch: React.createRef(),
-            roleSelect: React.createRef()
+            "activeSwitch": React.createRef(),
+            "roleSelect": React.createRef()
         };
-        this.textConfirm = "Yes, delete this user";
-
-        this.showModal = this.showModal.bind(this);
-        this.updateUser = this.updateUser.bind(this);
-        this.deleteUser = this.deleteUser.bind(this);
-        this.renderRoleSelect = this.renderRoleSelect.bind(this);
+        //Bind methods
+        this.toggleModal = this.toggleModal.bind(this);
+        this.handleUpdateUser = this.handleUpdateUser.bind(this);
+        this.handleDeleteUser = this.handleDeleteUser.bind(this);
     }
 
     componentWillMount() {
         let self = this;
-        request({url: "/api/users", method: "get", json: true, auth: {bearer: localStorage.getItem("token")}},
-            function (err, res, body) {
-                if (err) {
-                    return self.setState({error: err.message});
-                }
-                if (res.statusCode >= 300) {
-                    return self.setState({error: body.message});
-                }
-                return self.setState({users: body.users, ready: true});
-            });
-    }
-
-    //Show the modal and set the user to display
-    showModal(item, index, action) {
-        //The user cannot delete himself
-        if (item !== null) {
-            if (this.props.user.id === item.id || (item.is_admin && !this.props.user.owner)) {
-                return;
+        let requestOptions = {
+            "url": "/api/users",
+            "method": "get",
+            "json": true,
+            "auth": auth.generateAuth()
+        };
+        //Import users data
+        return request(requestOptions, function (error, res, body) {
+            if (error) {
+                return notification.error(error.message);
             }
-        }
-        return this.setState({
-            modal: {
-                show: !this.state.modal.show,
-                user: item,
-                index: index,
-                action: action
+            if (res.statusCode >= 300) {
+                return notification.error(body.message);
             }
+            //Save the users list to the state
+            return self.setState({"users": body.users, "loading": false});
         });
     }
 
-    // Render a list with all the applications
-    listUsers() {
-        if (this.state.ready) {
-            let customTitle = function (item) {
-                return item.name;
-            };
-            let customDetail = function (item) {
-                return item.email;
-            };
-            // Render the table
-            return (
-                <div className="users-list">
-                    <TableUsers data={this.state.users}
-                                icon="user"
-                                admin={this.props.user}
-                                editUser={this.showModal}
-                                customTitle={customTitle}
-                                customDetail={customDetail}/>
-                </div>
-            );
-        }
+    //Redirect to the register user route
+    registerRedirect() {
+        return redirect("/dashboard/users/register");
     }
 
-    renderRoleSelect(info) {
-        if (this.props.user.owner) {
+    //Show the modal and set the user to display
+    toggleModal(item, index, action) {
+        //Check if modal is loading
+        if (this.state.modalLoading === true) {
+            return false;
+        }
+        //The user cannot delete himself
+        if (item !== null) {
+            if (this.props.user.id === item.id || (item.is_admin && !this.props.user.owner)) {
+                return false;
+            }
+        }
+        //Current modal visibility
+        let currentStatus = this.state.modalVisible;
+        //Update the modal state
+        return this.setState({
+            "modalVisible": !currentStatus, 
+            "modalIndex": index, 
+            "modalAction": action,
+            "modalLoading": false
+        });
+    }
+
+    //Edit the user information
+    handleUpdateUser() {
+        let self = this;
+        //Get the current user information
+        let user = this.state.users[this.state.modalIndex];
+        let info = {
+            "is_active": this.ref.activeSwitch.current.checked
+        };
+        //Check for owner
+        if(this.props.user.owner === true){
+            info.is_admin = this.ref.roleSelect.current.value === "admin";
+        }
+        //Check that a change has been made in the info to update
+        let hasChanged = this.props.user.owner ? info.is_active !== user.is_active || info.is_admin !== user.is_admin : info.is_active !== user.is_active;
+        if (hasChanged === false) {
+            //No changes made --> close the modal
+            //return notification.warning("Change the user info before updating")
+            return this.setState({"modalVisible": false});
+        }
+        let requestOptions = {
+            "url": "/api/users/" + user.id,
+            "method": "put",
+            "json": true,
+            "body": info,
+            "auth": auth.generateAuth()
+        };
+        //Do the request
+        return request(requestOptions, function (err, res, body) {
+            if (err) {
+                notification.error(err.message);
+                return self.setState({"modalLoading": false});
+            }
+            if (res.statusCode >= 300) {
+                notification.error(body.message);
+                return self.setState({"modalLoading": false});
+            }
+            //Update the state users array
+            let newUsers = self.state.users;
+            newUsers[self.state.modalIndex].is_admin = info.is_admin;
+            newUsers[self.state.modalIndex].is_active = info.is_active;
+            //Confirm success
+            notification.success("User information updated");
+            //Update the users array and close the modal
+            return self.setState({
+                "users": newUsers, 
+                "modalVisible": false,
+                "modalLoading": false
+            });
+        });
+    }
+
+    //Delete the user
+    handleDeleteUser() {
+        let self = this;
+        return this.setState({"modalLoading": true}, function () {
+            let userId = self.state.users[self.state.modalIndex].id;
+            let requestOptions = { 
+                "url": "/api/users/" + userId,
+                "method": "delete",
+                "json": true,
+                "auth": auth.generateAuth()
+            };
+            //Do the request
+            return request(requestOptions, function (err, res, body) {
+                if (err) {
+                    notification.error(err.message);
+                    return self.setState({"modalLoading": false});
+                }
+                if (res.statusCode >= 300) {
+                    notification.error(body.message);
+                    return self.setState({"modalLoading": false});
+                }
+                //Delete the user from the array of users
+                let newUsers = self.state.users;
+                newUsers.splice(self.state.modalIndex, 1);
+                //Confirm success
+                notification.success("The user was deleted successfully");
+                //Close the modal and update the users list
+                return self.setState({
+                    "users": newUsers, 
+                    "modalVisible": false,
+                    "modalLoading": false
+                });
+            });
+        });
+    }
+
+    //Render a list with all the applications
+    renderUsers() {
+        if (this.state.loading === true) {
+            return (<Spinner color="primary" style={{"marginTop":"25px"}}/>);
+        }
+        let customTitle = function (item) {
+            return item.name;
+        };
+        let customDetail = function (item) {
+            return item.email;
+        };
+        // Render the table
+        return (
+            <div className="users-list">
+                <Paragraph>
+                    There are <strong>{this.state.users.length}</strong> users registered.
+                </Paragraph>
+                <TableUsers data={this.state.users}
+                    icon="user"
+                    admin={this.props.user}
+                    editUser={this.toggleModal}
+                    customTitle={customTitle}
+                    customDetail={customDetail}/>
+            </div>
+        );
+    }
+
+    renderRoleSelect() {
+        if (this.props.user.owner === true) {
+            //Get the role of the user 
+            let user = this.state.users[this.state.modalIndex];
+            let role = (user.is_admin === true) ? "admin" : "user";
             return (
-                <Field className="modal-role-section">
-                    <FieldLabel>Role of the user:</FieldLabel>
-                    <Select defaultValue={info.role} ref={this.ref.roleSelect}>
+                <Field>
+                    <Label>Role of the user: </Label>
+                    <Select defaultValue={role} ref={this.ref.roleSelect}>
                         <option value="user">User</option>
                         <option value="admin">Admin</option>
                     </Select>
@@ -102,163 +216,57 @@ class Users extends Component {
 
     // Render the modal to delete the application
     renderModal() {
-        if (this.state.modal.show) {
-            if (this.state.modal.action === "edit") {
-                //Prepare the tag and the initial state of the switch
-                let info = this.state.modal.user.is_active ?
-                    {color: "green", text: "Active", switch: true} :
-                    {color: "light", text: "Inactive", switch: false};
-                //To set the default select value
-                info.role = this.state.modal.user.is_admin ? "admin" : "user";
+        if (this.state.modalVisible) {
+            if (this.state.modalAction === "edit") {
+                let user = this.state.users[this.state.modalIndex];
                 return (
                     <div className="modal">
                         <div className={"modal-content"}>
-                            {/*Close button*/}
-                            <span className="modal-hide" onClick={() => this.showModal(null, null, null)}>&times;</span>
-                            {/*Title*/}
+                            <span className="modal-hide" onClick={() => this.toggleModal(null, null, null)}>&times;</span>
                             <Heading type={"h4"} className={"modal-title"}>Edit user</Heading>
-                            {/*Subtitle*/}
-                            <p className="siimple-p">Make the desired changes in the user and click <b>Save</b> to
-                                confirm them.</p>
-                            {/*Active tag*/}
-                            <Field className="modal-active-section">
-                                <Label htmlFor="active-switch">User active</Label>
-                                <Switch defaultChecked={info.switch} id={"active-switch"}
-                                        ref={this.ref.activeSwitch}>
-                                </Switch>
+                            <Paragraph>Make the desired changes in the user and click <b>Update user</b> to confirm them.</Paragraph>
+                            <Field>
+                                <Label>User active: </Label>
+                                <Switch defaultChecked={user.is_active} ref={this.ref.activeSwitch}/>
                             </Field>
-                            {/*Role select*/}
-                            {this.renderRoleSelect(info)}
-                            {/*Buttons*/}
-                            <div className="modal-btn-section">
-                                <Btn color={"blue"} onClick={this.updateUser}>Save</Btn>
-                                <Btn color={"light"} onClick={() => this.showModal(null, null, null)}>Cancel</Btn>
-                            </div>
+                            {this.renderRoleSelect()}
+                            <Btn color={"primary"} fluid onClick={this.handleUpdateUser}>Update user</Btn>
                         </div>
                     </div>
                 );
             }
-            else if (this.state.modal.action === "delete") {
+            else if (this.state.modalAction === "delete") {
                 return (
                     <div className="modal">
                         <div className={"modal-content"}>
-                            <span className="modal-hide" onClick={() => this.showModal(null, null, null)}>&times;</span>
+                            <span className="modal-hide" onClick={() => this.toggleModal(null, null, null)}>&times;</span>
                             <Heading type={"h4"} className={"modal-title"}>Are you sure?</Heading>
-                            <p className="siimple-p">Once you delete this user all his data will be permanently lost,
+                            <Paragraph>
+                                Once you delete this user all his data will be permanently lost,
                                 and the only way he'll be able to use the application again will be by creating a new
-                                account.</p>
-                            <Field>
-                                <FieldLabel>Verify this action by typing <i>{this.textConfirm}</i> below</FieldLabel>
-                                <Input className="modal-input"
-                                       type={"text"}
-                                       ref={this.ref.deleteConfirm}/>
-                            </Field>
-                            <Btn color={"red"} fluid onClick={this.deleteUser}>Delete user</Btn>
+                                account.
+                            </Paragraph>
+                            <Btn color={"error"} fluid onClick={this.handleDeleteUser}>Delete user</Btn>
                         </div>
                     </div>
                 );
             }
         }
-    }
-
-    //Edit the user information
-    updateUser() {
-        let self = this;
-        let modUser = this.state.modal.user;
-        let info = {
-            is_active: this.ref.activeSwitch.current.checked
-        };
-        if(this.props.user.owner){
-            info.is_admin = this.ref.roleSelect.current.value === "admin";
-        }
-        //Check that a change has been made in the info to update
-        let hasChanged = this.props.user.owner ? info.is_active === modUser.is_active && info.is_admin === modUser.is_admin : info.is_active === modUser.is_active;
-        if (hasChanged) {
-            return notification.warning("Change the user info before updating")
-        }
-        //Do the request
-        let url = "/api/users/" + this.state.modal.user.id;
-        request({url: url, method: "put", json: true, body: info, auth: {bearer: localStorage.getItem("token")}},
-            function (err, res, body) {
-                if (err) {
-                    return notification.error(err.message);
-                }
-                if (res.statusCode >= 300) {
-                    return notification.error(body.message);
-                }
-                //Update the state users array
-                let new_users = self.state.users;
-                new_users[self.state.modal.index].is_admin = info.is_admin;
-                new_users[self.state.modal.index].is_active = info.is_active;
-                //Confirm success
-                notification.success("User information updated");
-                //Update the users array and close the modal
-                return self.setState({
-                    users: new_users,
-                    modal: {
-                        show: false
-                    }
-                });
-            });
-    }
-
-    //Delete the user
-    deleteUser() {
-        let self = this;
-        //Check the text confirmation
-        if (this.textConfirm !== this.ref.deleteConfirm.current.value) {
-            return notification.warning("Type the exact confirmation text");
-        }
-        let url = "/api/users/" + this.state.modal.user.id;
-        //Do the request
-        request({url: url, method: "delete", json: true, auth: {bearer: localStorage.getItem("token")}},
-            function (err, res, body) {
-                if (err) {
-                    return notification.error(err.message);
-                }
-                if (res.statusCode >= 300) {
-                    return notification.error(body.message);
-                }
-                //Delete the user from the array of users
-                let new_users = self.state.users;
-                new_users.splice(self.state.modal.index, 1);
-                //Confirm success
-                notification.success("The user was deleted successfully");
-
-                //Close the modal and update the users
-                return self.setState({
-                    users: new_users,
-                    modal: {
-                        show: false
-                    }
-                });
-            });
     }
 
     render() {
-        if (!this.props.user.admin) {
-            return (
-                <Alert>You must be an administrator to access this route.</Alert>
-            );
+        //Check if logged user is not an administrator
+        if (this.props.user.admin === false) {
+            return (<Alert color="error">You must be an administrator to access this route.</Alert>);
         }
-        else {
-            if (!this.state.ready) {
-                return (<Spinner/>);
-            }
-            else
-                return (
-                    <div className="users-content">
-                        {/*Title*/}
-                        <Heading type={"h2"}>Users</Heading>
-                        {/*List of all the users*/}
-                        <Heading type={"h5"}>Registered users</Heading>
-                        {this.listUsers()}
-                        {/*Modal*/}
-                        {this.renderModal()}
-                    </div>
-                );
-        }
+        return (
+            <div className="users-content">
+                <Subhead headerText="Users" btnText="Register new user" onBtnClick={() => this.registerRedirect()}/>
+                {this.renderUsers()}
+                {/*Modal*/}
+                {this.renderModal()}
+            </div>
+        );
     }
 }
 
-export default Users;
