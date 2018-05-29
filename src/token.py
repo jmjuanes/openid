@@ -9,6 +9,8 @@ def encode(u, secret, algorithm, expiration):
     payload['email'] = u.email
     payload['name'] = u.name
     payload['is_admin'] = u.is_admin
+    payload['is_owner'] = u.is_owner
+    payload['is_active'] = u.is_active
     payload['id'] = u.key.id()
     payload['iat'] = int(time.time())
     payload['exp'] = int(time.time()) + expiration
