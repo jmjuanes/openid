@@ -185,6 +185,7 @@ class RouteUsersById(webapp2.RequestHandler):
         # Parse the body to JSON
         try:
             data = json.loads(self.request.body)
+            print data
         except:
             return response.sendError(self, 400, 'Bad request')
 
@@ -208,18 +209,17 @@ class RouteUsersById(webapp2.RequestHandler):
         if u is None:
             return response.sendError(self, 404, 'This user does not exist')
 
-        # Update the info
+        # Update if user is active
         # if isinstance(data['is_active'], bool):
-        if hasattr(data, 'is_active'):
+        if data.get('is_active') is not None:
+            print "Changed is_active value"
             u.is_active = data['is_active']
-        # if isinstance(data['is_active'], bool):
-        if hasattr(data, 'is_admin'):
-            u.is_admin = data['is_admin']
 
         # If the user to edit is an admin, only the owner is allowed to change its role
-        if u.is_admin is True:
-            if payload['is_owner'] is False and u.is_active is not None:
-                return response.sendError(self, 401, 'Only the owner can edit the roles')
+        if payload['is_owner'] is True:
+            if data.get('is_admin') is not None:
+                print 'Changed is_admin value of user'
+                u.is_admin = data['is_admin']
 
         try:
             u.put()
