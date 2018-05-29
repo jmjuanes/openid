@@ -13,7 +13,6 @@ export default class TableUsers extends React.Component {
         this.state = {
             checked: {}
         };
-
         this.handleActiveClick = this.handleActiveClick.bind(this);
     }
 
@@ -54,11 +53,15 @@ export default class TableUsers extends React.Component {
         return h("div", {className: "table-cell table-cell--tag table-cell-tag--last"}, tag);
     }
 
-    renderItemAdmin(item, index){
+    renderItemRole(item, index){
         let tagProps = {};
         let tagText;
-        if(item.is_admin){
-            tagProps.color = "blue";
+        if (item.is_owner === true) {
+            tagProps.color = "error";
+            tagText = "Owner";
+        }
+        else if (item.is_admin === true){
+            tagProps.color = "primary";
             tagText = "Admin";
         } else {
             tagProps.color = "light";
@@ -103,7 +106,7 @@ export default class TableUsers extends React.Component {
             let itemContent = self.renderItemContent(item, index);
             let itemLogo = self.renderItemLogo(item, index);
             let itemActive = self.renderItemActive(item, index);
-            let itemAdmin = self.renderItemAdmin(item, index);
+            let itemRole = self.renderItemRole(item, index);
             let itemEditBtn = self.renderEditBtn(item, index);
             let itemDeleteBtn = self.renderDeleteBtn(item, index);
             let itemProps = {
@@ -111,7 +114,7 @@ export default class TableUsers extends React.Component {
                 "key": index
             };
             //Return the item element
-            return h("div", itemProps, itemLogo, itemContent, itemAdmin, itemActive, itemEditBtn, itemDeleteBtn);
+            return h("div", itemProps, itemLogo, itemContent, itemRole, itemActive, itemEditBtn, itemDeleteBtn);
         });
         //Return the applications table
         return h("div", {className: "table"}, children);
