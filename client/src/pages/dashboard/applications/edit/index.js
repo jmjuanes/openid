@@ -192,10 +192,12 @@ export default class EditApp extends React.Component {
             //Sed the put request
             return request(requestOptions, function (err, res, body) {
                 if (err) {
-                    return notification.error(err.message);
+                    notification.error(err.message);
+                    return self.setState({"loading": false});
                 }
                 if (res.statusCode >= 300) {
-                    return notification.error(body.message);
+                    notification.error(body.message);
+                    return self.setState({"loading": false});
                 }
                 // Set the new info
                 notification.success("Application updated successfully");
