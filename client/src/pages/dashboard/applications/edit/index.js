@@ -1,14 +1,15 @@
 import React from 'react';
 import {request} from "@kofijs/request";
-import {Alert, Btn, Field, FieldLabel, Heading, Input, Small, Spinner} from "neutrine";
+import {Alert, Code, Btn, Heading, Input, Small, Spinner} from "neutrine";
+import {Field, FieldLabel, FieldHelper} from "neutrine";
 import {redirectHashbang as redirect} from "rouct";
 
-import * as auth from "../../../commons/auth.js";
+import * as auth from "../../../../commons/auth.js";
 import * as notification from "../../../../commons/notification.js";
 
 import "./styles.scss";
 
-class EditApp extends React.Component {
+export default class EditApp extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -17,6 +18,11 @@ class EditApp extends React.Component {
             "modal": {
                 "show": false,
                 "disableBtn": false
+            },
+            "keys": {
+                "public": null,
+                "secret": null,
+                "visible": false
             }
         };
         this.ref = {
@@ -85,6 +91,31 @@ class EditApp extends React.Component {
                 <Spinner/>
             );
         }
+    }
+
+    //Handle public and secret keys
+    handleShowKeys() {
+        let self = this;
+        let requestOptions = {
+            "url": "/api/applications/" + this.state.app.id + "/secret",
+            "method": "get",
+            "json": true,
+            "auth": auth.generateAuth()
+        };
+        return request(requestOptions, function (error, res, body) {
+            if (error) {
+                return notification.error(error.message);
+            }
+            if (res.statusCode >= 300) {
+                return notification.error(body.message);
+            }
+            let newState = {
+                "visible": true,
+                "public": self.state.app.id,
+                "secret": body.secret
+            };
+            return self.setState({"keys": newState});
+        });
     }
 
     // Delete the app
@@ -203,6 +234,31 @@ class EditApp extends React.Component {
         }
     }
 
+    renderKeys() {
+        if (this.state.keys.visible === false) {
+            return (
+                <div className="edit-app-keys">
+                    <Btn color="navy" onClick={() => this.handleShowKeys()}>
+                        Reveal public and secret keys
+                    </Btn>        
+                </div>
+            );
+        } else {
+            return (
+                <div className="edit-app-keys">
+                    <Field>
+                        <FieldLabel>Public key</FieldLabel>
+                        <Code className="edit-app-keys-container">{this.state.keys.public}</Code>
+                    </Field>
+                    <Field>
+                        <FieldLabel>Secret key</FieldLabel>
+                        <Code className="edit-app-keys-container">{this.state.keys.secret}</Code>
+                    </Field>
+                </div>
+            );
+        }
+    }
+
     render() {
         if (!this.props.admin) {
             return (
@@ -223,6 +279,9 @@ class EditApp extends React.Component {
                         {/*Title*/}
                         <Heading type={"h2"}>{this.state.app.name}</Heading>
                         {/*Edit form*/}
+                        {/*Key info from the application*/}
+                        <Heading type="h5">Public and secret keys</Heading>
+                        {this.renderKeys()}
                         {/*Form title*/}
                         <Heading type={"h5"}>Manage the application information</Heading>
                         <div className="edit-app-form">
@@ -234,6 +293,9 @@ class EditApp extends React.Component {
                                        fluid
                                        defaultValue={this.state.app.name}
                                        ref={this.ref.nameInput}/>
+                                <FieldHelper>
+                                    The name that all users will see.
+                                </FieldHelper>
                             </Field>
                             {/*Detail input*/}
                             <Field>
@@ -243,6 +305,9 @@ class EditApp extends React.Component {
                                        fluid
                                        defaultValue={this.state.app.detail}
                                        ref={this.ref.detailInput}/>
+                                <FieldHelper>
+                                    Brief description about your application.
+                                </FieldHelper>
                             </Field>
                             {/*Redirect input*/}
                             <Field>
@@ -253,28 +318,11 @@ class EditApp extends React.Component {
                                        defaultValue={this.state.app.redirect}
                                        ref={this.ref.redirectInput}/>
                             </Field>
-                            <Btn color={"blue"} onClick={() => {
-                                this.updateApp();
-                            }}>Update application</Btn>
-                        </div>
-                        {/*Key info from the application*/}
-                        <div className="edit-app-keys">
-                            <Heading type={"h5"}>Public & secret keys</Heading>
-                            {/*Public key (the id)*/}
-                            <p className={"key-header"}><b>Public key</b></p>
-                            <p>{this.state.app.id}</p>
-                            {/*Secret key*/}
-                            <p className={"key-header"}><b>Secret key</b></p>
-                            <p>{this.state.app.secret}</p>
-                        </div>
-                        {/*Delete application*/}
-                        <div className="edit-app-delete">
-                            <Heading type={"h5"}>Delete the application</Heading>
-                            <p className={"p-small"}>Once the application is deleted all its information will be
-                                permanently removed.
-                            </p>
-                            <Btn color={"grey"} className={"btn"} onClick={() => this.showModal()}>Delete
-                                application</Btn>
+                            <Btn color={"blue"} onClick={() => this.updateApp()} style={{"marginRight":"5px"}}>
+                                Update application
+                            </Btn>
+                            <Btn color={"red"} className={"btn"} onClick={() => this.showModal()}>
+                                Delete this application</Btn>
                         </div>
                     </div>
                 );
@@ -282,4 +330,3 @@ class EditApp extends React.Component {
     }
 }
 
-export default EditApp;
