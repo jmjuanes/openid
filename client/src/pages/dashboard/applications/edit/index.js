@@ -13,8 +13,7 @@ export default class EditApp extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            "app": {},
-            "ready": false,
+            "app": null,
             "modal": {
                 "show": false,
                 "disableBtn": false
@@ -23,7 +22,8 @@ export default class EditApp extends React.Component {
                 "public": null,
                 "secret": null,
                 "visible": false
-            }
+            },
+            "loading": true
         };
         this.ref = {
             "nameInput": React.createRef(),
@@ -32,9 +32,8 @@ export default class EditApp extends React.Component {
             "modalConfirm": React.createRef()
         };
         this.text_confirm = "Yes, delete this app";
-
+        //Bind update app functiom
         this.updateApp = this.updateApp.bind(this);
-
         // Functions from the modal
         this.showModal = this.showModal.bind(this);
         this.renderModal = this.renderModal.bind(this);
@@ -57,16 +56,15 @@ export default class EditApp extends React.Component {
             if (res.statusCode >= 300) {
                 return notification.error(body.message);
             }
+            console.log(body);
+            let newData = {
+                "id": self.props.request.params.id,
+                "name": body.name,
+                "detail": body.detail,
+                "redirect": body.redirect
+            };
             //Save the application info
-            return self.setState({
-                "app": {
-                    "id": self.props.request.params.id,
-                    "name": body.name,
-                    "detail": body.detail,
-                    "redirect": body.redirect
-                },
-                "ready": true
-            });
+            return self.setState({"app": newData, "loading": false});
         });
     }
 
@@ -182,34 +180,30 @@ export default class EditApp extends React.Component {
         if (info.name.length === 0 || info.detail.length === 0 || info.redirect.length === 0) {
             return notification.warning("No field can be empty");
         }
-        let requestOptions = {
-            "url": "/api/applications/" + this.props.request.params.id,
-            "method": "put",
-            "json": true,
-            "body": info,
-            "auth": auth.generateAuth()
-        };
-        return request(requestOptions, function (err, res, body) {
-            if (err) {
-                return notification.error(err.message);
-            }
-            if (res.statusCode >= 300) {
-                return notification.error(body.message);
-            }
-            // Set the new info
-            notification.success("Application updated successfully");
-            //New application data
-            let newData = {
-                "id": self.state.app.id,
-                "name": body.name,
-                "detail": body.detail,
-                "redirect": body.redirect
+        //Update the view state 
+        return this.setState({"loading": true}, function () {
+            let requestOptions = {
+                "url": "/api/applications/" + this.props.request.params.id,
+                "method": "put",
+                "json": true,
+                "body": info,
+                "auth": auth.generateAuth()
             };
-            //Redirect to the applications list
-            return setTimeout(function () {
-                return redirect("/dashboard/applications"); 
-            }, 500);
-            //return self.setState({"app": newData});
+            //Sed the put request
+            return request(requestOptions, function (err, res, body) {
+                if (err) {
+                    return notification.error(err.message);
+                }
+                if (res.statusCode >= 300) {
+                    return notification.error(body.message);
+                }
+                // Set the new info
+                notification.success("Application updated successfully");
+                //Redirect to the applications list
+                return setTimeout(function () {
+                    return redirect("/dashboard/applications"); 
+                }, 500);
+            });
         });
     }
 
@@ -270,9 +264,11 @@ export default class EditApp extends React.Component {
             );
         }
         else {
-            if (!this.state.ready) {
+            if (this.state.loading === true) {
                 return (
-                    <Spinner/>
+                    <div align="center" style={{"marginTop":"20px"}}>
+                        <Spinner color="blue"/>
+                    </div>
                 );
             }
             else
