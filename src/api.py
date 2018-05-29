@@ -705,6 +705,7 @@ app = webapp2.WSGIApplication([
     # Users routes
     webapp2.Route('/api/users', handler=RouteUsers),
     webapp2.Route('/api/users/<user_id>', handler=RouteUsersById),
+    # Authenticated user routes
     webapp2.Route('/api/user', handler=RouteUser),
     webapp2.Route('/api/user/password', handler=RouteUserPassword),
     webapp2.Route('/api/user/delete', handler=RouteUserDelete),
