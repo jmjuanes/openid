@@ -261,7 +261,7 @@ export default class Users extends React.Component {
         }
         return (
             <div className="users-content">
-                <Subhead headerText="Users" btnText="Register new user" onBtnClick={() => this.registerRedirect()}/>
+                <Subhead headerText="Users" btnText="New user" onBtnClick={() => this.registerRedirect()}/>
                 {this.renderUsers()}
                 {/*Modal*/}
                 {this.renderModal()}
