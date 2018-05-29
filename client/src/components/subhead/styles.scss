@@ -1,0 +1,27 @@
+@import "siimple-colors/scss/_all.scss";
+
+//Subhead class
+.subhead {
+    display: block;
+    height: 30px;
+    border-bottom: 1px solid $siimple-grey;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    margin-bottom: 15px;
+    //Subhead heading 
+    &-heading {
+        display: inline-block;
+        height: 30px;
+        line-height: 30px;
+        font-size: 26px;
+        color: $siimple-navy;
+        font-weight: bold;
+    }
+    //Subhead button 
+    &-btn {
+        float: right;
+        height: 30px;
+        font-size: 14px;
+        line-height: 30px;
+    }
+}
