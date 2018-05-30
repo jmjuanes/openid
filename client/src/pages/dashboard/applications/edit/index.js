@@ -4,7 +4,7 @@ import {Alert, Code, Btn, Heading, Input, Small, Spinner, Paragraph} from "neutr
 import {Field, FieldLabel, FieldHelper} from "neutrine";
 import {redirectHashbang as redirect} from "rouct";
 
-import Subhead from "../../../../components/subhead/index.js";
+import Header from "../../../../components/header/index.js";
 
 import * as auth from "../../../../commons/auth.js";
 import * as notification from "../../../../commons/notification.js";
@@ -283,10 +283,10 @@ export default class EditApp extends React.Component {
                 <div>
                     {this.renderModal()}
                     {/* Public ans secret keys of the application  */}
-                    <Subhead headerText="Public and secret keys"/>
+                    <Header text="Public and secret keys"/>
                     {this.renderKeys()}
                     {/* Update the application information  */}
-                    <Subhead headerText="Application settings"/>
+                    <Header text="Application settings"/>
                     {this.renderApplicationForm()}
                 </div>
             );
