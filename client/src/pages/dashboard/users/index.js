@@ -198,6 +198,7 @@ export default class Users extends React.Component {
         );
     }
 
+    //Render the user role selector --> only visible for owners
     renderModalRole() {
         if (this.props.user.owner === true) {
             //Get the role of the user 
@@ -218,7 +219,27 @@ export default class Users extends React.Component {
         }
     }
 
-    // Render the modal to delete the application
+    //Render the submit section for user update
+    renderModalUpdateSubmit() {
+        if (this.state.modalLoading === true) {
+            return <Spinner color="primary"/>;
+        }
+        else {
+            return <Btn color="primary" fluid onClick={this.handleUpdateUser}>Update user</Btn>;
+        }
+    }
+
+    //Render the submit section for user delete
+    renderModalDeleteSubmit() {
+        if (this.state.modalLoading === true) {
+            return <Spinner color="primary"/>;
+        }
+        else {
+            return <Btn color="error" fluid onClick={this.handleDeleteUser}>Delete user</Btn>;
+        }
+    }
+
+    //Render the modal to delete the application
     renderModal() {
         if (this.state.modalVisible) {
             if (this.state.modalAction === "edit") {
@@ -237,7 +258,7 @@ export default class Users extends React.Component {
                                 </FieldHelper>
                             </Field>
                             {this.renderModalRole()}
-                            <Btn color={"primary"} fluid onClick={this.handleUpdateUser}>Update user</Btn>
+                            {this.renderModalUpdateSubmit()}
                         </div>
                     </div>
                 );
@@ -253,7 +274,7 @@ export default class Users extends React.Component {
                                 and the only way he'll be able to use the application again will be by creating a new
                                 account.
                             </Paragraph>
-                            <Btn color={"error"} fluid onClick={this.handleDeleteUser}>Delete user</Btn>
+                            {this.renderModalDeleteSubmit()}
                         </div>
                     </div>
                 );
@@ -264,7 +285,7 @@ export default class Users extends React.Component {
     render() {
         //Check if logged user is not an administrator
         if (this.props.user.admin === false) {
-            return (<Alert color="error">You must be an administrator to access this route.</Alert>);
+            return <Alert color="error">You must be an administrator to access this route.</Alert>;
         }
         return (
             <div className="users-content">
