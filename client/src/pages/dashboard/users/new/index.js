@@ -7,7 +7,7 @@ import {request} from "@kofijs/request";
 import * as auth from "../../../../commons/auth.js";
 import * as notification from "../../../../commons/notification.js";
 
-import Subhead from "../../../../components/subhead/index.js";
+import Header from "../../../../components/header/index.js";
 
 //New user component 
 export default class NewUser extends React.Component {
@@ -93,7 +93,7 @@ export default class NewUser extends React.Component {
         }
         return (
             <div>
-                <Subhead headerText="Register a new user"/>
+                <Header text="Register a new user"/>
                 <Field>
                     <FieldLabel>Name</FieldLabel>
                     <Input type="text" fluid ref={this.ref.userName}/>
