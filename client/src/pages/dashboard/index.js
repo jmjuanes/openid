@@ -11,9 +11,9 @@ import Applications from "./applications/index";
 import EditApp from "./applications/edit/index";
 import CreateApp from "./applications/create/index";
 import Users from "./users/index";
+import NewUser from "./users/new/index.js";
 
-
-class Dashboard extends React.Component {
+export default class Dashboard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -88,7 +88,7 @@ class Dashboard extends React.Component {
                 <Spinner className={"dash-loading"}/>
             );
         }
-        else
+        else {
             return (
                 <div>
                     <Navbar size="medium" color="light">
@@ -158,13 +158,17 @@ class Dashboard extends React.Component {
                                         <Router.Route exact path={"/dashboard/users"}
                                                       component={Users}
                                                       props={{token: this.props.token, user: this.state.user}}/>
+                                        {/*New user route */}
+                                        <Router.Route exact path="/dashboard/users/new" component={NewUser} props={{"isAdmin": this.state.user.admin}}/>
+
                                     </Router.Switch>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>);
+                </div>
+            );
+        }
     }
 }
 
-export default Dashboard;
