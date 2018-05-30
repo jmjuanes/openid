@@ -4,7 +4,7 @@ import {Field, FieldHelper, FieldLabel} from "neutrine";
 import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
 
-import Subhead from "../../../../components/subhead/index.js";
+import Header from "../../../../components/header/index.js";
 
 import * as auth from "../../../../commons/auth.js";
 import * as notification from "../../../../commons/notification.js";
@@ -113,9 +113,7 @@ export default class CreateApp extends Component {
         else {
             return (
                 <div>
-                    {/* Subhead */}
-                    <Subhead headerText="Register a new application"/>
-                    {/* Render the create app form */}
+                    <Header text="Register a new application"/>
                     {this.renderForm()}
                 </div>
             );
