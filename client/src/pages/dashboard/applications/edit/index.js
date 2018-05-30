@@ -36,6 +36,7 @@ export default class EditApp extends React.Component {
         this.renderModal = this.renderModal.bind(this);
         this.handleAppDelete = this.handleAppDelete.bind(this);
         this.handleAppUpdate = this.handleAppUpdate.bind(this);
+        this.handleShowKeys = this.handleShowKeys.bind(this);
     }
 
     componentWillMount() {
