@@ -3,7 +3,7 @@ import {Alert, Btn, Field, FieldLabel, Heading, Input, Label, Paragraph, Select,
 import {redirectHashbang as redirect} from "rouct";
 import {request} from "@kofijs/request";
 
-import Subhead from "../../../components/subhead/index.js";
+import Header from "../../../components/header/index.js";
 import TableUsers from "../../../components/table_users/index.js";
 
 import * as auth from "../../../commons/auth.js";
@@ -261,7 +261,7 @@ export default class Users extends React.Component {
         }
         return (
             <div className="users-content">
-                <Subhead headerText="Users" btnText="New user" onBtnClick={() => this.registerRedirect()}/>
+                <Header text="Users" btnText="New user" onBtnClick={() => this.registerRedirect()}/>
                 {this.renderUsers()}
                 {/*Modal*/}
                 {this.renderModal()}
