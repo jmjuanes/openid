@@ -17,7 +17,7 @@ export default class Header extends React.Component {
                 "onClick": props.onBtnClick,
                 "color": props.btnColor
             };
-            btnComponent = React.CreateElement(Btn, btnProps, props.btnText);
+            btnComponent = React.createElement(Btn, btnProps, props.btnText);
         }
         //Return the header component
         return React.createElement("div", {"className": "header"}, textComponent, btnComponent);
