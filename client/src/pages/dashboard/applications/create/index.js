@@ -70,19 +70,25 @@ export default class CreateApp extends Component {
         });
     }
 
-    //Render the application form
-    renderForm() {
+    //Render the application submit
+    renderSubmit() {
         //Check for loading status
         if (this.state.loading === true) {
-            return (
-                <div align="center" style={{"marginTop":"20px"}}>
-                    <Spinner color="primary"/>
-                </div>
-            );
+            return <Spinner color="primary"/>;
         } 
+        else {
+            return <Btn color={"blue"} onClick={this.handleCreateApp}>Create application</Btn>;
+        }
+    }
+
+    render() {
+        if (this.props.admin === false) {
+            return <Alert>You must be an administrator to access this route.</Alert>;
+        }
         else {
             return (
                 <div>
+                    <Header text="Register a new application"/>
                     <Paragraph>Please check that all fields are correct before submitting.</Paragraph>
                     {/*Application name*/}
                     <Field>
@@ -100,21 +106,7 @@ export default class CreateApp extends Component {
                         <Input type={"text"} fluid ref={this.ref.redirectInput}/>
                         <FieldHelper>Must be a valid URL</FieldHelper>
                     </Field>
-                    <Btn color={"blue"} onClick={() => this.handleCreateApp()}>Create application</Btn>
-                </div>
-            );
-        }
-    }
-
-    render() {
-        if (this.props.admin === false) {
-            return (<Alert>You must be an administrator to access this route.</Alert>);
-        }
-        else {
-            return (
-                <div>
-                    <Header text="Register a new application"/>
-                    {this.renderForm()}
+                    {this.renderSubmit()}
                 </div>
             );
         }
