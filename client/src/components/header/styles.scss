@@ -1,19 +1,19 @@
 @import "siimple-colors/scss/_all.scss";
 
-//Subhead class
-.subhead {
+//Header class
+.header {
     display: block;
     height: 30px;
     border-bottom: 1px solid $siimple-grey;
     padding-bottom: 10px;
     padding-top: 10px;
     margin-bottom: 15px;
-    //Subhead not first children
+    //Header not first children
     &:not(:first-child) {
         margin-top: 25px;
     }
-    //Subhead heading 
-    &-heading {
+    //Header text 
+    &-text {
         display: inline-block;
         height: 30px;
         line-height: 30px;
@@ -21,7 +21,7 @@
         color: $siimple-navy;
         //font-weight: bold;
     }
-    //Subhead button 
+    //Header button 
     &-btn {
         float: right;
         height: 30px;
