@@ -57,7 +57,7 @@ export default class Users extends React.Component {
 
     //Redirect to the register user route
     registerRedirect() {
-        return redirect("/dashboard/users/register");
+        return redirect("/dashboard/users/new");
     }
 
     //Show the modal and set the user to display
