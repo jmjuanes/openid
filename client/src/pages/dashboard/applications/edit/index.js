@@ -31,12 +31,11 @@ export default class EditApp extends React.Component {
             "redirectInput": React.createRef(),
             "modalConfirm": React.createRef()
         };
-        //Bind update app functiom
-        this.updateApp = this.updateApp.bind(this);
         // Functions from the modal
         this.toggleModal = this.toggleModal.bind(this);
         this.renderModal = this.renderModal.bind(this);
         this.handleAppDelete = this.handleAppDelete.bind(this);
+        this.handleAppUpdate = this.handleAppUpdate.bind(this);
     }
 
     componentWillMount() {
@@ -137,8 +136,8 @@ export default class EditApp extends React.Component {
         });
     }
 
-    // Update the application info
-    updateApp() {
+    //Update the application info
+    handleAppUpdate() {
         let self = this;
         let info = {
             "name": this.ref.nameInput.current.value,
@@ -183,11 +182,12 @@ export default class EditApp extends React.Component {
     }
 
     //Render the delete button/spinner inside the modal
-    renderSpinnerButton() {
+    renderDeleteSubmit() {
         if (this.state.modalLoading === false) {
-            return (<Btn color={"error"} fluid onClick={() => this.handleAppDelete()}>Delete this application</Btn>);
-        } else {
-            return (<Spinner color="error"/>);
+            return <Btn color={"error"} fluid onClick={this.handleAppDelete}>Delete this application</Btn>;
+        } 
+        else {
+            return <Spinner color="error"/>;
         }
     }
 
@@ -197,7 +197,7 @@ export default class EditApp extends React.Component {
             return (
                 <div className="modal">
                     <div className={"modal-content"}>
-                        <span className="modal-hide" onClick={() => this.toggleModal()}>&times;</span>
+                        <span className="modal-hide" onClick={this.toggleModal}>&times;</span>
                         <Heading type={"h4"} className={"modal-title"}>Are you sure?</Heading>
                         <Paragraph>
                             After you confirm this action, all the information related to this
@@ -205,7 +205,7 @@ export default class EditApp extends React.Component {
                             information will be lost. This action can not be undone.
                         </Paragraph>
                         {/*Render the button or if it's loading the spinner*/}
-                        {this.renderSpinnerButton()}
+                        {this.renderDeleteSubmit()}
                     </div>
                 </div>
             );
@@ -216,7 +216,7 @@ export default class EditApp extends React.Component {
         if (this.state.keys.visible === false) {
             return (
                 <div className="edit-app-keys">
-                    <Btn color="navy" onClick={() => this.handleShowKeys()}>
+                    <Btn color="navy" onClick={this.handleShowKeys}>
                         Reveal public and secret keys
                     </Btn>        
                 </div>
@@ -237,46 +237,30 @@ export default class EditApp extends React.Component {
         }
     }
 
-    //Render the application information form
-    renderApplicationForm() {
-        //Check for loading state 
+    //Render the application submit
+    renderUpdateSubmit() {
         if (this.state.loading === true) {
-            return (<Spinner color="primary" style={{"marginTop": "20px"}}/>);
+            return <Spinner color="primary"/>;
         }
-        //Render the application form
-        return (
-           <div>
-               <Field>
-                   <FieldLabel>Application name</FieldLabel>
-                   <Input type={"text"} fluid defaultValue={this.state.app.name} ref={this.ref.nameInput}/>
-                   <FieldHelper>
-                       The name that all users will see.
-                   </FieldHelper>
-               </Field>
-               <Field>
-                   <FieldLabel>Application detail</FieldLabel>
-                   <Input type={"text"} fluid defaultValue={this.state.app.detail} ref={this.ref.detailInput}/>
-                   <FieldHelper>
-                       Brief description about your application.
-                   </FieldHelper>
-               </Field>
-               <Field>
-                   <FieldLabel>Redirect URL</FieldLabel>
-                   <Input type={"text"} fluid defaultValue={this.state.app.redirect} ref={this.ref.redirectInput}/>
-               </Field>
-               <Btn color={"blue"} onClick={() => this.updateApp()} style={{"marginRight":"5px"}}>
-                   Update application
-               </Btn>
-               <Btn color={"red"} className={"btn"} onClick={() => this.toggleModal()}>
-                   Delete this application
-               </Btn>
-           </div>
-        );
+        else {
+            return (
+                <Field>
+                    <Btn color="primary" onClick={this.handleAppUpdate} style={{"marginRight":"5px"}}>
+                        Update application
+                    </Btn>
+                    <Btn color="error" onClick={this.toggleModal}>
+                        Delete this application
+                    </Btn>
+                </Field>
+            );
+        }
     }
 
     render() {
         if (this.props.admin === false) {
-            return (<Alert color={"error"}>You must be an administrator to access this route.</Alert>);
+            return <Alert color={"error"}>You must be an administrator to access this route.</Alert>;
+        } else if (this.state.loading === true) {
+            return <Spinner color="primary"/>;
         }
         else {
             return (
@@ -287,7 +271,25 @@ export default class EditApp extends React.Component {
                     {this.renderKeys()}
                     {/* Update the application information  */}
                     <Header text="Application settings"/>
-                    {this.renderApplicationForm()}
+                    <Field>
+                        <FieldLabel>Application name</FieldLabel>
+                        <Input type={"text"} fluid defaultValue={this.state.app.name} ref={this.ref.nameInput}/>
+                        <FieldHelper>
+                            The name that all users will see.
+                        </FieldHelper>
+                    </Field>
+                    <Field>
+                        <FieldLabel>Application detail</FieldLabel>
+                        <Input type={"text"} fluid defaultValue={this.state.app.detail} ref={this.ref.detailInput}/>
+                        <FieldHelper>
+                            Brief description about your application.
+                        </FieldHelper>
+                    </Field>
+                    <Field>
+                        <FieldLabel>Redirect URL</FieldLabel>
+                        <Input type={"text"} fluid defaultValue={this.state.app.redirect} ref={this.ref.redirectInput}/>
+                    </Field>
+                    {this.renderUpdateSubmit()}
                 </div>
             );
         }
