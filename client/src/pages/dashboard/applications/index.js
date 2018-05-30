@@ -3,7 +3,7 @@ import {Alert, Btn, Heading, Input, Spinner, Small, Paragraph} from "neutrine";
 import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
 
-import Subhead from "../../../components/subhead/index.js";
+import Header from "../../../components/header/index.js";
 import Table from "../../../components/table/index.js";
 
 import * as auth from "../../../commons/auth.js";
@@ -99,7 +99,7 @@ export default class Applications extends React.Component {
         return (
             <div>
                 {/* Subheader with the button to register a new application */}
-                <Subhead headerText="Applications" btnText="New Application" onBtnClick={() => this.createRedirect()}/>
+                <Header text="Applications" btnText="New Application" onBtnClick={() => this.createRedirect()}/>
                 {/* Render the table with all the applications */}
                 {this.renderApplications()}
             </div>
