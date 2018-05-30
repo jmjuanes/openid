@@ -146,7 +146,8 @@ export default class EditApp extends React.Component {
         };
         // Check that all the info is new
         if (info.name === this.state.app.name && info.detail === this.state.app.detail && info.redirect === this.state.app.redirect) {
-            return notification.warning("Change the app information before submitting");
+            //return notification.warning("Change the app information before submitting");
+            return redirect("/dashboard/applications");
         }
         // Check that there aren't empty fields
         if (info.name.length === 0 || info.detail.length === 0 || info.redirect.length === 0) {
@@ -256,21 +257,14 @@ export default class EditApp extends React.Component {
         }
     }
 
-    render() {
-        if (this.props.admin === false) {
-            return <Alert color={"error"}>You must be an administrator to access this route.</Alert>;
-        } else if (this.state.loading === true) {
+    //Render the application update form
+    renderUpdateForm() {
+        if (this.state.app === null) {
             return <Spinner color="primary"/>;
         }
         else {
             return (
                 <div>
-                    {this.renderModal()}
-                    {/* Public ans secret keys of the application  */}
-                    <Header text="Public and secret keys"/>
-                    {this.renderKeys()}
-                    {/* Update the application information  */}
-                    <Header text="Application settings"/>
                     <Field>
                         <FieldLabel>Application name</FieldLabel>
                         <Input type={"text"} fluid defaultValue={this.state.app.name} ref={this.ref.nameInput}/>
@@ -289,6 +283,25 @@ export default class EditApp extends React.Component {
                         <FieldLabel>Redirect URL</FieldLabel>
                         <Input type={"text"} fluid defaultValue={this.state.app.redirect} ref={this.ref.redirectInput}/>
                     </Field>
+                </div>
+            );
+        }
+    }
+
+    render() {
+        if (this.props.admin === false) {
+            return <Alert color={"error"}>You must be an administrator to access this route.</Alert>;
+        }
+        else {
+            return (
+                <div>
+                    {this.renderModal()}
+                    {/* Public ans secret keys of the application */}
+                    <Header text="Public and secret keys"/>
+                    {this.renderKeys()}
+                    {/* Update the application information */}
+                    <Header text="Application settings"/>
+                    {this.renderUpdateForm()}
                     {this.renderUpdateSubmit()}
                 </div>
             );
