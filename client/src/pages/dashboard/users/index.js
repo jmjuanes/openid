@@ -1,5 +1,6 @@
 import React from 'react';
-import {Alert, Btn, Field, FieldLabel, Heading, Input, Label, Paragraph, Select, Spinner, Switch, Tag} from "neutrine";
+import {Alert, Btn, Heading, Input, Label, Paragraph, Select, Spinner, Switch, Tag} from "neutrine";
+import {Field, FieldHelper, FieldLabel} from "neutrine";
 import {redirectHashbang as redirect} from "rouct";
 import {request} from "@kofijs/request";
 
@@ -228,6 +229,9 @@ export default class Users extends React.Component {
                             <Field>
                                 <Label>User active: </Label>
                                 <Switch defaultChecked={user.is_active} ref={this.ref.activeSwitch}/>
+                                <FieldHelper>
+                                    If you deactivate the user, he will not be able to log in until he is activated again.
+                                </FieldHelper>
                             </Field>
                             {this.renderRoleSelect()}
                             <Btn color={"primary"} fluid onClick={this.handleUpdateUser}>Update user</Btn>
