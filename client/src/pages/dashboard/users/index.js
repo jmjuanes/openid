@@ -198,7 +198,7 @@ export default class Users extends React.Component {
         );
     }
 
-    renderRoleSelect() {
+    renderModalRole() {
         if (this.props.user.owner === true) {
             //Get the role of the user 
             let user = this.state.users[this.state.modalIndex];
@@ -210,6 +210,9 @@ export default class Users extends React.Component {
                         <option value="user">User</option>
                         <option value="admin">Admin</option>
                     </Select>
+                    <FieldHelper>
+                        An <strong>administrator</strong> can register and edit applications and users, but can not change the role of a user.
+                    </FieldHelper>
                 </Field>
             );
         }
@@ -233,7 +236,7 @@ export default class Users extends React.Component {
                                     If you deactivate the user, he will not be able to log in until he is activated again.
                                 </FieldHelper>
                             </Field>
-                            {this.renderRoleSelect()}
+                            {this.renderModalRole()}
                             <Btn color={"primary"} fluid onClick={this.handleUpdateUser}>Update user</Btn>
                         </div>
                     </div>
