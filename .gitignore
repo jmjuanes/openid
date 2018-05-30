@@ -95,3 +95,11 @@ ENV/
 # Testing files
 config.py
 src/config.py
+
+# Node modules and compiled files
+client/node_modules/
+client/package-lock.json
+client/public/app.css
+client/public/app.js
+client/public/img/
+
