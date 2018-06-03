@@ -33,14 +33,14 @@ export default class Login extends React.Component {
 
     //Redirect to the provided url
     redirectTo(redirectUrl) {
-        if (this.state.loading === true) {
-            return;
+        if (this.state.loading === false) {
+            //Check the continue url
+            let query = this.props.query;
+            if (typeof query.continueTo === "string") {
+                redirectUrl = redirectUrl + "?continueTo=" + query.continueTo;
+            }
+            return redirect(redirectUrl);
         }
-        //Check the continue url
-        if (typeof this.props.request.query.continueTo === "string") {
-            redirectUrl = redirectUrl + "?continueTo=" + this.props.request.query.continueTo;
-        }
-        return redirect(redirectUrl);
     }
 
     //Redirect to the register screen
@@ -91,6 +91,9 @@ export default class Login extends React.Component {
                     return self.setState({"loading": false});
                 }
                 //return self.props.saveToken(body.token);
+                return self.setState({"loading": false}, function () {
+                    //Save the token and redirect
+                });
             });
         });
     }
