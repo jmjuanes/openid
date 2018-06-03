@@ -88,9 +88,10 @@ export default class Register extends React.Component {
     redirectTo(redirectUrl) {
         //Check if is not loading 
         if (this.state.loading === false) {
+            let query = this.props.request.query;
             //Check the continue url
-            if (typeof this.props.request.query.continueTo === "string") {
-                redirectUrl = redirectUrl + "?continueTo=" + this.props.request.query.continueTo;
+            if (typeof query.continueTo === "string") {
+                redirectUrl = redirectUrl + "?continueTo=" + window.encodeURIComponent(query.continueTo);
             }
             return redirect(redirectUrl);
         }
