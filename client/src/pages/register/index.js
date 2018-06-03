@@ -169,7 +169,7 @@ export default class Register extends React.Component {
                         {/*Login*/}
                         <Field className="pf-register-login">
                             <FieldLabel align="center">Are you already registered?</FieldLabel>
-                            <Btn color="green" onClick={this.redirectToRegister} fluid>Log in</Btn>
+                            <Btn color="green" onClick={this.redirectToLogin} fluid>Log in</Btn>
                         </Field>
                     </div>
                 </div>
