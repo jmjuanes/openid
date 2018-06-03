@@ -1,5 +1,5 @@
 import React from "react";
-import {Btn, Field, FieldHelper, FieldLabel, Heading, Input, Spinner} from "neutrine";
+import {Btn, Field, FieldHelper, FieldLabel, Heading, Input, Small, Spinner} from "neutrine";
 import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
 
