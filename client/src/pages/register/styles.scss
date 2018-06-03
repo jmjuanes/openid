@@ -1,51 +1,32 @@
-// Register content div
-.register-content {
-    display: block;
-    width: 304px;
-    margin: 50px auto 100px;
+//Register class
+.pf-register {
+    &-content {
+        display: block;
+        width: 304px;
+        margin-top: 50px;
+        margin-bottom: 100px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    &-subtitle {
+        margin-bottom: 10px !important;
+        display: block;
+    }
+    &-captcha {
+        margin-top: 5px;
+    }
+    &-login {
+        margin-top: 20px !important;
+        display: block;
+    }
+    &-privacy {
+        display: block;
+        margin-top: 25px;
+        margin-bottom: 15px;
+    }
+    &-success {
+        display: block;
+        margin-top: 240px !important;
+    }
 }
 
-// Register subtitle
-.register-subtitle {
-    margin-bottom: 10px !important;
-}
-
-// Register input
-.register-input {
-    width: 100%;
-}
-
-// Register captcha
-.register-captcha {
-    margin-top: 5px;
-}
-
-// Register error
-.register-error {
-    margin-top: 15px;
-}
-
-// Register submit button
-.register-submit {
-    width: 100%;
-    margin-top: 10px !important;
-    padding-left: 0px !important;
-    padding-right: 0px !important;
-}
-
-// Register privacy
-.register-privacy {
-    margin-top: 25px;
-    margin-bottom: 15px;
-}
-
-// Register login box
-.register-login {
-    font-size: 15px;
-    margin-top: 20px !important;
-}
-
-//Register success view
-.register-success {
-    margin-top: 240px !important;
-}
