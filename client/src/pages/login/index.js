@@ -36,7 +36,7 @@ export default class Login extends React.Component {
     redirectTo(redirectUrl) {
         if (this.state.loading === false) {
             //Check the continue url
-            let query = this.props.query;
+            let query = this.props.request.query;
             if (typeof query.continueTo === "string") {
                 redirectUrl = redirectUrl + "?continueTo=" + query.continueTo;
             }
