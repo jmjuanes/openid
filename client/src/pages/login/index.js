@@ -81,7 +81,7 @@ export default class Login extends React.Component {
                 "json": true,
                 "body": data
             };
-            return request(requestObject, function (error, res, body) {
+            return request(requestOptions, function (error, res, body) {
                 if (error) {
                     notification.error(error.message);
                     return self.setState({"loading": false});
