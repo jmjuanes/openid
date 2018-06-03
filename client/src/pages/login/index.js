@@ -3,6 +3,7 @@ import {Heading, Field, FieldLabel, FieldHelper, Input, Btn, Small, Spinner} fro
 import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
 
+import * as auth from "../../commons/auth.js";
 import * as notification from "../../commons/notification.js";
 import Captcha from "../../components/captcha/index.js";
 
