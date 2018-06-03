@@ -79,7 +79,7 @@ export default class Register extends React.Component {
                     return self.setState({"loading": false});
                 }
                 //Show the successful register view
-                return self.setState({"done": true});
+                return self.setState({"done": true, "loading": false});
             });
         });
     }
