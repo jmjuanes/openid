@@ -1,5 +1,5 @@
 import React from "react";
-import {Heading, Field, FieldLabel, FieldHelper, Input, Btn, Small} from "neutrine";
+import {Heading, Field, FieldLabel, FieldHelper, Input, Btn, Small, Spinner} from "neutrine";
 import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
 
@@ -11,6 +11,9 @@ import "./styles.scss";
 export default class Login extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            "loading": false
+        };
         this.ref = {
             "emailInput": React.createRef(),
             "pwdInput": React.createRef(),
@@ -30,6 +33,9 @@ export default class Login extends React.Component {
 
     //Redirect to the provided url
     redirectTo(redirectUrl) {
+        if (this.state.loading === true) {
+            return;
+        }
         //Check the continue url
         if (typeof this.props.request.query.continueTo === "string") {
             redirectUrl = redirectUrl + "?continueTo=" + this.props.request.query.continueTo;
@@ -67,22 +73,25 @@ export default class Login extends React.Component {
         if (data.pwd.length < 6) {
             return notification.error("Password must contain at least 6 characters");
         }
-        //Do the request
-        let requestOptions = {
-            "url": "/api/login",
-            "method": "post",
-            "json": true,
-            "body": data
-        };
-        return request(requestObject, function (error, res, body) {
-            if (error) {
-                return notification.error(error.message);
-            }
-            if (res.statusCode >= 300) {
-                return notification.error(body.message);
-            }
-            //return self.props.saveToken(body.token);
-            //
+        return this.setState({"loading": true}, function () {
+            //Do the request
+            let requestOptions = {
+                "url": "/api/login",
+                "method": "post",
+                "json": true,
+                "body": data
+            };
+            return request(requestObject, function (error, res, body) {
+                if (error) {
+                    notification.error(error.message);
+                    return self.setState({"loading": false});
+                }
+                if (res.statusCode >= 300) {
+                    notification.error(body.message);
+                    return self.setState({"loading": false});
+                }
+                //return self.props.saveToken(body.token);
+            });
         });
     }
 
@@ -92,7 +101,7 @@ export default class Login extends React.Component {
             return (
                 <Field className="pf-login-register">
                     <FieldLabel align="center">New to {this.props.openid_name}?</FieldLabel>
-                    <Btn color="green" onClick={this.redirectToRegister} fluid>Create an account</Btn>
+                    <Btn color="success" onClick={this.redirectToRegister} fluid>Create an account</Btn>
                 </Field>
             );
         }
@@ -101,7 +110,17 @@ export default class Login extends React.Component {
     //Display the captcha
     renderCaptcha() {
         if (this.props.captcha_enabled === true) {
-            return <Captcha sitekey={this.props.caltcha_key} onError={this.handleCaptchaError} ref={this.ref.captchaInput}/>;
+            return <Captcha sitekey={this.props.caltcha_key} onError={this.handleCaptchaError} ref={this.ref.captcha}/>;
+        }
+    }
+
+    //Render the submit button
+    renderSubmit() {
+        if (this.state.loading === true) {
+            return <Spinner color="primary"/>;
+        }
+        else {
+            return <Btn color="primary" fluid onClick={this.handleSubmit}>Sign in</Btn>;
         }
     }
 
@@ -128,7 +147,7 @@ export default class Login extends React.Component {
                     <Small className="pf-login-privacy" align="center">
                         Check that all the information is correct and click on <b>"Sign in"</b>
                     </Small>
-                    <Btn color="blue" fluid onClick={this.handleSubmit}>Sign in</Btn>
+                    {this.renderSubmit()}
                     {this.renderRegister()}
                 </div>
             </div>
