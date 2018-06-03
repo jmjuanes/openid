@@ -1,5 +1,5 @@
 import React from "react";
-import {Heading, Alert, Field, FieldLabel, FieldHelper, Input, Btn} from "neutrine";
+import {Heading, Field, FieldLabel, FieldHelper, Input, Btn, Small} from "neutrine";
 import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
 
@@ -90,7 +90,7 @@ export default class Login extends React.Component {
     renderRegister() {
         if (this.props.openid_allow_signup) {
             return (
-                <Field className="login-register">
+                <Field className="pf-login-register">
                     <FieldLabel align="center">New to {this.props.openid_name}?</FieldLabel>
                     <Btn color="green" onClick={this.redirectToRegister} fluid>Create an account</Btn>
                 </Field>
@@ -107,34 +107,28 @@ export default class Login extends React.Component {
 
     render() {
         return (
-            <div className="login-content">
-                {/*Title*/}
-                <Heading type={"h2"} align="center">Sign in</Heading>
-                <div align="center" className="login-subtitle siimple-small">
+            <div className="pf-login-content">
+                <Heading type="h2" align="center">Sign in</Heading>
+                <Small align="center" className="pf-login-subtitle">
                     Sign in into your <strong>{this.props.openid_name}</strong> account
-                </div>
-                {/*Form*/}
-                <div id="login-form">
+                </Small>
+                <div>
                     {/*Email input*/}
                     <Field>
                         <FieldLabel>Email</FieldLabel>
-                        <Input className="login-input" ref={this.ref.emailInput} type="text"/>
+                        <Input ref={this.ref.emailInput} type="text" fluid/>
                         <FieldHelper>Please enter a valid email</FieldHelper>
                     </Field>
                     {/*Password input*/}
                     <Field>
                         <FieldLabel>Password</FieldLabel>
-                        <Input className="login-input" ref={this.ref.pwdInput} type="password"/>
+                        <Input ref={this.ref.pwdInput} type="password" fluid/>
                     </Field>
-                    {/*Captcha*/}
                     {this.renderCaptcha()}
-                    {/*Notice*/}
-                    <div className="login-privacy siimple-small" align="center">
+                    <Small className="pf-login-privacy" align="center">
                         Check that all the information is correct and click on <b>"Sign in"</b>
-                    </div>
-                    {/*Sign in*/}
+                    </Small>
                     <Btn color="blue" fluid onClick={this.handleSubmit}>Sign in</Btn>
-                    {/*New account*/}
                     {this.renderRegister()}
                 </div>
             </div>
