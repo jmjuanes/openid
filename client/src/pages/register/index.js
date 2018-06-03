@@ -1,163 +1,179 @@
 import React from "react";
-import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input} from "neutrine";
+import {Btn, Field, FieldHelper, FieldLabel, Heading, Input, Spinner} from "neutrine";
 import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
-import * as notification from "../../commons/notification.js";
 
 import './styles.scss';
+
 import Captcha from "../../components/captcha/index.js";
 
+import * as notification from "../../commons/notification.js";
 
-class Register extends React.Component {
+//Register screen class
+export default class Register extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            done: false
+            "done": false,
+            "loading": false
         };
         this.ref = {
-            nameInput: React.createRef(),
-            emailInput: React.createRef(),
-            pwdInput: React.createRef(),
-            pwdRepeatInput: React.createRef(),
-            captchaInput: React.createRef()
+            "nameInput": React.createRef(),
+            "emailInput": React.createRef(),
+            "pwd1Input": React.createRef(),
+            "pwd2Input": React.createRef(),
+            "captcha": React.createRef()
         };
         //Bind functions
-        this.handleRegisterClick = this.handleRegisterClick.bind(this);
-        this.captchaError = this.captchaError.bind(this);
-        this.redirectRegister = this.redirectRegister.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleCaptchaError = this.handleCaptchaError.bind(this);
+        this.redirectToLogin = this.redirectToLogin.bind(this);
     }
 
-    // Callback for the captcha in case of error
-    captchaError() {
+    //Callback for the captcha in case of error
+    handleCaptchaError() {
         return notification.error("Captcha validation error");
     }
 
     // Register the user with the provided info
-    handleRegisterClick() {
+    handleSubmit() {
         let self = this;
-        let credentials = {
-            name: this.ref.nameInput.current.value,
-            email: this.ref.emailInput.current.value,
-            pwd: this.ref.pwdInput.current.value
+        let data = {
+            "name": this.ref.nameInput.current.value,
+            "email": this.ref.emailInput.current.value,
+            "pwd": this.ref.pwd1Input.current.value
         };
-        // If the captcha is enabled check it
-        if (this.props.captcha_enabled) {
-            credentials = Object.assign({recaptcha: this.ref.captchaInput.current.getResponse()}, credentials);
+        //If the captcha is enabled check it
+        if (this.props.captcha_enabled === true) {
+            //data = Object.assign({recaptcha: this.ref.captcha.current.getResponse()}, data);
+            data.recaptcha = this.ref.captcha.getResponse();
         }
-        // Check if the email is valid
-        if (credentials.email.indexOf("@") === -1) {
-            return notification.warning("Invalid email provided");
+        //Check if the email is valid
+        if (data.email.indexOf("@") === -1) {
+            return notification.error("Invalid email provided");
         }
-        // Check if the password is valid
-        if (credentials.pwd.length < 6) {
-            return notification.warning("Invalid password");
+        //Check if the password is valid
+        if (data.pwd.length < 6) {
+            return notification.error("Password must contain at least 6 characters");
         }
-        // Check if passwords match
-        if (credentials.pwd !== this.ref.pwdRepeatInput.current.value) {
-            return notification.warning("Passwords don't match");
+        //Check if passwords match
+        if (data.pwd !== this.ref.pwd2Input.current.value) {
+            return notification.error("Passwords don't match");
         }
-
-        // Do the request
-        request({url: "/api/users", method: "post", json: true, body: credentials},
-            function (err, res, body) {
-                if (err) {
-                    return notification.error(err.message);
+        //Change the state
+        return this.setState({"loading": true}, function () {
+            //Do the request
+            let requestOptions = {
+                "url": "/api/users",
+                "method": "post",
+                "json": true,
+                "body": data
+            };
+            return request(requestOptions, function (error, response, body) {
+                if (error) {
+                    notification.error(error.message);
+                    return self.setState({"loading": false});
                 }
-                if (res.statusCode >= 300) {
-                    return notification.error(body.message);
+                if (response.statusCode >= 300) {
+                    notification.error(body.message);
+                    return self.setState({"loading": false});
                 }
-                // Show the successful register view
-                return self.setState({done: true});
+                //Show the successful register view
+                return self.setState({"done": true});
             });
+        });
     }
 
-    // Redirect to the login when register is successful
-    redirectRegister() {
-        return redirect("/login");
+    //Perform a redirection
+    redirectTo(redirectUrl) {
+        //Check if is not loading 
+        if (this.state.loading === false) {
+            //Check the continue url
+            if (typeof this.props.request.query.continueTo === "string") {
+                redirectUrl = redirectUrl + "?continueTo=" + this.props.request.query.continueTo;
+            }
+            return redirect(redirectUrl);
+        }
     }
 
+    //Redirect to the login screen
+    redirectToLogin() {
+        return this.redirectTo("/login");
+    }
+
+    renderCaptcha() {
+        if (this.props.capthca_enabled === true) {
+            return <Captcha sitekey={this.props.captcha_key} onError={this.handleCaptchaError} ref={this.ref.captcha}/>;
+        }
+    }
+
+    renderSubmit() {
+        if (this.state.loading === true) {
+            return <Spinner color="blue" className="pf-register-loading"/>;
+        }
+        else {
+            return <Btn color="blue" onClick={this.handleSubmit} fluid>Create account</Btn>;
+        }
+    }
 
     render() {
         if (this.state.done === true) {
             return (
-                <div className="register-content register-success">
-                    {/*Title*/}
-                    <Heading type={"h2"} align={"center"}>You are done!</Heading>
-                    <div className={"register-subtitle siimple-small"} align={"center"}>
-                        Thanks for creating an account in <b>{this.props.openid_name}</b>. You can now continue with
-                        your signup:
-                    </div>
-                    <Btn color={"green"} onClick={this.redirectRegister} fluid>Continue</Btn>
+                <div className="pf-register-content pf-register-success">
+                    <Heading type="h2" align="center">Register completed</Heading>
+                    <Small className="pf-register-subtitle" align="center">
+                        Thanks for creating an account in <b>{this.props.openid_name}</b>. You can now continue with your signup:
+                    </Small>
+                    <Btn color="green" onClick={this.redirectToLogin} fluid>Continue</Btn>
                 </div>
             );
         }
         else {
             return (
-                <div className={"register-content"}>
-                    {/*Title*/}
-                    <Heading type={"h2"} align="center">Register</Heading>
-                    {/*Subtitle*/}
-                    <div className={"register-subtitle siimple-small"} align={"center"}>
-                        Fill the following fields to create a new <b>{this.props.openid_name}</b> account. All of them
-                        are
-                        required.
-                    </div>
-                    {/*Form*/}
-                    <div className={"register-form"}>
+                <div className="pf-register-content">
+                    <Heading type="h2" align="center">Register</Heading>
+                    <Small className="pf-register-subtitle" align="center">
+                        Fill the following fields to create a new <b>{this.props.openid_name}</b> account. All of them are required.
+                    </Small>
+                    <div>
                         {/*Name input*/}
                         <Field>
                             <FieldLabel>Name</FieldLabel>
-                            <Input className="register-input"
-                                   ref={this.ref.nameInput}
-                                   maxLength={"16"}
-                                   required/>
+                            <Input ref={this.ref.nameInput} maxLength="16" type="text" fluid/>
                         </Field>
                         {/*Email input*/}
                         <Field>
                             <FieldLabel>Email</FieldLabel>
-                            <Input className="register-input"
-                                   ref={this.ref.emailInput}
-                                   required/>
+                            <Input ref={this.ref.emailInput} type="text" fluid/>
                         </Field>
                         {/*Password input*/}
                         <Field>
                             <FieldLabel>Password</FieldLabel>
-                            <Input className="register-input"
-                                   ref={this.ref.pwdInput}
-                                   type={"password"}
-                                   required/>
+                            <Input ref={this.ref.pwd1Input} type="password" fluid/>
                             <FieldHelper>6 characters minimum</FieldHelper>
                         </Field>
                         {/*Password input*/}
                         <Field>
                             <FieldLabel>Repeat password</FieldLabel>
-                            <Input className="register-input"
-                                   ref={this.ref.pwdRepeatInput}
-                                   type={"password"}
-                                   required/>
+                            <Input ref={this.ref.pwd2Input} type="password" fluid/>
                         </Field>
                         {/*Captcha*/}
-                        {this.props.captcha_enabled ? (<Captcha sitekey={this.props.captcha_key}
-                                                                onError={this.captchaError}
-                                                                ref={this.ref.captchaInput}/>) : (null)}
+                        {this.renderCaptcha()}
                         {/*Notice*/}
-                        <div className="register-privacy siimple-small" align="center">
+                        <Small className="pf-register-privacy" align="center">
                             Check that all the information is correct and click on <b>"Create account"</b>
-                        </div>
+                        </Small>
                         {/*Register*/}
-                        <Btn color={"blue"} onClick={this.handleRegisterClick} fluid>Create account</Btn>
+                        {this.renderSubmit()}
                         {/*Login*/}
-                        <Field className={"register-login"}>
-                            <FieldLabel align="center">
-                                Are you already registered?
-                            </FieldLabel>
-                            <Btn color={"green"} onClick={this.redirectRegister} fluid>Log in</Btn>
+                        <Field className="pf-register-login">
+                            <FieldLabel align="center">Are you already registered?</FieldLabel>
+                            <Btn color="green" onClick={this.redirectToRegister} fluid>Log in</Btn>
                         </Field>
                     </div>
                 </div>
             );
         }
-    };
+    }
 }
 
-export default Register;
