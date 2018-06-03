@@ -91,8 +91,20 @@ export default class Login extends React.Component {
                     return self.setState({"loading": false});
                 }
                 //return self.props.saveToken(body.token);
+                //console.log(body);
                 return self.setState({"loading": false}, function () {
                     //Save the token and redirect
+                    auth.saveToken(body.token);
+                    let query = self.props.request.query;
+                    if (typeof query.continueTo === "string") {
+                        //Redirect to the continue url 
+                        let url = window.decodeURIComponent(query.continueTo);
+                        return redirect(url);
+                    }
+                    else {
+                        //Redirect to the dashboard
+                        return redirect("/dashboard"); 
+                    }
                 });
             });
         });
