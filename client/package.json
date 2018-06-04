@@ -3,8 +3,8 @@
     "version": "0.0.0",
     "private": true,
     "dependencies": {
-        "@kofijs/request": "0.0.1",
-        "babel-preset-react": "^6.24.1",
+        "@kofijs/request": "^0.0.1",
+        "@kofijs/utils": "^0.0.1",
         "neutrine": "^0.0.6",
         "react": "^16.3.1",
         "react-dom": "^16.3.1",
@@ -15,6 +15,7 @@
         "babel-core": "^6.26.0",
         "babel-loader": "^7.1.4",
         "babel-preset-env": "^1.6.1",
+        "babel-preset-react": "^6.24.1",
         "css-loader": "^0.28.11",
         "mini-css-extract-plugin": "^0.4.0",
         "node-sass": "^4.8.3",
