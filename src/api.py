@@ -296,6 +296,11 @@ class RouteUserDelete(webapp2.RequestHandler):
         if u.email != del_email:
             return response.sendError(self, 400, 'Invalid email')
         try:
+            # Delete all authorizations for this user
+            result = authorization.delete_by_user(payload['id'])
+            if result is False:
+                return response.sendError(self, 500, 'Error removing all authorizations')
+            # Delete this user
             u.key.delete()
             return response.sendJson(self, {'message': "User deleted"})
         except:
