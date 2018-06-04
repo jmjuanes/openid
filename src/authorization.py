@@ -36,3 +36,12 @@ def get_all(user_id):
     except:
         return None
 
+
+# Export authorization information in JSON format
+def to_json(a):
+    obj = {'app_id': a.app_id,
+            'user_id': a.user_id,
+            'grant_access': a.grant_access,
+            'last_access': a.last_access}
+    return obj
+
