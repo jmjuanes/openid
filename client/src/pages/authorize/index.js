@@ -2,6 +2,7 @@ import React from "react";
 import {Btn, Field, FieldHelper, FieldLabel, Heading, Small, Spinner} from 'neutrine';
 import {Card, CardTitle, CardBody} from "neutrine";
 import {request} from "@kofijs/request";
+import {format} from "@kofijs/utils";
 import {redirectHashbang as redirect} from "rouct";
 
 import "./styles.scss";
@@ -80,7 +81,9 @@ export default class Authorize extends React.Component {
                 //Redirect to the generated url
                 //window.location.replace(url);
                 return self.setState({"loading": false}, function () {
-                    return false;
+                    let redirectUrl = format(self.state.app.redirect_url, body);
+                    console.log("Redirect to -->" + redirectUrl);
+                    window.location.href = redirectUrl;
                 });
             });
         });
@@ -90,14 +93,17 @@ export default class Authorize extends React.Component {
     renderPermissions() {
         let children = [];
         //Loop over all permissions of the application
-        permissions.getAll().forEach(function (item, index) {
+        this.state.app.permissions.split(",").forEach(function (key, index) {
+            let item = permissions.get(key);
             let itemTitle = React.createElement(CardTitle, {"className": "pf-authorize-permissions-title"}, item.name);
             let itemContent = React.createElement(Small, {"className": "pf-authorize-permissions-description"}, item.description);
             //Save the list item element
             children.push(React.createElement(CardBody, {"key": index}, itemTitle, itemContent));
         });
         //Return the list element
-        return React.createElement(Card, {"className": "pf-authorize-permissions"}, children);
+        if (children.length > 0) {
+            return React.createElement(Card, {"className": "pf-authorize-permissions"}, children);
+        }
     }
 
     render() {
