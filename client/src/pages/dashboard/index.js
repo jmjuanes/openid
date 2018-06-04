@@ -4,6 +4,9 @@ import {Btn, List, ListItem, ListTitle, Spinner, Small} from "neutrine";
 import {Navbar, NavbarTitle, NavbarSubtitle, NavbarItem} from "neutrine";
 import {request} from "@kofijs/request";
 
+import * as auth from "../../commons/auth.js";
+import * as notification from "../../commons/notification.js";
+
 import Account from "./account/index";
 import Profile from "./profile/index";
 import "./styles.scss";
@@ -13,68 +16,73 @@ import CreateApp from "./applications/create/index";
 import Users from "./users/index";
 import NewUser from "./users/new/index.js";
 
+//Main dashboard
 export default class Dashboard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            ready: false,
-            user: {}
+            "ready": false,
+            "user": null
         };
-
-        this.dashboardRedirect = this.dashboardRedirect.bind(this);
+        //Bind methods
+        this.redirectTo = this.redirectTo.bind(this);
+        this.handleLogout = this.handleLogout.bind(this);
         this.renderAdminPanel = this.renderAdminPanel.bind(this);
     }
 
-    // Get the user info using his access token
     componentDidMount() {
-        // If there's no access token, redirect to login
-        if (localStorage.getItem("token") === null) {
+        //If there's no access token, redirect to login
+        if (auth.hasToken() === false) {
             return Router.redirectHashbang("/login");
         }
         let self = this;
-        request({
-            url: "/api/user",
-            method: "get",
-            json: true,
-            auth: {bearer: localStorage.getItem("token")}
-        }, function (err, res, body) {
-            if (err) {
-                return self.setState({error: err.message});
+        let requestOptions = {
+            "url": "/api/user",
+            "method": "get",
+            "json": true,
+            "auth": auth.generateAuth()
+        };
+        return request(requstOptions, function (error, response, body) {
+            if (error) {
+                return notification.error(error.message);
             }
-            if (res.statusCode >= 300) {
-                return self.setState({error: body.message});
+            if (response.statusCode >= 300) {
+                return notification.error(body.message);
             }
-            return self.setState({
-                user: {
-                    id: body.id,
-                    admin: body.is_admin,
-                    owner: body.is_owner
-                },
-                ready: true
-            });
+            //New user information
+            let newUserData = {
+                "name": body.name,
+                "id": body.id,
+                "isAdmin": body.is_admin,
+                "isOwner": body.is_owner
+            };
+            return self.setState({"user": newUserData, "ready": true});
         });
     }
 
-    // Left panel redirects
-    dashboardRedirect(path) {
-        Router.redirectHashbang("/dashboard/" + path);
+    //Left panel redirects
+    redirectTo(path) {
+        return Router.redirectHashbang("/dashboard/" + path);
     }
 
-    // Show the admin routes if the user is admin
+    //Logout
+    handleLogout() {
+        //Delete the token and redirect to the login page
+        auth.deleteToken();
+        return Router.redirectHashbang("/login");
+    }
+
+    //Show the admin routes if the user is admin
     renderAdminPanel() {
-        if (this.state.user.admin) {
+        if (this.state.user.isAdmin) {
             return (
                 <List>
-                    <ListItem className={"dash-menu-item"} onClick={() => {
-                        this.dashboardRedirect("applications");
-                    }}>
-                        <ListTitle style={{marginBottom: "0px"}}>Applications</ListTitle>
+                    <ListItem className={"dash-menu-item"} onClick={() => { this.redirectTo("applications") }}>
+                        <ListTitle style={{"marginBottom": "0px"}}>Applications</ListTitle>
                         <Small>Manage all the registered applications</Small>
                     </ListItem>
-                    <ListItem className={"dash-menu-item"} onClick={() => {
-                        this.dashboardRedirect("users");
-                    }}>
-                        <ListTitle style={{marginBottom: "0px"}}>Users</ListTitle>
+                    <ListItem className={"dash-menu-item"} onClick={() => { this.redirectTo("users") }}>
+                        <ListTitle style={{"marginBottom": "0px"}}>Users</ListTitle>
                         <Small>Manage all the registered users</Small>
                     </ListItem>
                 </List>
@@ -84,18 +92,17 @@ export default class Dashboard extends React.Component {
 
     render() {
         if (this.state.ready === false) {
-            return (
-                <Spinner className={"dash-loading"}/>
-            );
+            return <Spinner color="primary" className="dash-loading"/>;
         }
         else {
+            //User information
+            let userProps = this.state.user;
             return (
                 <div>
                     <Navbar size="medium" color="light">
                         <NavbarTitle>OpenID</NavbarTitle>
                         <NavbarSubtitle>Dashboard</NavbarSubtitle>
-                        <NavbarItem style={{"float": "right"}}
-                                    onClick={() => this.props.deleteToken()}>Log out</NavbarItem>
+                        <NavbarItem style={{"float": "right"}} onClick={this.handleLogout}>Log out</NavbarItem>
                     </Navbar>
                     <div className="siimple-content siimple-content--medium">
                         <div className="siimple-grid">
@@ -105,28 +112,23 @@ export default class Dashboard extends React.Component {
                                     {/*User panel*/}
                                     <div className="dash-menu-list">
                                         <List>
-                                            <ListItem className={"dash-menu-item"} onClick={() => {
-                                                this.dashboardRedirect("");
-                                            }}>
-                                                <ListTitle style={{marginBottom: "0px"}}>Profile</ListTitle>
+                                            <ListItem className="dash-menu-item" onClick={() => { this.redirectTo("") }}>
+                                                <ListTitle style={{"marginBottom": "0px"}}>Profile</ListTitle>
                                                 <Small>Edit your personal info</Small>
                                             </ListItem>
-                                            <ListItem className={"dash-menu-item"} onClick={() => {
-                                                this.dashboardRedirect("account");
-                                            }}>
-                                                <ListTitle style={{marginBottom: "0px"}}>Account</ListTitle>
+                                            <ListItem className="dash-menu-item" onClick={() => { this.redirectTo("account") }}>
+                                                <ListTitle style={{"marginBottom": "0px"}}>Account</ListTitle>
                                                 <Small>Manage your account settings</Small>
                                             </ListItem>
-                                            <ListItem className={"dash-menu-item"}>
-                                                <ListTitle style={{marginBottom: "0px"}}>Email</ListTitle>
+                                            <ListItem className="dash-menu-item"}>
+                                                <ListTitle style={{"marginBottom": "0px"}}>Email</ListTitle>
                                                 <Small>Edit your notifications settings</Small>
                                             </ListItem>
-                                            <ListItem className={"dash-menu-item"}>
-                                                <ListTitle style={{marginBottom: "0px"}}>Authorized apps</ListTitle>
+                                            <ListItem className="dash-menu-item">
+                                                <ListTitle style={{"marginBottom": "0px"}}>Authorized apps</ListTitle>
                                                 <Small>Manage which applications can access your personal data</Small>
                                             </ListItem>
                                         </List>
-
                                         {/*Admin panel*/}
                                         {this.renderAdminPanel()}
                                     </div>
@@ -134,33 +136,13 @@ export default class Dashboard extends React.Component {
                                 {/*Content*/}
                                 <div className="dash-content siimple-grid-col siimple-grid-col--9">
                                     <Router.Switch>
-                                        {/*Profile route*/}
-                                        <Router.Route exact path={"/dashboard/"}
-                                                      component={Profile}
-                                                      props={{token: this.props.token}}/>
-                                        {/*Account route*/}
-                                        <Router.Route exact path={"/dashboard/account"}
-                                                      component={Account}
-                                                      props={{token: this.props.token}}/>
-                                        {/*Applications route*/}
-                                        <Router.Route exact path={"/dashboard/applications"}
-                                                      component={Applications}
-                                                      props={{token: this.props.token, admin: this.state.user.admin}}/>
-                                        {/*New application route*/}
-                                        <Router.Route exact path={"/dashboard/applications/create"}
-                                                      component={CreateApp}
-                                                      props={{token: this.props.token, admin: this.state.user.admin}}/>
-                                        {/*Edit application route*/}
-                                        <Router.Route exact path={"/dashboard/applications/:id"}
-                                                      component={EditApp}
-                                                      props={{token: this.props.token, admin: this.state.user.admin}}/>
-                                        {/*Users route*/}
-                                        <Router.Route exact path={"/dashboard/users"}
-                                                      component={Users}
-                                                      props={{token: this.props.token, user: this.state.user}}/>
-                                        {/*New user route */}
-                                        <Router.Route exact path="/dashboard/users/new" component={NewUser} props={{"isAdmin": this.state.user.admin}}/>
-
+                                        <Router.Route exact path="/dashboard/" component={Profile} props={userProps}/>
+                                        <Router.Route exact path="/dashboard/account" component={Account} props={userProps}/>
+                                        <Router.Route exact path="/dashboard/applications" component={Applications} props={userProps}/>
+                                        <Router.Route exact path="/dashboard/applications/create" component={CreateApp} props={userProps}/>
+                                        <Router.Route exact path="/dashboard/applications/:id" component={EditApp} props={userProps}/>
+                                        <Router.Route exact path="/dashboard/users" component={Users} props={userProps}/>
+                                        <Router.Route exact path="/dashboard/users/new" component={NewUser} props={userProps}/>
                                     </Router.Switch>
                                 </div>
                             </div>
