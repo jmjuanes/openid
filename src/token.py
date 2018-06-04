@@ -4,25 +4,33 @@ import logging
 
 
 # Generate a token
-def encode(u, secret, algorithm, expiration):
+def encode(u, secret, permissions, algorithm, expiration):
     payload = dict()
-    payload['email'] = u.email
-    payload['name'] = u.name
     payload['is_admin'] = u.is_admin
     payload['is_owner'] = u.is_owner
     payload['is_active'] = u.is_active
     payload['id'] = u.key.id()
     payload['iat'] = int(time.time())
     payload['exp'] = int(time.time()) + expiration
-
+    # Check the permissions to add more data to the token
+    if permissions and permissions.strip():
+        permissions_list = permissions.split(',')
+        if 'name' in permissions_list:
+            payload['name'] = u.name
+        if 'email' in permissions_list:
+            payload['email'] = u.email
+        if 'extra' in permissions_list:
+            payload['company'] = u.company
+            payload['location'] = u.location
+            payload['biography'] = u.biography
     # Build and return the token
     return jwt.encode(payload, secret, algorithm=algorithm)
 
 
 # Decode a token
 def decode(token, secret, algorithm):
-    # Decode the payload
     try:
+        # Decode the payload
         payload = jwt.decode(token, secret, algorithms=[algorithm])
         logging.info("Token decoded")
         if payload is None:
@@ -34,7 +42,6 @@ def decode(token, secret, algorithm):
                 # Return invalid token
                 # logging.info("No expiration date")
                 return None
-
             # Check the expiration date
             current_time = int(time.time())
             if current_time > payload['exp']:
@@ -54,3 +61,4 @@ def extract(header):
     if info[0] != 'Bearer':
         return None
     return info[1]
+
