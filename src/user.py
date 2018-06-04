@@ -12,6 +12,7 @@ class User(ndb.Model):
     pwd = ndb.StringProperty(indexed=False)
     biography = ndb.StringProperty(indexed=False)
     company = ndb.StringProperty(indexed=False)
+    location = ndb.StringProperty(indexed=False)
     is_admin = ndb.BooleanProperty(indexed=False)
     is_active = ndb.BooleanProperty(indexed=False)
     is_owner = ndb.BooleanProperty(indexed=False)
@@ -59,6 +60,7 @@ def to_json(self, u):
            'email': u.email,
            'biography': u.biography,
            'company': u.company,
+           'location': u.location,
            'is_admin': u.is_admin,
            'is_active': u.is_active,
            'is_owner': u.is_owner}
