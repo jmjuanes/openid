@@ -10,7 +10,7 @@ class User(ndb.Model):
     email = ndb.StringProperty(indexed=True)
     name = ndb.StringProperty(indexed=False)
     pwd = ndb.StringProperty(indexed=False)
-    biography = ndb.StringProperty(indexed=False)
+    bio = ndb.StringProperty(indexed=False)
     company = ndb.StringProperty(indexed=False)
     location = ndb.StringProperty(indexed=False)
     is_admin = ndb.BooleanProperty(indexed=False)
@@ -53,16 +53,15 @@ def exists(value):
 
 
 # Generate Json from user
-def to_json(self, u):
-    self.response.headers['Content-Type'] = 'application/json'
+def to_json(u):
     obj = {"id": u.key.id(),
            'name': u.name,
            'email': u.email,
-           'biography': u.biography,
+           'bio': u.bio,
            'company': u.company,
            'location': u.location,
            'is_admin': u.is_admin,
            'is_active': u.is_active,
            'is_owner': u.is_owner}
-    return self.response.out.write(json.dumps(obj))
+    return obj
 
