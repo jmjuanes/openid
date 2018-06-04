@@ -10,6 +10,8 @@ class User(ndb.Model):
     email = ndb.StringProperty(indexed=True)
     name = ndb.StringProperty(indexed=False)
     pwd = ndb.StringProperty(indexed=False)
+    biography = ndb.StringProperty(indexed=False)
+    company = ndb.StringProperty(indexed=False)
     is_admin = ndb.BooleanProperty(indexed=False)
     is_active = ndb.BooleanProperty(indexed=False)
     is_owner = ndb.BooleanProperty(indexed=False)
@@ -22,11 +24,9 @@ def get(id=None, email=None):
         if id is not None:
             value = int(id)
             user = User.get_by_id(value)
-
         # Get user by email
         elif email is not None:
             query = User.query(User.email == email)
-
             # Check the number of users with this email
             if query.count() != 1:
                 user = None
@@ -37,8 +37,8 @@ def get(id=None, email=None):
         return None
 
 
-# Extract all the users
-def getAll():
+# Extract all the users from the database
+def get_all():
     try:
         users = User.query().fetch()
         return users
@@ -52,12 +52,15 @@ def exists(value):
 
 
 # Generate Json from user
-def getInfo(self, u):
+def to_json(self, u):
     self.response.headers['Content-Type'] = 'application/json'
     obj = {"id": u.key.id(),
            'name': u.name,
            'email': u.email,
+           'biography': u.biography,
+           'company': u.company,
            'is_admin': u.is_admin,
            'is_active': u.is_active,
            'is_owner': u.is_owner}
     return self.response.out.write(json.dumps(obj))
+
