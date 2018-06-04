@@ -16,11 +16,9 @@ class Authorization(ndb.Model):
 # Get a single authorization
 def get(app_id, user_id): 
     try:
-        # Conver the app_id and the user_id to integers
-        app_id = int(app_id)
-        user_id = int(user_id)
         # Execute the query
-        query = Authorization.query(Authorization.app_id == app_id, Authorization.user_id == user_id)
+        query = Authorization.query(Authorization.app_id == int(app_id), 
+                                    Authorization.user_id == int(user_id))
         return query.get()
     except:
         return None
@@ -29,12 +27,31 @@ def get(app_id, user_id):
 # Get all the applications authorized by the user
 def get_all(user_id):
     try:
-        user_id = int(user_id)
         # Execute the query
-        query = Authorization.query(Authorization.user_id == id)
+        query = Authorization.query(Authorization.user_id == int(user_id))
         return query.get()
     except:
         return None
+
+
+# Delete all authorizations for a single application
+def delete_by_application(app_id):
+    try:
+        auth_list = Authorization.query(Authorization.app_id == int(app_id)).fetch(keys_only=True)
+        ndb.delete_multi(auths_list)
+        return True
+    except:
+        return False
+
+
+# Delete all authorizations for a single user
+def delete_by_user(user_id):
+    try:
+        auth_list = Authorization.query(Authorization.user_id == int(user_id)).fetch(keys_only=True)
+        ndb.delete_multi(auths_list)
+        return True
+    except:
+        return False
 
 
 # Export authorization information in JSON format
