@@ -41,6 +41,17 @@ def exists(value):
     return get(value) is not None
 
 
+# Generate a JSON object from the application object
+def to_json(a):
+    obj = {'id': a.key.id(),
+            'name': a.name,
+            'description': a.description,
+            'permissions': a.permissions,
+            'homepage_url': a.homepage_url,
+            'privacy_url': a.privacy_url,
+            'redirect_url': a.redirect_url}
+    return obj
+
 # Generate a secret for the application
 def generate_secret():
     secret = ''.join(
