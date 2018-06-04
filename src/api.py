@@ -538,7 +538,7 @@ class RouteApplicationsById(webapp2.RequestHandler):
         if a is None:
             return response.sendError(self, 404, 'This application does not exist')
         # Delete all authorizations for this application
-        result = Authorization.delete_by_application(app_id)
+        result = authorization.delete_by_application(app_id)
         if result is False:
             return response.sendError(self, 500, 'Error removing authorizations for this application')
         # Delete this application
