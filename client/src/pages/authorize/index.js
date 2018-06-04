@@ -83,7 +83,7 @@ export default class Authorize extends React.Component {
                 return self.setState({"loading": false}, function () {
                     let redirectUrl = format(self.state.app.redirect_url, body);
                     console.log("Redirect to -->" + redirectUrl);
-                    window.location.href = redirectUrl;
+                    //window.location.href = redirectUrl;
                 });
             });
         });
