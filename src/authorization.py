@@ -7,39 +7,32 @@ import json
 
 # Authorizations class
 class Authorization(ndb.Model):
-    app_id = ndb.StringProperty(indexed=False)
-    user_id = ndb.StringProperty(indexed=False)
+    app_id = ndb.StringProperty(indexed=True)
+    user_id = ndb.StringProperty(indexed=True)
     grant_access = ndb.StringProperty(indexed=False)
     last_access = ndb.StringProperty(indexed=False)
 
 
-# Get all the applications authorized by the user
-def get_authorized_apps(user_id):
+# Get a single authorization
+def get(app_id, user_id): 
     try:
-        id = int(user_id)
-        # Get the apps
-        query = Authorization.query(Authorization.user_id == id)
+        # Conver the app_id and the user_id to integers
+        app_id = int(app_id)
+        user_id = int(user_id)
         # Execute the query
-        authorized_apps = query.get()
-        return authorized_apps
+        query = Authorization.query(Authorization.app_id == app_id, Authorization.user_id == user_id)
+        return query.get()
     except:
         return None
 
 
-# Check if the application has already been authorized by the user
-def already_authorized(userid, appid):
+# Get all the applications authorized by the user
+def get_all(user_id):
     try:
-        app_id = int(appid)
-        user_id = int(userid)
-        # See if the app id is in some authorization entity of the user
-        query = Authorization.query(Authorization.user_id == user_id,
-                                    Authorization.app_id == app_id)
-        # Check if it was already authorized
-        if query.count() > 0:
-            authorized = True
-        else:
-            authorized = False
-        return authorized
-
+        user_id = int(user_id)
+        # Execute the query
+        query = Authorization.query(Authorization.user_id == id)
+        return query.get()
     except:
         return None
+
