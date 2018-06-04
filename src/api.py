@@ -532,6 +532,10 @@ class RouteApplicationsById(webapp2.RequestHandler):
         a = application.get(app_id)
         if a is None:
             return response.sendError(self, 404, 'This application does not exist')
+        # Delete all authorizations for this application
+        result = Authorization.delete_by_application(app_id)
+        if result is False:
+            return response.sendError(self, 500, 'Error removing authorizations for this application')
         # Delete this application
         try:
             a.key.delete()
@@ -655,9 +659,6 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/api/applications/<app_id>', handler=RouteApplicationsById),
     # Login route
     webapp2.Route('/api/login', handler=RouteLogin),
-    # Authorize route
-    #webapp2.Route('/api/authorize', handler=RouteAuthorize),
-
     # Error route
     webapp2.Route('/api/<:.*>', handler=RouteError)
 ], debug=True)
