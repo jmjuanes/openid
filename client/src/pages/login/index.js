@@ -100,6 +100,7 @@ export default class Login extends React.Component {
                     if (typeof query.continueTo === "string") {
                         //Redirect to the continue url 
                         let url = window.decodeURIComponent(query.continueTo);
+                        //console.log("Redirect to: " + url);
                         return redirect(url);
                     }
                     else {
