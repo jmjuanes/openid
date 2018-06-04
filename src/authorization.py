@@ -9,8 +9,8 @@ import json
 class Authorization(ndb.Model):
     app_id = ndb.StringProperty(indexed=True)
     user_id = ndb.StringProperty(indexed=True)
-    grant_access = ndb.StringProperty(indexed=False)
-    last_access = ndb.StringProperty(indexed=False)
+    grant_access = ndb.IntegerProperty(indexed=False)
+    last_access = ndb.IntegerProperty(indexed=False)
 
 
 # Get a single authorization
