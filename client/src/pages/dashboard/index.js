@@ -7,9 +7,10 @@ import {request} from "@kofijs/request";
 import * as auth from "../../commons/auth.js";
 import * as notification from "../../commons/notification.js";
 
+import "./styles.scss";
+
 import Account from "./account/index";
 import Profile from "./profile/index";
-import "./styles.scss";
 import Applications from "./applications/index";
 import EditApp from "./applications/edit/index";
 import CreateApp from "./applications/create/index";
@@ -76,13 +77,13 @@ export default class Dashboard extends React.Component {
     renderAdminPanel() {
         if (this.state.user.isAdmin) {
             return (
-                <List>
-                    <ListItem className={"dash-menu-item"} onClick={() => { this.redirectTo("applications") }}>
-                        <ListTitle style={{"marginBottom": "0px"}}>Applications</ListTitle>
+                <List hover={true}>
+                    <ListItem className="pf-dashboard-menu-item" onClick={() => { this.redirectTo("applications") }}>
+                        <ListTitle>Applications</ListTitle>
                         <Small>Manage all the registered applications</Small>
                     </ListItem>
-                    <ListItem className={"dash-menu-item"} onClick={() => { this.redirectTo("users") }}>
-                        <ListTitle style={{"marginBottom": "0px"}}>Users</ListTitle>
+                    <ListItem className="pf-dashboard-menu-item" onClick={() => { this.redirectTo("users") }}>
+                        <ListTitle>Users</ListTitle>
                         <Small>Manage all the registered users</Small>
                     </ListItem>
                 </List>
@@ -102,39 +103,36 @@ export default class Dashboard extends React.Component {
                     <Navbar size="medium" color="light">
                         <NavbarTitle>OpenID</NavbarTitle>
                         <NavbarSubtitle>Dashboard</NavbarSubtitle>
-                        <NavbarItem style={{"float": "right"}} onClick={this.handleLogout}>Log out</NavbarItem>
+                        <NavbarItem className="pf-dashboard-logout" onClick={this.handleLogout}>Log out</NavbarItem>
                     </Navbar>
                     <div className="siimple-content siimple-content--medium">
                         <div className="siimple-grid">
                             <div className="siimple-grid-row">
-                                {/*Side menu*/}
-                                <div className="dash-menu siimple-grid-col siimple-grid-col--3">
+                                <div className="pf-dashboard-menu siimple-grid-col siimple-grid-col--3">
                                     {/*User panel*/}
-                                    <div className="dash-menu-list">
-                                        <List>
-                                            <ListItem className="dash-menu-item" onClick={() => { this.redirectTo("") }}>
-                                                <ListTitle style={{"marginBottom": "0px"}}>Profile</ListTitle>
-                                                <Small>Edit your personal info</Small>
-                                            </ListItem>
-                                            <ListItem className="dash-menu-item" onClick={() => { this.redirectTo("account") }}>
-                                                <ListTitle style={{"marginBottom": "0px"}}>Account</ListTitle>
-                                                <Small>Manage your account settings</Small>
-                                            </ListItem>
-                                            <ListItem className="dash-menu-item"}>
-                                                <ListTitle style={{"marginBottom": "0px"}}>Email</ListTitle>
-                                                <Small>Edit your notifications settings</Small>
-                                            </ListItem>
-                                            <ListItem className="dash-menu-item">
-                                                <ListTitle style={{"marginBottom": "0px"}}>Authorized apps</ListTitle>
-                                                <Small>Manage which applications can access your personal data</Small>
-                                            </ListItem>
-                                        </List>
-                                        {/*Admin panel*/}
-                                        {this.renderAdminPanel()}
-                                    </div>
+                                    <List hover={true}>
+                                        <ListItem className="pf-dashboard-menu-item" onClick={() => { this.redirectTo("") }}>
+                                            <ListTitle>Profile</ListTitle>
+                                            <Small>Edit your personal info</Small>
+                                        </ListItem>
+                                        <ListItem className="pf-dashboard-menu-item" onClick={() => { this.redirectTo("account") }}>
+                                            <ListTitle>Account</ListTitle>
+                                            <Small>Manage your account settings</Small>
+                                        </ListItem>
+                                        <ListItem className="pf-dashboard-menu-item"}>
+                                            <ListTitle>Email</ListTitle>
+                                            <Small>Edit your notifications settings</Small>
+                                        </ListItem>
+                                        <ListItem className="pf-dashboard-menu-item">
+                                            <ListTitle>Authorized apps</ListTitle>
+                                            <Small>Manage which applications can access your personal data</Small>
+                                        </ListItem>
+                                    </List>
+                                    {/*Admin panel*/}
+                                    {this.renderAdminPanel()}
                                 </div>
                                 {/*Content*/}
-                                <div className="dash-content siimple-grid-col siimple-grid-col--9">
+                                <div className="pf-dashboard-content siimple-grid-col siimple-grid-col--9">
                                     <Router.Switch>
                                         <Router.Route exact path="/dashboard/" component={Profile} props={userProps}/>
                                         <Router.Route exact path="/dashboard/account" component={Account} props={userProps}/>
