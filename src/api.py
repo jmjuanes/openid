@@ -222,7 +222,7 @@ class RouteUser(webapp2.RequestHandler):
         if u is None:
             return response.sendError(self, 400, 'Invalid user information')
         # Check if the user wants to update the password
-        if data.get('old_pwd') is not None:
+        if data.get('new_pwd') is not None:
             # Check the new password
             if data['new_pwd'] != data['repeat_pwd']:
                 return response.sendError(self, 400, 'Passwords do not match')
