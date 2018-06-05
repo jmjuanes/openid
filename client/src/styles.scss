@@ -8,20 +8,57 @@
 }
 
 //Toast styles
-.toast {
+.pf-toast {
     opacity: 0;
     position: fixed;
     left: 0;
     right: 0;
     margin: 0 auto;
     bottom: -100px;
-    width: 350px;
+    width: 450px;
     transition: 0.5s;
     z-index: 100;
+    //Visible toast
+    &--visible {
+        transform: translateY(-150px);
+        transition: 0.5s;
+        opacity: 1.0 !important;
+    }
 }
 
-.toast--visible {
-    transform: translateY(-150px);
-    transition: 0.5s;
-    opacity: 1 !important;
+//Global modal styles
+.pf-modal {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    //Modal container
+    &-content {
+        background-color: #fefefe;
+        margin: 100px auto;
+        padding: 20px;
+        border-radius: 4px;
+        width: 420px;
+    }
+    //Modal hide element
+    &-hide {
+        color: #aaa;
+        float: right;
+        font-size: 30px;
+        font-weight: bold;
+    }
+    &-hide:hover {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    //Modal title
+    &-title {
+        margin-top: 5px !important;
+    }
 }
+
