@@ -1,120 +1,148 @@
 import React from "react";
-import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Paragraph, Spinner} from "neutrine";
+import {Btn, Field, FieldHelper, FieldLabel, Input, Textarea, Spinner} from "neutrine";
 import {request} from "@kofijs/request";
 
+import Header from "../../../components/header/index.js"; 
+
 import * as notification from "../../../commons/notification.js";
+import * as auth from "../../../commons/auth.js";
+
 import "./styles.scss";
 
-class Profile extends React.Component {
+//Check if two objects are equal
+let equalObjects = function (obj1, obj2) {
+    let keys = Object.keys(obj1);
+    //Iterate over all keys of the object
+    for (let i = 0; i < keys.length; i++) {
+        let key = keys[i];
+        if (obj1[key] !== obj2[key]) {
+            return false;
+        }
+    }
+    //Both objects are equal
+    return true;
+};
+
+//User profile screen
+export default class Profile extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            user: null
+            "user": null,
+            "loading": false
         };
         this.ref = {
-            nameInput: React.createRef()
+            "name": React.createRef(),
+            "biography": React.createRef(),
+            "company": React.createRef(),
+            "location": React.createRef()
         };
-
-        this.handleInfoChange = this.handleInfoChange.bind(this);
+        //Bind methods
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    // Get the user info using his access token
+    //Get the user info using his access token
     componentDidMount() {
-        // Change to dashboard
         let self = this;
-
-        request({url: "/api/user", method: "get", json: true, auth: {bearer: localStorage.getItem("token")}},
-            function (err, res, body) {
-                if (err) {
-                    return notification.error(err.message);
-                }
-                if (res.statusCode >= 300) {
-                    return notification.error(body.message);
-                }
-                return self.setState({
-                    user: {
-                        name: body.name,
-                        email: body.email,
-                        id: body.id
-                    }
-                });
-            });
+        let requestOptions = {
+            "url": "/api/user",
+            "method": "get",
+            "json": true,
+            "auth": auth.generateAuth()
+        };
+        //Import the user information from the api
+        return request(requestOptions, function (error, response, body) {
+            if (error) {
+                return notification.error(error.message);
+            }
+            if (response.statusCode >= 300) {
+                return notification.error(body.message);
+            }
+            //Update the state
+            return self.setState({"user": body});
+        });
     }
 
-    // Updates the user's information
-    handleInfoChange() {
+    //Update the user's information
+    handleSubmit() {
         let self = this;
-        let credentials = {
-            name: this.ref.nameInput.current.value
+        let data = {
+            "name": this.ref.name.current.value,
+            "biography": this.ref.biography.current.value,
+            "company": this.ref.company.current.value,
+            "location": this.ref.location.current.value
         };
-        if (credentials.name === this.state.user.name) {
-            return notification.warning("Change the info before submitting");
+        //Check if there is no data to update
+        if (equalObjects(data, this.state.user) === true) {
+            return false;
         }
-
-        request({
-            url: "/api/user",
-            method: "put",
-            json: true,
-            body: credentials,
-            auth: {bearer: localStorage.getItem("token")}
-        }, function (err, res, body) {
-            if (err) {
-                return notification.error(body.message);
-            }
-            if (res.statusCode >= 300) {
-                return notification.error(body.message);
-            }
-            notification.success("Information updated successfully");
-            return self.setState({
-                // React only respects the 1st level: update the whole user
-                user: {
-                    name: body.name,
-                    id: self.state.user.id,
-                    email: self.state.user.email
+        //Change the current state
+        return self.setState({"loading": true}, function () {
+            let requestOptions = {
+                "url": "/api/user",
+                "method": "put",
+                "json": true,
+                "body": data
+            };
+            return request(requestOptions, function (error, response, body) {
+                if (error) {
+                    notification.error(error.message);
+                    return self.setState({"loading": false});
                 }
+                if (response.statusCode >= 300) {
+                    notification.error(body.message);
+                    return self.setState({"loading": false});
+                }
+                //Display success
+                notification.success("Information updated successfully");
+                return self.setState({"user": data, "loading": false});
             });
         });
     }
 
+    //Render the submit button 
+    renderSubmit() {
+        if (this.state.loading === true) {
+            return <Spinner color="primary"/>;
+        }
+        else {
+            return <Btn color="primary" onClick={this.handleSubmit}>Update profile</Btn>;
+        }
+    }
 
     render() {
         if (this.state.user === null) {
+            return <Spinner color="primary"/>;
+        } 
+        else {
             return (
-                <Spinner className={"profile-loading"}/>
-            );
-        } else
-            return (
-                <div className={"profile-content"}>
-                    {/*Title*/}
-                    <Heading type={"h2"}>Profile</Heading>
-                    <Paragraph>This is your public user information.</Paragraph>
-                    {/*User info*/}
-                    <div className={"profile-form"}>
-                        {/*Name input*/}
-                        <Field>
-                            <FieldLabel>Name</FieldLabel>
-                            <Input className="profile-input"
-                                   type={"text"}
-                                   fluid
-                                   defaultValue={this.state.user.name}
-                                   ref={this.ref.nameInput}/>
-                        </Field>
-                        {/*Email input*/}
-                        <Field>
-                            <FieldLabel>Email</FieldLabel>
-                            <Input className="profile-input"
-                                   type={"text"}
-                                   fluid
-                                   defaultValue={this.state.user.email}
-                                   readOnly/>
-                            <FieldHelper>Email used to log in the application</FieldHelper>
-                        </Field>
-                    </div>
-                    {/*Update info*/}
-                    <Btn color={"blue"} onClick={this.handleInfoChange}>Update info</Btn>
+                <div>
+                    <Header text="Profile"/>
+                    <Field>
+                        <FieldLabel>Name</FieldLabel>
+                        <Input type="text" fluid defaultValue={this.state.user.name} ref={this.ref.name}/>
+                    </Field>
+                    <Field>
+                        <FieldLabel>Biography</FieldLabel>
+                        <Textarea fluid ref={this.ref.biography}>{this.state.user.biography}</Textarea>
+                    </Field>
+                    <Field>
+                        <FieldLabel>Company</FieldLabel>
+                        <Input tyle="text" fluid defaultValue={this.state.user.company} ref={this.ref.company}/>
+                    </Field>
+                    <Field>
+                        <FieldLabel>Location</FieldLabel>
+                        <Input type="text" fluid defaultValue={this.state.user.location} ref={this.ref.location}/>
+                    </Field>
+                    <Field>
+                        <FieldHelper>
+                            All the fields on this page are optional and can be deleted at any time. You can allow the applications to access the information that you provide on this page.
+                        </FieldHelper>
+                    </Field>
+                    {this.renderSubmit()}
                 </div>
             );
+        }
     }
 }
 
-export default Profile;
