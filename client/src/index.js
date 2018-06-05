@@ -10,92 +10,62 @@ import Register from "./pages/register/index.js";
 import {Spinner} from "neutrine";
 import Dashboard from "./pages/dashboard/index";
 
+import * as auth from "./commons/auth.js";
 import * as notification from "./commons/notification.js";
 
 import "./styles.scss";
-
 
 //Main app class
 class Main extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            token: null,
-            config: {},
-            error: null
+            "config": null
         };
-        // Bind functions
-        this.saveToken = this.saveToken.bind(this);
-        this.deleteToken = this.deleteToken.bind(this);
     }
 
     // Get the general info, like the captcha sitekey
     componentDidMount() {
         let self = this;
-        request({url: "/api/", method: "get", json: true}, function (err, res, body) {
-            if (err) {
-                return self.setState({error: err.message});
+        //Import configuration data
+        return request({"url": "/api/", "json": true}, function (error, response, body) {
+            if (error) {
+                return notification.error(error.message);
             }
-            if (res.statusCode >= 300) {
-                return self.setState({error: body.message});
+            if (response.statusCode >= 300) {
+                return notification.error(body.message);
             }
-            return self.setState({
-                config: {
-                    openid_name: body.openid_name,
-                    captcha_enabled: body.captcha_enabled,
-                    captcha_key: body.captcha_key,
-                    openid_allow_signup: body.openid_allow_signup
-                }
-            });
-        });
-    }
-
-    // Save the user token from the login
-    saveToken(token) {
-        // Save the token in local storage
-        localStorage.setItem("token", token);
-        // Redirect
-        return this.setState({token: token}, function () {
-            return Router.redirectHashbang("/dashboard");
-        });
-    }
-
-    // Delete the user token and return to the login
-    deleteToken() {
-        // Remove the token from the local storage
-        localStorage.removeItem("token");
-        // Redirect
-        return this.setState({token: null}, function () {
-            return Router.redirectHashbang("/login");
+            //New configuration object
+            let config = {
+                "openid_name": body.openid_name,
+                "captcha_enabled": body.captcha_enabled,
+                "captcha_key": body.captcha_key,
+                "openid_allow_signup": body.openid_allow_signup
+            };
+            return self.setState({"config": config});
         });
     }
 
     render() {
-        // Custom props for each route
-        let loginProps = Object.assign({saveToken: this.saveToken}, this.state.config);
-        let dashboardProps = Object.assign({token: this.state.token, deleteToken: this.deleteToken}, this.state.config);
-
+        //Check if the configuration has been imported
         if (this.state.config === null) {
-            return (
-                <Spinner className={"authorize-loading"}/>
-            );
-        } else
+            return <Spinner color="primary" style={{"marginTop": "75px"}}/>;
+        } 
+        else {
+            //Save the configuration object
+            let config = this.state.config;
             return (
                 <Router.HashbangRouter>
                     <Router.Switch>
-                        {/*Login route*/}
-                        <Router.Route exact path="/login" component={Login} props={loginProps}/>
-                        {/*Authorize route*/}
-                        <Router.Route exact path="/authorize" component={Authorize} props={this.state.config}/>
-                        {/*Register route*/}
-                        <Router.Route exact path="/register" component={Register} props={this.state.config}/>
-                        {/*Dashboard route*/}
-                        <Router.Route path="/dashboard" component={Dashboard} props={dashboardProps}/>
-                        {/*Default route*/}
-                        <Router.Route path="/" component={Login} props={loginProps}/>
+                        <Router.Route exact path="/login" component={Login} props={config}/>
+                        <Router.Route exact path="/authorize" component={Authorize} props={config}/>
+                        <Router.Route exact path="/register" component={Register} props={config}/>
+                        <Router.Route path="/dashboard" component={Dashboard} props={config}/>
+                        <Router.Route path="/" component={Login} props={config}/>
                     </Router.Switch>
                 </Router.HashbangRouter>
             );
+        }
     }
 }
 
