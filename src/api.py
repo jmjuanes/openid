@@ -240,8 +240,11 @@ class RouteUser(webapp2.RequestHandler):
         # Check to update the personal information
         if data.get('name') is not None:
             u.name = data['name']
+        if data.get('biography') is not None:
             u.biography = data['biography']
+        if data.get('company') is not None:
             u.company = data['company']
+        if data.get('location') is not None:
             u.location = data['location']
         # Update the db information
         try:
