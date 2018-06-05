@@ -50,11 +50,11 @@ class Toast extends React.Component {
 
     render() {
         let self = this;
-        let close = React.createElement(Close, {onClick: self.close}, null);
-        let alert = React.createElement(Alert, {color: self.state.color}, close, self.state.text);
-        var myclass = ["toast"];
+        let close = React.createElement(Close, {"onClick": self.close}, null);
+        let alert = React.createElement(Alert, {"color": self.state.color}, close, self.state.text);
+        let myclass = ["pf-toast"];
         if (this.state.display === true) {
-            myclass.push("toast--visible");
+            myclass.push("pf-toast--visible");
         }
         return React.createElement("div", {"className": myclass.join(" ")}, alert);
     }
