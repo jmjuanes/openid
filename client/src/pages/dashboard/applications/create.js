@@ -135,7 +135,7 @@ export default class CreateApp extends Component {
                     </Field>
                     <Field>
                         <FieldLabel>Redirect URL</FieldLabel>
-                        <Input type"text" fluid ref={this.ref.redirect}/>
+                        <Input type="text" fluid ref={this.ref.redirect}/>
                         <FieldHelper>Must be a valid URL</FieldHelper>
                     </Field>
                     <Field>
