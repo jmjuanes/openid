@@ -4,12 +4,11 @@ import {Field, FieldHelper, FieldLabel} from "neutrine";
 import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
 
-import Header from "../../../../components/header/index.js";
+import Header from "../../../components/header/index.js";
 
-import * as auth from "../../../../commons/auth.js";
-import * as notification from "../../../../commons/notification.js";
-
-import "./styles.scss";
+import * as auth from "../../../commons/auth.js";
+import * as notification from "../../../commons/notification.js";
+import * as permissions from "../../../commons/permissions.js";
 
 //Create app component
 export default class CreateApp extends Component {
@@ -19,35 +18,56 @@ export default class CreateApp extends Component {
             "loading": false
         };
         this.ref = {
-            "nameInput": React.createRef(),
-            "detailInput": React.createRef(),
-            "redirectInput": React.createRef()
+            "name": React.createRef(),
+            "description": React.createRef(),
+            "redirect": React.createRef(),
+            "homepage": React.createRef(),
+            "privacy": React.createRef()
         };
-        this.handleCreateApp = this.handleCreateApp.bind(this);
+        //Create the reference for the permissions
+        let permissionsList = permissions.getAll();
+        for (let i = 0; i < permissionsList.length; i++) {
+            let permission = permissionsList[i];
+            this.ref["permission_" + permission.id] = React.createRef();
+        }
+        //Bind methods
+        this.renderPermissions = this.renderPermissions.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    // Create a new application
-    handleCreateApp() {
+    //Create a new application
+    handleSubmit() {
         let self = this;
-        let info = {
-            "name": this.ref.nameInput.current.value,
-            "detail": this.ref.detailInput.current.value,
-            "redirect": this.ref.redirectInput.current.value
+        let data = {
+            "name": this.ref.name.current.value,
+            "description": this.ref.description.current.value,
+            "redirect_url": this.ref.redirect.current.value,
+            "homepage_url": this.ref.homepage.current.value,
+            "privacy_url": this.ref.privacy.current.value,
+            "permissions": []
         };
         // Check that there aren't empty fields
-        if (info.name.length === 0 || info.detail.length === 0 || info.redirect.length === 0) {
-            return notification.warning("No field can be empty");
+        if (data.name.length === 0) {
+            return notification.error("Application name can not be empty");
         }
-        if (info.redirect.indexOf(".") === -1) {
-            return notification.warning("Invalid URL");
+        if (data.redirect_url.indexOf("http") === -1 || data.redirect_url.indexOf("://") === -1) {
+            return notification.warning("Invalid redirect url");
         }
+        //Add the permissions
+        permissions.getAll().forEach(function (item) {
+            if (self.ref["permission_" + item.id].current.checked === true) {
+                data.permissions.push(item.id);
+            }
+        });
+        //Join all permissions
+        data.permisssions = data.permissions.join(",");
         return this.setState({"loading": true}, function () {
             //Initialize the request options
             let requestOptions = {
                 "url": "/api/applications",
                 "method": "post",
                 "json": true,
-                "body": info,
+                "body": data,
                 "auth": auth.generateAuth()
             };
             //Register the new application
@@ -77,12 +97,26 @@ export default class CreateApp extends Component {
             return <Spinner color="primary"/>;
         } 
         else {
-            return <Btn color={"blue"} onClick={this.handleCreateApp}>Create application</Btn>;
+            return <Btn color="primary" onClick={this.handleSubmit}>Create application</Btn>;
         }
     }
 
+    //Render the permissions
+    renderPermissions() {
+        let self = this;
+        let children = [];
+        //Add all available permissions
+        permissions.getAll().forEach(function (item, index) {
+            let itemCheckbox = React.createElement(Checkbox, {"ref": self.ref["permission_" + item.id]});
+            let itemName = React.createElement(Label, {}, item.name);
+            children.push(React.createElement("div", {"key": index}, itemCheckbox, itemName));
+        });
+        //Return the permissions list
+        return React.createElement(Field, {}, children);
+    }
+
     render() {
-        if (this.props.admin === false) {
+        if (this.props.isAdmin === false) {
             return <Alert>You must be an administrator to access this route.</Alert>;
         }
         else {
@@ -90,22 +124,30 @@ export default class CreateApp extends Component {
                 <div>
                     <Header text="Register a new application"/>
                     <Paragraph>Please check that all fields are correct before submitting.</Paragraph>
-                    {/*Application name*/}
                     <Field>
                         <FieldLabel>Name of the application</FieldLabel>
-                        <Input type={"text"} fluid ref={this.ref.nameInput}/>
+                        <Input type="text" fluid ref={this.ref.name}/>
                     </Field>
-                    {/*Application description*/}
                     <Field>
                         <FieldLabel>Detail of the application</FieldLabel>
-                        <Input type={"text"} fluid ref={this.ref.detailInput}/>
+                        <Input type="text" fluid ref={this.ref.description}/>
                     </Field>
-                    {/*Application redirect url*/}
                     <Field>
                         <FieldLabel>Redirect URL</FieldLabel>
-                        <Input type={"text"} fluid ref={this.ref.redirectInput}/>
+                        <Input type"text" fluid ref={this.ref.redirect}/>
                         <FieldHelper>Must be a valid URL</FieldHelper>
                     </Field>
+                    <Field>
+                        <FieldLabel>Homepage URL</FieldLabel>
+                        <Input type="text" fluid ref={this.ref.homepage}/>
+                        <FieldHelper>URL where the users can know more about your application</FieldHelper>
+                    </Field>
+                    <Field>
+                        <FieldLabel>Privacy URL</FieldLabel>
+                        <Input type="text" fluid ref={this.ref.privacy}/>
+                        <FieldHelper>URL to your privacy policy</FieldHelper>
+                    </Field>
+                    {this.renderPermissions()}
                     {this.renderSubmit()}
                 </div>
             );
