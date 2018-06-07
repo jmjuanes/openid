@@ -4,7 +4,7 @@
     "private": true,
     "dependencies": {
         "@kofijs/request": "^0.0.1",
-        "@kofijs/utils": "^0.0.1",
+        "@kofijs/utils": "^0.2.0",
         "neutrine": "^0.0.6",
         "react": "^16.3.1",
         "react-dom": "^16.3.1",
