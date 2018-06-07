@@ -1,5 +1,6 @@
 import React from 'react';
 import {request} from "@kofijs/request";
+import {equal} from "@kofijs/utils";
 import {Alert, Code, Btn, Heading, Input, Small, Spinner, Paragraph} from "neutrine";
 import {Field, FieldLabel, FieldHelper, Checkbox, Label} from "neutrine";
 import {redirectHashbang as redirect} from "rouct";
@@ -153,7 +154,7 @@ export default class EditApp extends React.Component {
         //Combine the permissions
         data.permissions = data.permissions.join(",");
         // Check that all the info is new
-        if (data.name === this.state.app.name && data.detail === this.state.app.detail && data.redirect === this.state.app.redirect) {
+        if (equal(data, this.state.app) === true) {
             //return notification.warning("Change the app information before submitting");
             return redirect("/dashboard/applications");
         }
