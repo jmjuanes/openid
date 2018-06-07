@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Alert, Btn, Input, Spinner, Small, Paragraph} from "neutrine";
-import {Field, FieldHelper, FieldLabel} from "neutrine";
+import {Field, FieldHelper, FieldLabel, Checkbox, Label} from "neutrine";
 import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
 
@@ -105,6 +105,7 @@ export default class CreateApp extends Component {
     renderPermissions() {
         let self = this;
         let children = [];
+        children.push(React.createElement(FieldLabel, {}, "Permissions"));
         //Add all available permissions
         permissions.getAll().forEach(function (item, index) {
             let itemCheckbox = React.createElement(Checkbox, {"ref": self.ref["permission_" + item.id]});
