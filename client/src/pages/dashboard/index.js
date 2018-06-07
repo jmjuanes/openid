@@ -9,13 +9,13 @@ import * as notification from "../../commons/notification.js";
 
 import "./styles.scss";
 
-import Account from "./account/index";
-import Profile from "./profile/index";
-import Applications from "./applications/index";
-import EditApp from "./applications/edit/index";
-import CreateApp from "./applications/create/index";
-import Users from "./users/index";
-import NewUser from "./users/new/index.js";
+import Account from "./account/index.js";
+import Profile from "./profile/index.js";
+import Applications from "./applications/index.js";
+import EditApp from "./applications/edit.js";
+import CreateApp from "./applications/create.js";
+import Users from "./users/index.js";
+import NewUser from "./users/new.js";
 
 //Main dashboard
 export default class Dashboard extends React.Component {
@@ -119,7 +119,7 @@ export default class Dashboard extends React.Component {
                                             <ListTitle>Account</ListTitle>
                                             <Small>Manage your account settings</Small>
                                         </ListItem>
-                                        <ListItem className="pf-dashboard-menu-item"}>
+                                        <ListItem className="pf-dashboard-menu-item">
                                             <ListTitle>Email</ListTitle>
                                             <Small>Edit your notifications settings</Small>
                                         </ListItem>
