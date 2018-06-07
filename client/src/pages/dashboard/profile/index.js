@@ -1,25 +1,12 @@
 import React from "react";
 import {Btn, Field, FieldHelper, FieldLabel, Input, Textarea, Spinner} from "neutrine";
 import {request} from "@kofijs/request";
+import {equal} from "@kofijs/utils";
 
 import Header from "../../../components/header/index.js"; 
 
 import * as notification from "../../../commons/notification.js";
 import * as auth from "../../../commons/auth.js";
-
-//Check if two objects are equal
-let equalObjects = function (obj1, obj2) {
-    let keys = Object.keys(obj1);
-    //Iterate over all keys of the object
-    for (let i = 0; i < keys.length; i++) {
-        let key = keys[i];
-        if (obj1[key] !== obj2[key]) {
-            return false;
-        }
-    }
-    //Both objects are equal
-    return true;
-};
 
 //User profile screen
 export default class Profile extends React.Component {
@@ -56,8 +43,14 @@ export default class Profile extends React.Component {
             if (response.statusCode >= 300) {
                 return notification.error(body.message);
             }
-            //Update the state
-            return self.setState({"user": body});
+            //Update the state with the new user data
+            let newUserData = {
+                "name": body.name,
+                "biograpby": body.biography,
+                "company": body.company,
+                "location": body.location
+            };
+            return self.setState({"user": newUserData});
         });
     }
 
@@ -71,7 +64,7 @@ export default class Profile extends React.Component {
             "location": this.ref.location.current.value
         };
         //Check if there is no data to update
-        if (equalObjects(data, this.state.user) === true) {
+        if (equal(data, this.state.user) === true) {
             return false;
         }
         //Change the current state
