@@ -10,8 +10,6 @@ import TableUsers from "../../../components/table_users/index.js";
 import * as auth from "../../../commons/auth.js";
 import * as notification from "../../../commons/notification.js";
 
-import "./styles.scss";
-
 //Users management component
 export default class Users extends React.Component {
     constructor(props) {
@@ -174,7 +172,7 @@ export default class Users extends React.Component {
     //Render a list with all the applications
     renderUsers() {
         if (this.state.loading === true) {
-            return (<Spinner color="primary" style={{"marginTop":"25px"}}/>);
+            return <Spinner color="primary" style={{"marginTop":"25px"}}/>;
         }
         let customTitle = function (item) {
             return item.name;
@@ -184,7 +182,7 @@ export default class Users extends React.Component {
         };
         // Render the table
         return (
-            <div className="users-list">
+            <div>
                 <Paragraph>
                     There are <strong>{this.state.users.length}</strong> users registered.
                 </Paragraph>
@@ -284,7 +282,7 @@ export default class Users extends React.Component {
 
     render() {
         //Check if logged user is not an administrator
-        if (this.props.user.admin === false) {
+        if (this.props.user.isAdmin === false && this.props.user.isOwner === false) {
             return <Alert color="error">You must be an administrator to access this route.</Alert>;
         }
         return (
