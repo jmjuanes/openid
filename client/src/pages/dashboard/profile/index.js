@@ -7,8 +7,6 @@ import Header from "../../../components/header/index.js";
 import * as notification from "../../../commons/notification.js";
 import * as auth from "../../../commons/auth.js";
 
-import "./styles.scss";
-
 //Check if two objects are equal
 let equalObjects = function (obj1, obj2) {
     let keys = Object.keys(obj1);
