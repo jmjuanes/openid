@@ -1,16 +1,15 @@
 import React from 'react';
 import {request} from "@kofijs/request";
 import {Alert, Code, Btn, Heading, Input, Small, Spinner, Paragraph} from "neutrine";
-import {Field, FieldLabel, FieldHelper} from "neutrine";
+import {Field, FieldLabel, FieldHelper, Checkbox, Label} from "neutrine";
 import {redirectHashbang as redirect} from "rouct";
 
-import Header from "../../../../components/header/index.js";
+import Header from "../../../components/header/index.js";
 
-import * as auth from "../../../../commons/auth.js";
-import * as notification from "../../../../commons/notification.js";
+import * as auth from "../../../commons/auth.js";
+import * as notification from "../../../commons/notification.js";
 
-import "./styles.scss";
-
+//Export application edit component
 export default class EditApp extends React.Component {
     constructor(props) {
         super(props);
@@ -18,20 +17,23 @@ export default class EditApp extends React.Component {
             "app": null,
             "modalVisible": false,
             "modalLoading": false,
-            "keys": {
-                "public": null,
-                "secret": null,
-                "visible": false
-            },
-            "loading": true
+            "keys": null,
+            "loading": true 
         };
         this.ref = {
-            "nameInput": React.createRef(),
-            "detailInput": React.createRef(),
-            "redirectInput": React.createRef(),
-            "modalConfirm": React.createRef()
+            "name": React.createRef(),
+            "description": React.createRef(),
+            "redirect": React.createRef(),
+            "homepage": React.createRef(),
+            "privacy": React.createRef()
         };
-        // Functions from the modal
+        //Assign permissions to ref
+        let permissionsList = permissions.getAll();
+        for (let i = 0; i < permissionsList.length; i++) {
+            let item = permissionsList[i];
+            this.ref["permission_" + item.id] = React.createRef();
+        }
+        //Bind methods
         this.toggleModal = this.toggleModal.bind(this);
         this.renderModal = this.renderModal.bind(this);
         this.handleAppDelete = this.handleAppDelete.bind(this);
@@ -54,12 +56,7 @@ export default class EditApp extends React.Component {
             if (res.statusCode >= 300) {
                 return notification.error(body.message);
             }
-            let newData = {
-                "id": self.props.request.params.id,
-                "name": body.name,
-                "detail": body.detail,
-                "redirect": body.redirect
-            };
+            let newData = Object.assign({"id": self.props.request.params.id}, body);
             //Save the application info
             return self.setState({"app": newData, "loading": false});
         });
@@ -68,12 +65,10 @@ export default class EditApp extends React.Component {
     // Show or hide the modal
     toggleModal() {
         //Check if modal is loading 
-        if (this.state.modalLoading === true) {
-            return false;
+        if (this.state.modalLoading === false) {
+            let currentStatus = this.state.modalVisible;
+            return this.setState({"modalVisible": !currentStatus, "modalLoading": false});
         }
-        //Get the current status
-        let currentStatus = this.state.modalVisible;
-        return this.setState({"modalVisible": !currentStatus, "modalLoading": false});
     }
 
     //Handle public and secret keys
@@ -140,19 +135,34 @@ export default class EditApp extends React.Component {
     //Update the application info
     handleAppUpdate() {
         let self = this;
-        let info = {
-            "name": this.ref.nameInput.current.value,
-            "detail": this.ref.detailInput.current.value,
-            "redirect": this.ref.redirectInput.current.value
+        let data = {
+            "id": this.state.app.id,
+            "name": this.ref.name.current.value,
+            "description": this.ref.description.current.value,
+            "redirect_url": this.ref.redirect.current.value,
+            "homepage_url": this.ref.homepage.current.value,
+            "privacy_url": this.ref.privacy.current.value,
+            "permissions": []
         };
+        //Build the permissions
+        permissions.getAll().forEach(function (item) {
+            if (self.ref["permission_" + item.id].current.checked === true) {
+                data.permissions.push(item.id);
+            }
+        });
+        //Combine the permissions
+        data.permissions = data.permissions.join(",");
         // Check that all the info is new
-        if (info.name === this.state.app.name && info.detail === this.state.app.detail && info.redirect === this.state.app.redirect) {
+        if (data.name === this.state.app.name && data.detail === this.state.app.detail && data.redirect === this.state.app.redirect) {
             //return notification.warning("Change the app information before submitting");
             return redirect("/dashboard/applications");
         }
         // Check that there aren't empty fields
-        if (info.name.length === 0 || info.detail.length === 0 || info.redirect.length === 0) {
-            return notification.warning("No field can be empty");
+        if (data.name.length === 0) {
+            return notification.error("Application name can not be empty");
+        }
+        if (data.redirect_url.lenght === 0 || data.redirect_url.indexOf("http") === -1) {
+            return notification.error("Redirect URL can not be empty");
         }
         //Update the view state 
         return this.setState({"loading": true}, function () {
@@ -160,7 +170,7 @@ export default class EditApp extends React.Component {
                 "url": "/api/applications/" + this.props.request.params.id,
                 "method": "put",
                 "json": true,
-                "body": info,
+                "body": data,
                 "auth": auth.generateAuth()
             };
             //Sed the put request
@@ -193,7 +203,7 @@ export default class EditApp extends React.Component {
         }
     }
 
-    // Render the modal to delete the application
+    //Render the modal to delete the application
     renderModal() {
         if (this.state.modalVisible === true) {
             return (
@@ -214,8 +224,9 @@ export default class EditApp extends React.Component {
         }
     }
 
+    //Render the keys 
     renderKeys() {
-        if (this.state.keys.visible === false) {
+        if (this.state.keys === null) {
             return (
                 <div className="edit-app-keys">
                     <Btn color="navy" onClick={this.handleShowKeys}>
@@ -239,6 +250,23 @@ export default class EditApp extends React.Component {
         }
     }
 
+    //Render the permissions list
+    renderPermissions() {
+        let self = this;
+        let children = [];
+        children.push(React.createElement(FieldLabel, {}, "Permissions"));
+        //Add all the permissions
+        permissions.getAll().forEach(function (item, index) {
+            let isChecked = self.app.permissions.indexOf(item.id) !== -1;
+            let ref = self.ref["permission_" + item.id];
+            let itemCheck = React.createElement(Checkbox, {"defaultChecked": isChecked, "ref": ref});
+            let itemText = React.createElement(Label, {}, item.name);
+            children.push(React.createElement("div", {"key": index}, itemCheck, itemText));
+        });
+        //Return the permissions list 
+        return React.createElement(Field, {}, children);
+    }
+
     //Render the application submit
     renderUpdateSubmit() {
         if (this.state.loading === true) {
@@ -250,9 +278,7 @@ export default class EditApp extends React.Component {
                     <Btn color="primary" onClick={this.handleAppUpdate} style={{"marginRight":"5px"}}>
                         Update application
                     </Btn>
-                    <Btn color="error" onClick={this.toggleModal}>
-                        Delete this application
-                    </Btn>
+                    <Btn color="error" onClick={this.toggleModal}>Delete this application</Btn>
                 </Field>
             );
         }
@@ -268,22 +294,31 @@ export default class EditApp extends React.Component {
                 <div>
                     <Field>
                         <FieldLabel>Application name</FieldLabel>
-                        <Input type={"text"} fluid defaultValue={this.state.app.name} ref={this.ref.nameInput}/>
+                        <Input type="text" fluid defaultValue={this.state.app.name} ref={this.ref.name}/>
                         <FieldHelper>
                             The name that all users will see.
                         </FieldHelper>
                     </Field>
                     <Field>
-                        <FieldLabel>Application detail</FieldLabel>
-                        <Input type={"text"} fluid defaultValue={this.state.app.detail} ref={this.ref.detailInput}/>
+                        <FieldLabel>Application description</FieldLabel>
+                        <Input type="text" fluid defaultValue={this.state.app.description} ref={this.ref.description}/>
                         <FieldHelper>
                             Brief description about your application.
                         </FieldHelper>
                     </Field>
                     <Field>
                         <FieldLabel>Redirect URL</FieldLabel>
-                        <Input type={"text"} fluid defaultValue={this.state.app.redirect} ref={this.ref.redirectInput}/>
+                        <Input type="text" fluid defaultValue={this.state.app.redirect_url} ref={this.ref.redirect}/>
                     </Field>
+                    <Field>
+                        <FieldLabel>Homepage URL</FieldLabel>
+                        <Input type="text" fluid defaultValue={this.state.app.homepage_url} ref={this.ref.homepage}/>
+                    </Field>
+                    <Field>
+                        <FieldLabel>Privacy URL</FieldLabel>
+                        <Input type="text" fuild defaultValue={this.state.app.privacy_url} ref={this.ref.privacy}/>
+                    </Field>
+                    {this.renderPermissions}
                 </div>
             );
         }
@@ -291,7 +326,7 @@ export default class EditApp extends React.Component {
 
     render() {
         if (this.props.admin === false) {
-            return <Alert color={"error"}>You must be an administrator to access this route.</Alert>;
+            return <Alert color="error">You must be an administrator to access this route.</Alert>;
         }
         else {
             return (
