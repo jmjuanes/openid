@@ -9,8 +9,6 @@ import Table from "../../../components/table/index.js";
 import * as auth from "../../../commons/auth.js";
 import * as notification from "../../../commons/notification.js";
 
-import "./styles.scss";
-
 //Applications list component
 export default class Applications extends React.Component {
     constructor(props) {
@@ -61,11 +59,7 @@ export default class Applications extends React.Component {
     renderApplications() {
         //Check for loading
         if (this.state.loading === true) {
-            return (
-                <div style={{"marginTop": "20px"}}>
-                    <Spinner color="primary"/>
-                </div>
-            );
+            return <Spinner color="primary" style={{"marginTop": "20px"}}/>;
         } 
         let customTitle = function (item) {
             return item.name;
@@ -75,7 +69,7 @@ export default class Applications extends React.Component {
         };
         //Render the table
         return (
-            <div className="apps-list">
+            <div>
                 {/* Display the number of registered applications */}
                 <Paragraph>
                     You have <strong>{this.state.applications.length}</strong> applications registered.
