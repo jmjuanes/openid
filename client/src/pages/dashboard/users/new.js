@@ -4,10 +4,10 @@ import {Checkbox, Label, Input} from "neutrine";
 import {redirectHashbang as redirect} from "rouct";
 import {request} from "@kofijs/request";
 
-import * as auth from "../../../../commons/auth.js";
-import * as notification from "../../../../commons/notification.js";
+import * as auth from "../../../commons/auth.js";
+import * as notification from "../../../commons/notification.js";
 
-import Header from "../../../../components/header/index.js";
+import Header from "../../../components/header/index.js";
 
 //New user component 
 export default class NewUser extends React.Component {
@@ -80,16 +80,16 @@ export default class NewUser extends React.Component {
     //Render the submit section
     renderSubmit() {
         if (this.state.loading === true) {
-            return (<Spinner color="primary"/>);
+            return <Spinner color="primary"/>;
         }
         else {
-            return (<Btn color="primary" onClick={() => this.handleSubmit()}>Register user</Btn>);
+            return <Btn color="primary" onClick={this.handleSubmit}>Register user</Btn>;
         }
     }
 
     render() {
-        if (this.props.isAdmin === false) {
-            return (<Alert color="error">You must be an administrator to access this section</Alert>);
+        if (this.props.isAdmin === false && this.props.isOwner === false) {
+            return <Alert color="error">You must be an administrator to access this section</Alert>;
         }
         return (
             <div>
