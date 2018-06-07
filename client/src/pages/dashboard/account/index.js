@@ -3,6 +3,8 @@ import {request} from "@kofijs/request";
 import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Paragraph, Small, Spinner} from "neutrine";
 import {redirectHashbang as redirect} from "rouct";
 
+import Header from "../../../components/header/index.js";
+
 import * as auth from "../../../commons/auth.js";
 import * as notification from "../../../commons/notification.js";
 
