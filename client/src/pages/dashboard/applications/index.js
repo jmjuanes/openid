@@ -17,8 +17,9 @@ export default class Applications extends React.Component {
             "applications": [],
             "loading": true
         };
-        this.editRedirect = this.editRedirect.bind(this);
-        this.createRedirect = this.createRedirect.bind(this);
+        //Bind methods
+        this.redirectToEdit = this.redirectToEdit.bind(this);
+        this.redirectToCreate = this.redirectToCreate.bind(this);
     }
 
     componentDidMount() {
@@ -46,12 +47,12 @@ export default class Applications extends React.Component {
     }
 
     //Redirect the admin to edit the specific application
-    editRedirect(item) {
+    redirectToEdit(item) {
         return redirect("/dashboard/applications/" + item.id);
     }
 
     //Redirect the user to edit the specific application
-    createRedirect() {
+    redirectToCreate() {
         return redirect("/dashboard/applications/create");
     }
 
@@ -78,7 +79,7 @@ export default class Applications extends React.Component {
                 <Table data={this.state.applications} 
                     icon="application" 
                     actionText="Manage"
-                    onActionClick={this.editRedirect}
+                    onActionClick={this.redirectToEdit}
                     customTitle={customTitle} 
                     customDetail={customDetail}/>
             </div>
@@ -87,13 +88,13 @@ export default class Applications extends React.Component {
 
     render() {
         //Check if the user is an administrator
-        if (this.props.admin === false) {
-            return(<Alert>You must be an administrator to access this route.</Alert>);
+        if (this.props.isAdmin === false && this.props.isOwner === false) {
+            return <Alert>You must be an administrator to access this route.</Alert>;
         }
         return (
             <div>
                 {/* Subheader with the button to register a new application */}
-                <Header text="Applications" btnText="New Application" onBtnClick={() => this.createRedirect()}/>
+                <Header text="Applications" btnText="New Application" onBtnClick={this.eedirectToCreate}/>
                 {/* Render the table with all the applications */}
                 {this.renderApplications()}
             </div>
