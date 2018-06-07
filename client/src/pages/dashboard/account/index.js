@@ -1,6 +1,6 @@
 import React from "react";
 import {request} from "@kofijs/request";
-import {Alert, Btn, Field, FieldHelper, FieldLabel, Heading, Input, Paragraph, Small, Spinner} from "neutrine";
+import {Btn, Field, FieldHelper, FieldLabel, Heading, Input, Paragraph, Small, Spinner} from "neutrine";
 import {redirectHashbang as redirect} from "rouct";
 
 import Header from "../../../components/header/index.js";
