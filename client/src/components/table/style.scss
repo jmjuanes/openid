@@ -1,7 +1,7 @@
 @import "siimple-colors/scss/_all.scss";
 
 //Table class
-.table {
+.pf-table {
     display: block;
     color: $siimple-navy;
     //Table item
@@ -25,6 +25,11 @@
             padding-right: 15px !important;
             padding-left: 15px !important;
         }
+        //Tag table cell
+        &--tag {
+            min-width: 60px;
+            text-align: center;
+        }
     }
     //Cell title 
     &-title {
@@ -32,14 +37,14 @@
         font-weight: bold;
         font-size: 15px;
     }
-    //Cell detail 
-    &-detail {
+    //Cell description 
+    &-description {
         display: block;
         font-size: 13px;
         color: $siimple-navy-light;
     }
-    //Table logo
-    &-logo {
+    //Table images
+    &-image {
         width: 55px;
         height: 55px;
         background-color: $siimple-navy-light;
@@ -56,5 +61,37 @@
             background-image: url('./img/user.png');
         }
     }
+    //Table button
+    &-btn {
+        height: 30px;
+        line-height: 30px;
+        font-size: 14px;
+    }
+    //Table icons
+    &-icon {
+        width: 20px;
+        height: 20px;
+        //background-color: $siimple-navy-light;
+        background-size: 20px 20px;
+        background-repeat: no-repeat;
+        background-position: center;
+        &:hover{
+            cursor: pointer;
+        }
+        //Edit icon
+        &--edit {
+            background-image: url('./img/icon-edit.png');
+            margin-right: 5px;
+        }
+        //Delete icon
+        &--delete {
+            background-image: url('./img/icon-delete.png');
+        }
+        //Disabled icon
+        &--disabled {
+            opacity: 0.5 !important;
+        }
+    }
+
 }
 
