@@ -204,7 +204,7 @@ export default class Account extends React.Component {
                 {/*Repeat pass input*/}
                 <Field>
                     <FieldLabel>Confirm new password</FieldLabel>
-                    <Input type="password" fluid ref={this.ref.repeatPwd2}/>
+                    <Input type="password" fluid ref={this.ref.newPwd2}/>
                 </Field>
                 {this.renderSubmit()}
                 <Header text="Delete account"></Header>
