@@ -123,7 +123,7 @@ export default class EditApp extends React.Component {
                 }
                 if (res.statusCode >= 300) {
                     notification.error(body.message);
-                    return self.setState({"modalLoading": true});
+                    return self.setState({"modalLoading": false});
                 }
                 //Print confirmation and redirect to the applications list
                 notification.success("Application '" + appName + "' removed");
@@ -198,7 +198,7 @@ export default class EditApp extends React.Component {
     //Render the delete button/spinner inside the modal
     renderDeleteSubmit() {
         if (this.state.modalLoading === false) {
-            return <Btn color={"error"} fluid onClick={this.handleAppDelete}>Delete this application</Btn>;
+            return <Btn color="error" fluid onClick={this.handleAppDelete}>Delete this application</Btn>;
         } 
         else {
             return <Spinner color="error"/>;
@@ -209,10 +209,10 @@ export default class EditApp extends React.Component {
     renderModal() {
         if (this.state.modalVisible === true) {
             return (
-                <div className="modal">
-                    <div className={"modal-content"}>
-                        <span className="modal-hide" onClick={this.toggleModal}>&times;</span>
-                        <Heading type={"h4"} className={"modal-title"}>Are you sure?</Heading>
+                <div className="pf-modal">
+                    <div className="pf-modal-content">
+                        <span className="pf-modal-hide" onClick={this.toggleModal}>&times;</span>
+                        <Heading type="h4" className="pf-modal-title">Are you sure?</Heading>
                         <Paragraph>
                             After you confirm this action, all the information related to this
                             application will be removed, and the list of users that allowed it to access their
@@ -229,23 +229,17 @@ export default class EditApp extends React.Component {
     //Render the keys 
     renderKeys() {
         if (this.state.keys === null) {
-            return (
-                <div className="edit-app-keys">
-                    <Btn color="navy" onClick={this.handleShowKeys}>
-                        Reveal public and secret keys
-                    </Btn>        
-                </div>
-            );
+            return <Btn color="navy" onClick={this.handleShowKeys}>Reveal public and secret keys</Btn>;
         } else {
             return (
-                <div className="edit-app-keys">
+                <div>
                     <Field>
                         <FieldLabel>Public key</FieldLabel>
-                        <Code className="edit-app-keys-container">{this.state.keys.public}</Code>
+                        <Code>{this.state.keys.public}</Code>
                     </Field>
                     <Field>
                         <FieldLabel>Secret key</FieldLabel>
-                        <Code className="edit-app-keys-container">{this.state.keys.secret}</Code>
+                        <Code>{this.state.keys.secret}</Code>
                     </Field>
                 </div>
             );
