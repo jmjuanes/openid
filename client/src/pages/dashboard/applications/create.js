@@ -85,7 +85,7 @@ export default class CreateApp extends Component {
                 //Redirect to the applications list
                 return setTimeout(function() {
                     return redirect("/dashboard/applications");
-                }, 500);
+                }, 750);
             });
         });
     }
