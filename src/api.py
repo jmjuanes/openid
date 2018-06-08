@@ -477,7 +477,7 @@ class RouteApplications(webapp2.RequestHandler):
             a.homepage_url = data['homepage_url']
             a.privacy_url = data['privacy_url']
             a.premissions = data['permissions']
-            a.secret = application.generateSecret()
+            a.secret = application.generate_secret()
         except:
             return response.sendError(self, 500, 'Error registrating the application')
         # Insert the application in the database
