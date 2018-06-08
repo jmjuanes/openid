@@ -7,6 +7,7 @@ import {redirectHashbang as redirect} from "rouct";
 
 import Header from "../../../components/header/index.js";
 
+import * as permissions from "../../../commons/permissions.js";
 import * as auth from "../../../commons/auth.js";
 import * as notification from "../../../commons/notification.js";
 
