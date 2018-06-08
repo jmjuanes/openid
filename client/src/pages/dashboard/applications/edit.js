@@ -256,14 +256,16 @@ export default class EditApp extends React.Component {
     renderPermissions() {
         let self = this;
         let children = [];
-        children.push(React.createElement(FieldLabel, {}, "Permissions"));
+        //Generate the permissions list
+        let permissionsList = (this.state.app.permissions === null) ? [] : this.state.app.permissions.split(",");
+        children.push(React.createElement(FieldLabel, {"key": 0}, "Permissions"));
         //Add all the permissions
         permissions.getAll().forEach(function (item, index) {
-            let isChecked = self.app.permissions.indexOf(item.id) !== -1;
+            let isChecked = permissionsList.indexOf(item.id) !== -1;
             let ref = self.ref["permission_" + item.id];
             let itemCheck = React.createElement(Checkbox, {"defaultChecked": isChecked, "ref": ref});
             let itemText = React.createElement(Label, {}, item.name);
-            children.push(React.createElement("div", {"key": index}, itemCheck, itemText));
+            children.push(React.createElement("div", {"key": index + 1}, itemCheck, itemText));
         });
         //Return the permissions list 
         return React.createElement(Field, {}, children);
@@ -318,9 +320,9 @@ export default class EditApp extends React.Component {
                     </Field>
                     <Field>
                         <FieldLabel>Privacy URL</FieldLabel>
-                        <Input type="text" fuild defaultValue={this.state.app.privacy_url} ref={this.ref.privacy}/>
+                        <Input type="text" fluid defaultValue={this.state.app.privacy_url} ref={this.ref.privacy}/>
                     </Field>
-                    {this.renderPermissions}
+                    {this.renderPermissions()}
                 </div>
             );
         }
