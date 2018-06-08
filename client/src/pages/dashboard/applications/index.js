@@ -4,7 +4,7 @@ import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
 
 import Header from "../../../components/header/index.js";
-import Table from "../../../components/table/index.js";
+import TableApplications from "../../../components/table/applications.js";
 
 import * as auth from "../../../commons/auth.js";
 import * as notification from "../../../commons/notification.js";
@@ -62,12 +62,6 @@ export default class Applications extends React.Component {
         if (this.state.loading === true) {
             return <Spinner color="primary" style={{"marginTop": "20px"}}/>;
         } 
-        let customTitle = function (item) {
-            return item.name;
-        };
-        let customDetail = function (item) {
-            return "Application created on xxxxxxxxx";
-        };
         //Render the table
         return (
             <div>
@@ -76,12 +70,7 @@ export default class Applications extends React.Component {
                     You have <strong>{this.state.applications.length}</strong> applications registered.
                 </Paragraph>
                 {/* Display the table with all the applications */}
-                <Table data={this.state.applications} 
-                    icon="application" 
-                    actionText="Manage"
-                    onActionClick={this.redirectToEdit}
-                    customTitle={customTitle} 
-                    customDetail={customDetail}/>
+                <TableApplications data={this.state.applications} onClick={this.redirectToEdit}/>
             </div>
         );
     }
