@@ -116,7 +116,7 @@ export default class Profile extends React.Component {
                     </Field>
                     <Field>
                         <FieldLabel>Biography</FieldLabel>
-                        <Textarea fluid ref={this.ref.biography}>{this.state.user.biography}</Textarea>
+                        <Textarea fluid ref={this.ref.biography} defaultValue={this.state.user.biography}/>
                     </Field>
                     <Field>
                         <FieldLabel>Company</FieldLabel>
