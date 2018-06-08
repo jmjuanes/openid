@@ -11,6 +11,8 @@ import * as permissions from "../../../commons/permissions.js";
 import * as auth from "../../../commons/auth.js";
 import * as notification from "../../../commons/notification.js";
 
+import "./style.scss";
+
 //Export application edit component
 export default class EditApp extends React.Component {
     constructor(props) {
@@ -235,11 +237,17 @@ export default class EditApp extends React.Component {
                 <div>
                     <Field>
                         <FieldLabel>Public key</FieldLabel>
-                        <Code>{this.state.keys.public}</Code>
+                        <Code className="pf-applications-keys">{this.state.keys.public}</Code>
+                        <FieldHelper>
+                            Use this key to identify your application.
+                        </FieldHelper>
                     </Field>
                     <Field>
                         <FieldLabel>Secret key</FieldLabel>
-                        <Code>{this.state.keys.secret}</Code>
+                        <Code className="pf-applications-keys">{this.state.keys.secret}</Code>
+                        <FieldHelper>
+                            Use this key to decode the token provided when the user authorizes your application. Remember that this key shouldn't be visible in your application.
+                        </FieldHelper>
                     </Field>
                 </div>
             );
