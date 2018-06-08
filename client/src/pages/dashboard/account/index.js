@@ -83,7 +83,7 @@ export default class Account extends React.Component {
                 //Reset the password values
                 self.ref.oldPwd.current.value = "";
                 self.ref.newPwd1.current.value = "";
-                self.ref.repeatPwd2.current.value = "";
+                self.ref.newPwd2.current.value = "";
                 //Display success and hide the loading
                 notification.success("Password updated successfully");
                 return self.setState({"loading": false});
