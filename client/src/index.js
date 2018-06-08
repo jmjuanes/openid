@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 import {request} from "@kofijs/request";
 import * as Router from "rouct";
-import "siimple/scss/_base.scss";
 
 import Login from "./pages/login/index.js";
 import Authorize from "./pages/authorize/index.js";
@@ -13,6 +12,7 @@ import Dashboard from "./pages/dashboard/index";
 import * as auth from "./commons/auth.js";
 import * as notification from "./commons/notification.js";
 
+import "siimple/scss/_base.scss";
 import "./styles.scss";
 
 //Main app class
