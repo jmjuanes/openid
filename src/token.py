@@ -4,7 +4,7 @@ import logging
 
 
 # Generate a token
-def encode(u, secret, permissions, algorithm, expiration):
+def encode(u, permissions, secret, algorithm, expiration):
     payload = dict()
     payload['is_admin'] = u.is_admin
     payload['is_owner'] = u.is_owner
