@@ -267,7 +267,7 @@ class RouteUser(webapp2.RequestHandler):
         u = user.get(id=payload['id'])
         if u is None:
             return response.sendError(self, 400, 'Invalid user information')
-        return response.sendJson(user.to_json(u))
+        return response.sendJson(self, user.to_json(u))
 
 
 # User deleting his own account
