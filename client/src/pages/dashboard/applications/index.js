@@ -94,7 +94,7 @@ export default class Applications extends React.Component {
         return (
             <div>
                 {/* Subheader with the button to register a new application */}
-                <Header text="Applications" btnText="New Application" onBtnClick={this.eedirectToCreate}/>
+                <Header text="Applications" btnText="New Application" onBtnClick={this.redirectToCreate}/>
                 {/* Render the table with all the applications */}
                 {this.renderApplications()}
             </div>
