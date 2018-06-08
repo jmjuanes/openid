@@ -660,7 +660,7 @@ app = webapp2.WSGIApplication([
     # webapp2.Route('/api/user/password', handler=RouteUserPassword),
     webapp2.Route('/api/user/delete', handler=RouteUserDelete),
     webapp2.Route('/api/user/authorizations', handler=RouteUserAuthorizations),
-    webapp2.Route('/api/user/authorizations/<app_id>', handler=RouterUserAuthorizationsById),
+    webapp2.Route('/api/user/authorizations/<app_id>', handler=RouteUserAuthorizationsById),
     # Applications routes
     webapp2.Route('/api/applications', handler=RouteApplications),
     webapp2.Route('/api/applications/<app_id>/secret', handler=RouteApplicationsSecret),
