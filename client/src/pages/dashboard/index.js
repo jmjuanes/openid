@@ -43,7 +43,7 @@ export default class Dashboard extends React.Component {
             "json": true,
             "auth": auth.generateAuth()
         };
-        return request(requstOptions, function (error, response, body) {
+        return request(requestOptions, function (error, response, body) {
             if (error) {
                 return notification.error(error.message);
             }
