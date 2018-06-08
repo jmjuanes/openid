@@ -1,7 +1,8 @@
 import React from "react";
 import * as Router from "rouct";
-import {Btn, List, ListItem, ListTitle, Spinner, Small} from "neutrine";
+import {Btn, List, ListItem, ListTitle, Spinner, Small, Content} from "neutrine";
 import {Navbar, NavbarTitle, NavbarSubtitle, NavbarItem} from "neutrine";
+import {Grid, GridRow, GridCol} from "neutrine";
 import {request} from "@kofijs/request";
 
 import * as auth from "../../commons/auth.js";
@@ -105,47 +106,45 @@ export default class Dashboard extends React.Component {
                         <NavbarSubtitle>Dashboard</NavbarSubtitle>
                         <NavbarItem className="pf-dashboard-logout" onClick={this.handleLogout}>Log out</NavbarItem>
                     </Navbar>
-                    <div className="siimple-content siimple-content--medium">
-                        <div className="siimple-grid">
-                            <div className="siimple-grid-row">
-                                <div className="pf-dashboard-menu siimple-grid-col siimple-grid-col--3">
-                                    {/*User panel*/}
-                                    <List hover={true}>
-                                        <ListItem className="pf-dashboard-menu-item" onClick={() => { this.redirectTo("") }}>
-                                            <ListTitle>Profile</ListTitle>
-                                            <Small>Edit your personal info</Small>
-                                        </ListItem>
-                                        <ListItem className="pf-dashboard-menu-item" onClick={() => { this.redirectTo("account") }}>
-                                            <ListTitle>Account</ListTitle>
-                                            <Small>Manage your account settings</Small>
-                                        </ListItem>
-                                        <ListItem className="pf-dashboard-menu-item">
-                                            <ListTitle>Email</ListTitle>
-                                            <Small>Edit your notifications settings</Small>
-                                        </ListItem>
-                                        <ListItem className="pf-dashboard-menu-item">
-                                            <ListTitle>Authorized apps</ListTitle>
-                                            <Small>Manage which applications can access your personal data</Small>
-                                        </ListItem>
-                                    </List>
-                                    {/*Admin panel*/}
-                                    {this.renderAdminPanel()}
-                                </div>
-                                {/*Content*/}
-                                <div className="pf-dashboard-content siimple-grid-col siimple-grid-col--9">
-                                    <Router.Switch>
-                                        <Router.Route exact path="/dashboard/" component={Profile} props={userProps}/>
-                                        <Router.Route exact path="/dashboard/account" component={Account} props={userProps}/>
-                                        <Router.Route exact path="/dashboard/applications" component={Applications} props={userProps}/>
-                                        <Router.Route exact path="/dashboard/applications/create" component={CreateApp} props={userProps}/>
-                                        <Router.Route exact path="/dashboard/applications/:id" component={EditApp} props={userProps}/>
-                                        <Router.Route exact path="/dashboard/users" component={Users} props={userProps}/>
-                                        <Router.Route exact path="/dashboard/users/new" component={NewUser} props={userProps}/>
-                                    </Router.Switch>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <Content size="medium">
+                        <GridRow>
+                            <GridCol className="pf-dashboard-menu" size="3" small="12">
+                                {/*User panel*/}
+                                <List hover={true}>
+                                    <ListItem className="pf-dashboard-menu-item" onClick={() => { this.redirectTo("") }}>
+                                        <ListTitle>Profile</ListTitle>
+                                        <Small>Edit your personal info</Small>
+                                    </ListItem>
+                                    <ListItem className="pf-dashboard-menu-item" onClick={() => { this.redirectTo("account") }}>
+                                        <ListTitle>Account</ListTitle>
+                                        <Small>Manage your account settings</Small>
+                                    </ListItem>
+                                    <ListItem className="pf-dashboard-menu-item">
+                                        <ListTitle>Email</ListTitle>
+                                        <Small>Edit your notifications settings</Small>
+                                    </ListItem>
+                                    <ListItem className="pf-dashboard-menu-item">
+                                        <ListTitle>Authorized apps</ListTitle>
+                                        <Small>Manage which applications can access your personal data</Small>
+                                    </ListItem>
+                                </List>
+                                {/*Admin panel*/}
+                                {this.renderAdminPanel()}
+                            </GridCol>
+                            {/*Content*/}
+                            <GridCol className="pf-dashboard-content" size="9" small="12">
+                                <Router.Switch>
+                                    <Router.Route exact path="/dashboard/" component={Profile} props={userProps}/>
+                                    <Router.Route exact path="/dashboard/account" component={Account} props={userProps}/>
+                                    <Router.Route exact path="/dashboard/applications" component={Applications} props={userProps}/>
+                                    <Router.Route exact path="/dashboard/applications/create" component={CreateApp} props={userProps}/>
+                                    <Router.Route exact path="/dashboard/applications/:id" component={EditApp} props={userProps}/>
+                                    <Router.Route exact path="/dashboard/users" component={Users} props={userProps}/>
+                                    <Router.Route exact path="/dashboard/users/new" component={NewUser} props={userProps}/>
+                                </Router.Switch>
+                            </GridCol>
+                        </GridRow>
+                    </Content>
                 </div>
             );
         }
