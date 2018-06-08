@@ -108,7 +108,7 @@ export default class Dashboard extends React.Component {
                     </Navbar>
                     <Content size="medium">
                         <GridRow>
-                            <GridCol className="pf-dashboard-menu" size="3" small="12">
+                            <GridCol className="pf-dashboard-menu" size={3} small={12}>
                                 {/*User panel*/}
                                 <List hover={true}>
                                     <ListItem className="pf-dashboard-menu-item" onClick={() => { this.redirectTo("") }}>
@@ -132,7 +132,7 @@ export default class Dashboard extends React.Component {
                                 {this.renderAdminPanel()}
                             </GridCol>
                             {/*Content*/}
-                            <GridCol className="pf-dashboard-content" size="9" small="12">
+                            <GridCol className="pf-dashboard-content" size={9} small={12}>
                                 <Router.Switch>
                                     <Router.Route exact path="/dashboard/" component={Profile} props={userProps}/>
                                     <Router.Route exact path="/dashboard/account" component={Account} props={userProps}/>
