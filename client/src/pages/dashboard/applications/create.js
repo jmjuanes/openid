@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Alert, Btn, Input, Spinner, Small, Paragraph} from "neutrine";
+import {Alert, Btn, Input, Spinner, Small} from "neutrine";
 import {Field, FieldHelper, FieldLabel, Checkbox, Label} from "neutrine";
 import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
@@ -124,7 +124,6 @@ export default class CreateApp extends Component {
             return (
                 <div>
                     <Header text="Register a new application"/>
-                    <Paragraph>Please check that all fields are correct before submitting.</Paragraph>
                     <Field>
                         <FieldLabel>Name of the application</FieldLabel>
                         <Input type="text" fluid ref={this.ref.name}/>
