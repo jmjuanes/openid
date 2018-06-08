@@ -476,7 +476,7 @@ class RouteApplications(webapp2.RequestHandler):
             a.redirect_url = data['redirect_url']
             a.homepage_url = data['homepage_url']
             a.privacy_url = data['privacy_url']
-            a.premissions = data['permissions']
+            a.permissions = data['permissions']
             a.secret = application.generate_secret()
         except:
             return response.sendError(self, 500, 'Error registrating the application')
