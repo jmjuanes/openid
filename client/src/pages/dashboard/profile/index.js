@@ -46,7 +46,7 @@ export default class Profile extends React.Component {
             //Update the state with the new user data
             let newUserData = {
                 "name": body.name,
-                "biograpby": body.biography,
+                "biography": body.biography,
                 "company": body.company,
                 "location": body.location
             };
@@ -73,7 +73,8 @@ export default class Profile extends React.Component {
                 "url": "/api/user",
                 "method": "put",
                 "json": true,
-                "body": data
+                "body": data,
+                "auth": auth.generateAuth()
             };
             return request(requestOptions, function (error, response, body) {
                 if (error) {
