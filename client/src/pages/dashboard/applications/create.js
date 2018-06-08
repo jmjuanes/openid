@@ -60,7 +60,7 @@ export default class CreateApp extends Component {
             }
         });
         //Join all permissions
-        data.permisssions = data.permissions.join(",");
+        data.permissions = data.permissions.join(",");
         return this.setState({"loading": true}, function () {
             //Initialize the request options
             let requestOptions = {
@@ -105,12 +105,12 @@ export default class CreateApp extends Component {
     renderPermissions() {
         let self = this;
         let children = [];
-        children.push(React.createElement(FieldLabel, {}, "Permissions"));
+        children.push(React.createElement(FieldLabel, {"key": 0}, "Permissions"));
         //Add all available permissions
         permissions.getAll().forEach(function (item, index) {
             let itemCheckbox = React.createElement(Checkbox, {"ref": self.ref["permission_" + item.id]});
             let itemName = React.createElement(Label, {}, item.name);
-            children.push(React.createElement("div", {"key": index}, itemCheckbox, itemName));
+            children.push(React.createElement("div", {"key": index + 1}, itemCheckbox, itemName));
         });
         //Return the permissions list
         return React.createElement(Field, {}, children);
