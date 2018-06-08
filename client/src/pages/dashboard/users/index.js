@@ -5,7 +5,7 @@ import {redirectHashbang as redirect} from "rouct";
 import {request} from "@kofijs/request";
 
 import Header from "../../../components/header/index.js";
-import TableUsers from "../../../components/table_users/index.js";
+import TableUsers from "../../../components/table/users.js";
 
 import * as auth from "../../../commons/auth.js";
 import * as notification from "../../../commons/notification.js";
@@ -171,27 +171,23 @@ export default class Users extends React.Component {
 
     //Render a list with all the applications
     renderUsers() {
+        let self = this;
         if (this.state.loading === true) {
             return <Spinner color="primary" style={{"marginTop":"25px"}}/>;
         }
-        let customTitle = function (item) {
-            return item.name;
-        };
-        let customDetail = function (item) {
-            return item.email;
-        };
         // Render the table
+        let editUser = function (item, index) {
+            return self.toggleModal(item, index, "edit"); 
+        };
+        let deleteUser = function (item, index) {
+            return self.toggleModal(item, index, "delete");
+        };
         return (
             <div>
                 <Paragraph>
                     There are <strong>{this.state.users.length}</strong> users registered.
                 </Paragraph>
-                <TableUsers data={this.state.users}
-                    icon="user"
-                    admin={this.props}
-                    editUser={this.toggleModal}
-                    customTitle={customTitle}
-                    customDetail={customDetail}/>
+                <TableUsers data={this.state.users} user={this.props} onEditClick={editUser} onDeleteClick={deleteUser}/>
             </div>
         );
     }
