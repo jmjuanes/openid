@@ -67,7 +67,7 @@ export default class Users extends React.Component {
         }
         //The user cannot delete himself
         if (item !== null) {
-            if (this.props.user.id === item.id || (item.is_admin && !this.props.user.owner)) {
+            if (this.props.id === item.id || (item.is_admin && !this.props.isOwner)) {
                 return false;
             }
         }
@@ -91,11 +91,11 @@ export default class Users extends React.Component {
             "is_active": this.ref.activeSwitch.current.checked
         };
         //Check for owner
-        if(this.props.user.owner === true){
+        if(this.props.isOwner === true){
             info.is_admin = this.ref.roleSelect.current.value === "admin";
         }
         //Check that a change has been made in the info to update
-        let hasChanged = this.props.user.owner ? info.is_active !== user.is_active || info.is_admin !== user.is_admin : info.is_active !== user.is_active;
+        let hasChanged = this.props.isOwner ? info.is_active !== user.is_active || info.is_admin !== user.is_admin : info.is_active !== user.is_active;
         if (hasChanged === false) {
             //No changes made --> close the modal
             //return notification.warning("Change the user info before updating")
@@ -188,7 +188,7 @@ export default class Users extends React.Component {
                 </Paragraph>
                 <TableUsers data={this.state.users}
                     icon="user"
-                    admin={this.props.user}
+                    admin={this.props}
                     editUser={this.toggleModal}
                     customTitle={customTitle}
                     customDetail={customDetail}/>
@@ -198,7 +198,7 @@ export default class Users extends React.Component {
 
     //Render the user role selector --> only visible for owners
     renderModalRole() {
-        if (this.props.user.owner === true) {
+        if (this.props.isOwner === true) {
             //Get the role of the user 
             let user = this.state.users[this.state.modalIndex];
             let role = (user.is_admin === true) ? "admin" : "user";
@@ -243,10 +243,10 @@ export default class Users extends React.Component {
             if (this.state.modalAction === "edit") {
                 let user = this.state.users[this.state.modalIndex];
                 return (
-                    <div className="modal">
-                        <div className={"modal-content"}>
-                            <span className="modal-hide" onClick={() => this.toggleModal(null, null, null)}>&times;</span>
-                            <Heading type={"h4"} className={"modal-title"}>Edit user</Heading>
+                    <div className="pf-modal">
+                        <div className="pf-modal-content">
+                            <span className="pf-modal-hide" onClick={() => this.toggleModal(null, null, null)}>&times;</span>
+                            <Heading type="h4" className="pf-modal-title">Edit user</Heading>
                             <Paragraph>Make the desired changes in the user and click <b>Update user</b> to confirm them.</Paragraph>
                             <Field>
                                 <Label>User active: </Label>
@@ -263,10 +263,12 @@ export default class Users extends React.Component {
             }
             else if (this.state.modalAction === "delete") {
                 return (
-                    <div className="modal">
-                        <div className={"modal-content"}>
-                            <span className="modal-hide" onClick={() => this.toggleModal(null, null, null)}>&times;</span>
-                            <Heading type={"h4"} className={"modal-title"}>Are you sure?</Heading>
+                    <div className="pf-modal">
+                        <div className="pf-modal-content">
+                            <span className="pf-modal-hide" onClick={() => this.toggleModal(null, null, null)}>
+                                &times;
+                            </span>
+                            <Heading type="h4" className="pf-modal-title">Are you sure?</Heading>
                             <Paragraph>
                                 Once you delete this user all his data will be permanently lost,
                                 and the only way he'll be able to use the application again will be by creating a new
@@ -282,14 +284,13 @@ export default class Users extends React.Component {
 
     render() {
         //Check if logged user is not an administrator
-        if (this.props.user.isAdmin === false && this.props.user.isOwner === false) {
+        if (this.props.isAdmin === false && this.props.isOwner === false) {
             return <Alert color="error">You must be an administrator to access this route.</Alert>;
         }
         return (
-            <div className="users-content">
+            <div>
                 <Header text="Users" btnText="New user" onBtnClick={() => this.registerRedirect()}/>
                 {this.renderUsers()}
-                {/*Modal*/}
                 {this.renderModal()}
             </div>
         );
