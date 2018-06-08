@@ -2,13 +2,14 @@
 from google.appengine.ext import ndb
 
 # Import python modules
+import sys
 import json
 
 
 # Authorizations class
 class Authorization(ndb.Model):
-    app_id = ndb.StringProperty(indexed=True)
-    user_id = ndb.StringProperty(indexed=True)
+    app_id = ndb.IntegerProperty(indexed=True)
+    user_id = ndb.IntegerProperty(indexed=True)
     grant_access = ndb.IntegerProperty(indexed=False)
     last_access = ndb.IntegerProperty(indexed=False)
 
@@ -21,6 +22,7 @@ def get(app_id, user_id):
                                     Authorization.user_id == int(user_id))
         return query.get()
     except:
+        print "Unexpected error: ", sys.exc_info()[0]
         return None
 
 
@@ -31,6 +33,7 @@ def get_all(user_id):
         query = Authorization.query(Authorization.user_id == int(user_id))
         return query.get()
     except:
+        print "Unexpected error: ", sys.exc_info()[0]
         return None
 
 
@@ -38,9 +41,10 @@ def get_all(user_id):
 def delete_by_application(app_id):
     try:
         auth_list = Authorization.query(Authorization.app_id == int(app_id)).fetch(keys_only=True)
-        ndb.delete_multi(auths_list)
+        ndb.delete_multi(auth_list)
         return True
     except:
+        print "Unexpected error: ", sys.exc_info()[0]
         return False
 
 
@@ -48,9 +52,10 @@ def delete_by_application(app_id):
 def delete_by_user(user_id):
     try:
         auth_list = Authorization.query(Authorization.user_id == int(user_id)).fetch(keys_only=True)
-        ndb.delete_multi(auths_list)
+        ndb.delete_multi(auth_list)
         return True
     except:
+        print "Unexpected error: ", sys.exc_info()[0]
         return False
 
 
