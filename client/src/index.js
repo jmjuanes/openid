@@ -37,10 +37,11 @@ class Main extends React.Component {
             }
             //New configuration object
             let config = {
-                "openid_name": body.openid_name,
+                "name": body.name,
                 "captcha_enabled": body.captcha_enabled,
                 "captcha_key": body.captcha_key,
-                "openid_allow_signup": body.openid_allow_signup
+                "allow_signup": body.allow_signup,
+                "allow_resetpwd": body.allow_resetpwd
             };
             return self.setState({"config": config});
         });
