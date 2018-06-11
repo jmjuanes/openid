@@ -390,7 +390,7 @@ class RouteUserAuthorizationsById(webapp2.RequestHandler):
             au.last_access = int(time.time())
             au.put()
             # Generate the token for this application
-            client_token = token.encode(u, a.secret, a.permissions, config.token_algorithm, config.token_expiration)
+            client_token = token.encode(u, a.permissions, a.secret, config.token_algorithm, config.token_expiration)
             return response.sendJson(self, {'token': client_token})
         except:
             print "Unexpected error: ", sys.exc_info()[0]
