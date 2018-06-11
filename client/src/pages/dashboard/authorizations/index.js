@@ -96,27 +96,22 @@ export default class Authorizations extends React.Component {
         }
     }
 
-    //Render the authorizations
-    renderAuthorizations() {
+    //Render the authorizations view
+    render() {
         if (this.state.authorizations === null) {
             return <Spinner color="primary"/>;
         }
         else {
             return (
-                <Paragraph>
-                    You have granted access to <strong>{this.state.authorizations.length} applications</strong> to your account.
-                </Paragraph>
-                <TableAuthorizations data={this.state.authorizations} onClick={this.handleRevoke}/>
+                <div>
+                    <Header text="Authorizations"/>
+                    <Paragraph>
+                        You have granted access to <strong>{this.state.authorizations.length} applications</strong> to your account.
+                    </Paragraph>
+                    <TableAuthorizations data={this.state.authorizations} onClick={this.handleRevoke}/>
+                </div>
             );
         }
-    }
-
-    //Render the authorizations view
-    render () {
-        return (
-            <Header text="Authorizations"/>
-            {this.renderAuthorizations()}
-        );
     }
 }
 
