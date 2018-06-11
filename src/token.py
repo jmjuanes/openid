@@ -13,7 +13,7 @@ def encode(u, permissions, secret, algorithm, expiration):
     payload['iat'] = int(time.time())
     payload['exp'] = int(time.time()) + expiration
     # Check the permissions to add more data to the token
-    if permissions and permissions.strip():
+    if permissions is not None and permissions.strip():
         permissions_list = permissions.split(',')
         if 'name' in permissions_list:
             payload['name'] = u.name
