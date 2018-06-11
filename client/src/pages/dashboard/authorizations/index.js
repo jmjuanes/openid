@@ -63,8 +63,37 @@ export default class Authorizations extends React.Component {
     //Handle revoke confirm
     handleRevokeSend() {
         let self = this;
-        let app = this.state.authorizations[this.state.modalIndex].app_id;
-        console.log(app);
+        let index = this.state.modalIndex;
+        let id = this.state.authorizations[index].app_id;
+        return self.setState({"modalLoading": true}, function () {
+            let requestOptions = {
+                "url": "/api/user/authorizations/" + id,
+                "method": "delete",
+                "json": true
+            };
+            //Delete this authorization
+            return request(requestOptions, function (error, response, body) {
+                if (error) {
+                    notification.error(error.message);
+                    return self.setState({"modalLoading": false});
+                }
+                if (response.statusCode >= 300) {
+                    notification.error(body.message);
+                    return self.setState({"modalLoading": false});
+                }
+                //Authorization removed
+                notification.success("Authorization removed");
+                //Remove from the list of authorizations
+                let authorizations = self.state.authorizations;
+                authorizations.splice(index, 1);
+                let newState = {
+                    "authorizations": authorizations, 
+                    "modalLoading": false, 
+                    "modalVisible": false
+                };
+                return self.setState(newState);
+            });
+        });
     }
 
     //Render the modal submit
@@ -103,14 +132,16 @@ export default class Authorizations extends React.Component {
             return <Spinner color="primary"/>;
         }
         else {
+            //Authorizations list
+            let list = this.state.authorizations;
             return (
                 <div>
                     <Header text="Authorizations"/>
                     {this.renderModal()}
                     <Paragraph>
-                        You have granted access to <strong>{this.state.authorizations.length} applications</strong> to your account.
+                        You have granted access to <strong>{list.length} applications</strong> to your account.
                     </Paragraph>
-                    <TableAuthorizations data={this.state.authorizations} onClick={this.handleRevoke}/>
+                    <TableAuthorizations data={list} onClick={this.handleRevoke}/>
                 </div>
             );
         }
