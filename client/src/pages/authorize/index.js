@@ -93,17 +93,32 @@ export default class Authorize extends React.Component {
     renderPermissions() {
         let children = [];
         //Loop over all permissions of the application
-        this.state.app.permissions.split(",").forEach(function (key, index) {
-            let item = permissions.get(key);
-            let itemTitle = React.createElement(CardTitle, {"className": "pf-authorize-permissions-title"}, item.name);
-            let itemContent = React.createElement(Small, {"className": "pf-authorize-permissions-description"}, item.description);
-            //Save the list item element
-            children.push(React.createElement(CardBody, {"key": index}, itemTitle, itemContent));
-        });
-        //Return the list element
-        if (children.length > 0) {
-            return React.createElement(Card, {"className": "pf-authorize-permissions"}, children);
+        let permissionsList = []; 
+        if (typeof this.state.app.permissions === "string") {
+            //Split the permissions by comma and filter the generated list
+            permissionsList = this.state.app.permissions.split(",").filter(function (key) {
+                return key.trim().length > 0;
+            });
         }
+        //Check the number of permissions
+        if (permissionsList.length === 0) {
+            let text = "This application does not need to access to your personal information."
+            let content = React.createElement(Small, {"className": "pf-authorize-permissions-description"}, text);
+            children.push(React.createElement(CardBody, {"key": 0, "align": "center"}, content));
+        }
+        else {
+            //Display all the permissions
+            permissionsList.split(",").forEach(function (key, index) {
+                //Get the permission information
+                let item = permissions.get(key);
+                let itemTitle = React.createElement(CardTitle, {"className": "pf-authorize-permissions-title"}, item.name);
+                let itemContent = React.createElement(Small, {"className": "pf-authorize-permissions-description"}, item.description);
+                //Save the list item element
+                children.push(React.createElement(CardBody, {"key": index}, itemTitle, itemContent));
+            });
+        }
+        //Return the list element
+        return React.createElement(Card, {"className": "pf-authorize-permissions"}, children);
     }
 
     render() {
