@@ -38,10 +38,10 @@ export default class Authorizations extends React.Component {
                 return notification.error(error.message);
             }
             if (response.statusCode >= 300) {
-                return notification.error(body.messsage);
+                return notification.error(body.message);
             }
             //Save the authorizations list
-            return self.setState({"authorizations": body, "loading": false});
+            return self.setState({"authorizations": body.authorizations});
         });
     }
 
