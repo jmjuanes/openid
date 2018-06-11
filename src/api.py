@@ -325,18 +325,18 @@ class RouteUserAuthorizations(webapp2.RequestHandler):
         # Extract all the authorizations for this user
         try:
             all_auths = authorization.get_all(id=payload['id'])
+            #print "Imported authorizations: ", len(all_auths)
             auths = []
             for i in range(0, len(all_auths)):
                 # Build the authorization object
                 obj = authorization.to_json(all_auths[i])
                 # Get and save the application information for this authorization
-                q = application.get(all_auts[i].app_id)
+                a= application.get(all_auths[i].app_id)
                 obj['application'] = application.to_json(a)
                 auths.append(obj)
             # Return the list with the applications registered
             response.sendJson(self, {'authorizations': auths})
         except:
-            print "ERROR"
             print "Unexpected error: ", sys.exc_info()[0]
             return response.sendError(self, 500, 'Authorizations could not be retrieved')
 
