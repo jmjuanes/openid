@@ -22,7 +22,8 @@ export default class TableAuthorizations extends Table {
 
     //Get the table subtitle content
     getDescription(item, index) {
-        return "Last used on " + Date(item.last_access) + "";
+        let currentDate = new Date(item.last_access);
+        return "Last used on " + currentDate.toString() + "";
     }
 
     //Get the extra columns
