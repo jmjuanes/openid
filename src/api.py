@@ -57,10 +57,23 @@ class RouteUsers(webapp2.RequestHandler):
         # Check if the user already exists
         if user.exists(data['email']):
             return response.sendError(self, 400, 'This user already exists')
+        # Extract the user token from the header
+        t = token.extract(self.request.headers.get('Authorization'))
+        payload = None
+        if t is not None:
+            payload = token.decode(t, config.passfort_secret, config.token_algorithm)
+            # Only admins are allowed
+            if payload is None:
+                return response.sendError(self, 401, 'Invalid authentication credentials')
+            if payload.get('is_admin') is not True: 
+                return response.sendError(self, 401, 'Only administrators are allowed')
+        # Check if signup is not allowed
+        if config.passfort_allow_signup is False and payload is None:
+            return response.sendError(self, 403, 'No new signups are allowed')
         # Check if the captcha is enabled
-        if config.captcha_enabled is True:
+        if config.captcha_enabled is True and payload is None:
             # Get the captcha value and check if the captcha is valid
-            captcha_value = data['recaptcha']
+            captcha_value = data.get('recaptcha')
             if captcha.verify(captcha_value, config.captcha_secret, config.captcha_url) is False:
                 return response.sendError(self, 400, 'Captcha answered incorrectly')
         # Initialize the user
