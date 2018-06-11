@@ -124,7 +124,7 @@ export default class Dashboard extends React.Component {
                                         <ListTitle>Email</ListTitle>
                                         <Small>Edit your notifications settings</Small>
                                     </ListItem>
-                                    <ListItem className="pf-dashboard-menu-item" onClick={() => { this.redirectTo("authorizarions") }}>
+                                    <ListItem className="pf-dashboard-menu-item" onClick={() => { this.redirectTo("authorizations") }}>
                                         <ListTitle>Authorized apps</ListTitle>
                                         <Small>Manage which applications can access your personal data</Small>
                                     </ListItem>
