@@ -103,7 +103,7 @@ export default class Dashboard extends React.Component {
             return (
                 <div>
                     <Navbar size="medium" color="light">
-                        <NavbarTitle>OpenID</NavbarTitle>
+                        <NavbarTitle>{this.props.name}</NavbarTitle>
                         <NavbarSubtitle>Dashboard</NavbarSubtitle>
                         <NavbarItem className="pf-dashboard-logout" onClick={this.handleLogout}>Log out</NavbarItem>
                     </Navbar>
