@@ -364,7 +364,7 @@ class RouteUserAuthorizationsById(webapp2.RequestHandler):
         try:
             au = authorization.get(app_id, payload['id'])
             if au is None:
-                au = authorization.Authorization(app_id=app_id, user_id=payload['id'])
+                au = authorization.Authorization(app_id=int(app_id), user_id=int(payload['id']))
                 au.grant_access = int(time.time())
             # Update the last access value and update the authorization in the database
             au.last_access = int(time.time())
@@ -373,6 +373,7 @@ class RouteUserAuthorizationsById(webapp2.RequestHandler):
             client_token = token.encode(u, a.secret, a.permissions, config.token_algorithm, config.token_expiration)
             return response.sendJson(self, {'token': client_token})
         except:
+            print "Unexpected error: ", sys.exc_info()[0]
             return response.sendError(self, 500, 'Error generating authorization')
 
     # Delete an authorization
