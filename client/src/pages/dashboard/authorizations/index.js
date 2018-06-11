@@ -1,6 +1,6 @@
 import React from "react";
 import {request} from "@kofijs/request";
-import {Paragraph, Spinner} from "neutrine";
+import {Btn, Heading, Paragraph, Spinner} from "neutrine";
 
 import Header from "../../../components/header/index.js";
 import TableAuthorizations from "../../../components/table/authorizations.js";
@@ -40,6 +40,7 @@ export default class Authorizations extends React.Component {
             if (response.statusCode >= 300) {
                 return notification.error(body.message);
             }
+            //console.log(body.authorizations);
             //Save the authorizations list
             return self.setState({"authorizations": body.authorizations});
         });
@@ -80,7 +81,7 @@ export default class Authorizations extends React.Component {
     renderModal() {
         //Check if modal is visible
         if (this.state.modalVisible === true) {
-            let app = this.state.authorizations[this.state.modalIndex].applications;
+            let app = this.state.authorizations[this.state.modalIndex].application;
             return (
                 <div className="pf-modal">
                     <div className="pf-modal-content">
@@ -105,6 +106,7 @@ export default class Authorizations extends React.Component {
             return (
                 <div>
                     <Header text="Authorizations"/>
+                    {this.renderModal()}
                     <Paragraph>
                         You have granted access to <strong>{this.state.authorizations.length} applications</strong> to your account.
                     </Paragraph>
