@@ -59,7 +59,7 @@ export default class Authorize extends React.Component {
         let id = this.props.request.query.id;
         return this.setState({"loading": true}, function () {
             let requestOptions = {
-                "url": "/api/user/authorizations/" + idi,
+                "url": "/api/user/authorizations/" + id,
                 "method": "post",
                 "json": true,
                 "auth": auth.generateAuth()
