@@ -28,8 +28,8 @@ class RouteHome(webapp2.RequestHandler):
         obj = {
             'name': config.passfort_name,
             'allow_signup': config.passfort_allow_signup,
-            'allow_resetpwd': config.option_allow_resetpwd,
-            'captcha_enabled': config.capthca_enabled,
+            'allow_resetpwd': config.passfort_allow_resetpwd,
+            'captcha_enabled': config.captcha_enabled,
             'captcha_key': config.captcha_key
         }
         # Send the configuration object
