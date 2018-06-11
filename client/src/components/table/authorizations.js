@@ -22,7 +22,7 @@ export default class TableAuthorizations extends Table {
 
     //Get the table subtitle content
     getDescription(item, index) {
-        return "Last used ";
+        return "Last used " + Date(item.last_access) + "";
     }
 
     //Get the extra columns
