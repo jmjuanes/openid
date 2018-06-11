@@ -69,7 +69,8 @@ export default class Authorizations extends React.Component {
             let requestOptions = {
                 "url": "/api/user/authorizations/" + id,
                 "method": "delete",
-                "json": true
+                "json": true,
+                "auth": auth.generateAuth()
             };
             //Delete this authorization
             return request(requestOptions, function (error, response, body) {
