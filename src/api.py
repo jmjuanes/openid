@@ -78,7 +78,7 @@ class RouteUsers(webapp2.RequestHandler):
     def get(self):
         # Only administrators authorized
         # Extract the user token from the header
-        t = token.extract(self.request.headers['Authorization'])
+        t = token.extract(self.request.headers.get('Authorization'))
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
@@ -111,7 +111,7 @@ class RouteUsersById(webapp2.RequestHandler):
     def get(self, user_id):
         # Only administrators authorized
         # Extract the user token from the header
-        t = token.extract(self.request.headers['Authorization'])
+        t = token.extract(self.request.headers.get('Authorization'))
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
@@ -136,7 +136,7 @@ class RouteUsersById(webapp2.RequestHandler):
     def delete(self, user_id):
         # Only administrators authorized
         # Extract the user token from the header
-        t = token.extract(self.request.headers['Authorization'])
+        t = token.extract(self.request.headers.get('Authorization'))
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
@@ -170,7 +170,7 @@ class RouteUsersById(webapp2.RequestHandler):
             return response.sendError(self, 400, 'Bad request')
         # Only administrators authorized
         # Extract the user token from the header 
-        t = token.extract(self.request.headers['Authorization'])
+        t = token.extract(self.request.headers.get('Authorization'))
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
@@ -211,7 +211,7 @@ class RouteUser(webapp2.RequestHandler):
         except:
             return response.sendError(self, 400, 'Bad request')
         # Extract the user token from the header
-        t = token.extract(self.request.headers['Authorization'])
+        t = token.extract(self.request.headers.get('Authorization'))
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
@@ -257,7 +257,7 @@ class RouteUser(webapp2.RequestHandler):
     # Extract the user data
     def get(self):
         # Extract the user token from the header 
-        t = token.extract(self.request.headers['Authorization'])
+        t = token.extract(self.request.headers.get('Authorization'))
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
@@ -280,7 +280,7 @@ class RouteUserDelete(webapp2.RequestHandler):
         except:
             return response.sendError(self, 400, 'Bad request')
         # Extract the user token from the header
-        t = token.extract(self.request.headers['Authorization'])
+        t = token.extract(self.request.headers.get('Authorization'))
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
@@ -315,7 +315,7 @@ class RouteUserDelete(webapp2.RequestHandler):
 class RouteUserAuthorizations(webapp2.RequestHandler):
     def get(self):
         # Extract the token from the header
-        t = token.extract(self.request.headers['Authorization'])
+        t = token.extract(self.request.headers.get('Authorization'))
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
@@ -345,7 +345,7 @@ class RouteUserAuthorizations(webapp2.RequestHandler):
 class RouteUserAuthorizationsById(webapp2.RequestHandler):
     def post(self, app_id):
         # Extract the token from the header
-        t = token.extract(self.request.headers['Authorization'])
+        t = token.extract(self.request.headers.get('Authorization'))
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
@@ -379,7 +379,7 @@ class RouteUserAuthorizationsById(webapp2.RequestHandler):
     # Delete an authorization
     def delete(self, app_id):
         # Extract the token from the header
-        t = token.extract(self.request.headers['Authorization'])
+        t = token.extract(self.request.headers.get('Authorization'))
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
@@ -407,7 +407,7 @@ class RouteUserPassword(webapp2.RequestHandler):
         except:
             return response.sendError(self, 400, 'Bad request')
         # Extract the user token from the header
-        header = self.request.headers['Authorization']
+        header = self.request.headers.get('Authorization')
         t = token.extract(header)
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
@@ -460,7 +460,7 @@ class RouteApplications(webapp2.RequestHandler):
         #         return response.sendError(self, 400, 'Answer the captcha correctly')
         # Only administrators authorized
         # Extract the user token from the header
-        t = token.extract(self.request.headers['Authorization'])
+        t = token.extract(self.request.headers.get('Authorization'))
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
@@ -496,7 +496,7 @@ class RouteApplications(webapp2.RequestHandler):
     def get(self):
         # Only administrators authorized
         # Extract the user token from the header
-        t = token.extract(self.request.headers['Authorization'])
+        t = token.extract(self.request.headers.get('Authorization'))
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
@@ -531,7 +531,7 @@ class RouteApplicationsById(webapp2.RequestHandler):
     def delete(self, app_id):
         # Only administrators authorized
         # Extract the user token from the header
-        t = token.extract(self.request.headers['Authorization'])
+        t = token.extract(self.request.headers.get('Authorization'))
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
@@ -565,7 +565,7 @@ class RouteApplicationsById(webapp2.RequestHandler):
             return response.sendError(self, 400, 'Bad request')
         # Only administrators authorized
         # Extract the user token from the header
-        t = token.extract(self.request.headers['Authorization'])
+        t = token.extract(self.request.headers.get('Authorization'))
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
@@ -599,7 +599,7 @@ class RouteApplicationsSecret(webapp2.RequestHandler):
     def get(self, app_id):
         # Only administrators authorized
         # Extract the user token from the header 
-        t = token.extract(self.request.headers['Authorization'])
+        t = token.extract(self.request.headers.get('Authorization'))
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
