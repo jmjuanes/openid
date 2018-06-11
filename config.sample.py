@@ -1,57 +1,44 @@
 # Sample configuration file
 # You must rename this file as "config.py" and edit the fields below with
 # your own configuration.
-# Check the documentation at https://github.com/mgviz/openid
+# Check the documentation at https://github.com/mgviz/passfort
 
-# OpenID configuration
+# PassFort configuration
 # ======================
 
-# OpenID name
-# Public name of the OpenID
-openid_name = 'OPENID_NAME'
+# PassFort visible name
+passfort_name = 'PassFort'
 
-# OpenID key value
-#
-openid_key = 'openid'
+# PassFort key value
+passfort_key = 'passfort'
 
-# OpenID secret key
-# This key is used when user enters into the admin page
-openid_secret = 'OPENID_SECRET_KEY'
-
-# User roles
-# An array with all the available user roles
-openid_roles = ['demo', 'user', 'premium']
+# PassFort secret key
+passfort_secret = 'PASSFORT_SECRET_KEY'
 
 # Default active value
-# User is active by default
-openid_default_active = True
+passfort_default_active = True
 
-# Default user role
-# When a new user is registered, the default role is 'user'
-openid_default_role = 'user'
+# Allow signup: allow users to create a new account
+passfort_allow_signup = False
 
-# Allow signup
-# Allow users to create a new account
-openid_allow_signup = True
+# Allow reset password: allow users to reset his password
+passfort_allow_resetpwd = False
 
 
 # Captcha configuration
 # ======================
 # Visit the ReCaptcha documentation at https://developers.google.com/recaptcha/intro
 
-# Captcha enabled
-captcha_enabled = True
+# Captcha enabled: force to use the captcha when login or register
+captcha_enabled = False
 
-# Captcha verification url
-# You must not change this url
+# Captcha verification url (you should not change this value)
 captcha_url = 'https://www.google.com/recaptcha/api/siteverify'
 
-# Captcha key
-# Enter your captcha key value
+# Captcha key: your captcha key
 captcha_key = 'YOUR_CAPTCHA_KEY'
 
-# Captcha secret key
-# Enter your captcha secret key value
+# Captcha secret key: your captcha secret key value
 captcha_secret = 'YOUR_CAPTCHA_SECRET_KEY'
 
 
@@ -59,10 +46,9 @@ captcha_secret = 'YOUR_CAPTCHA_SECRET_KEY'
 # ======================
 # Read more about JSON web tokens: https://en.wikipedia.org/wiki/JSON_Web_Token
 
-# Token expiration days
-# Number of days where the token is valid
+# Token expiration days: number of days where the token is valid
 token_expiration = 7 * (24 * 60 * 60)
 
-# Token algorithm
-# Set the token sign algorithm. Allowed values: HS256 or RS256
+# Token sign algorithm: allowed HS256 or RS256
 token_algorithm = 'HS256'
+
