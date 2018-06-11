@@ -329,7 +329,8 @@ class RouteUserAuthorizations(webapp2.RequestHandler):
                 # Build the authorization object
                 obj = authorizations.to_json(all_auths[i])
                 # Get and save the application information for this authorization
-                obj['application'] = application.get(all_auts[i].app_id)
+                q = application.get(all_auts[i].app_id)
+                obj['application'] = application.to_json(a)
                 auths.append(obj)
             # Return the list with the applications registered
             response.sendJson(self, {'authorizations': obj})
