@@ -22,7 +22,7 @@ export default class TableAuthorizations extends Table {
 
     //Get the table subtitle content
     getDescription(item, index) {
-        let currentDate = new Date(item.last_access);
+        let currentDate = new Date(item.last_access * 1000);
         return "Last used on " + currentDate.toString() + "";
     }
 
