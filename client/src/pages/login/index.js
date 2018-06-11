@@ -117,7 +117,7 @@ export default class Login extends React.Component {
         if (this.props.openid_allow_signup) {
             return (
                 <Field className="pf-login-register">
-                    <FieldLabel align="center">New to {this.props.openid_name}?</FieldLabel>
+                    <FieldLabel align="center">New to {this.props.name}?</FieldLabel>
                     <Btn color="success" onClick={this.redirectToRegister} fluid>Create an account</Btn>
                 </Field>
             );
@@ -146,7 +146,7 @@ export default class Login extends React.Component {
             <div className="pf-login-content">
                 <Heading type="h2" align="center">Sign in</Heading>
                 <Small align="center" className="pf-login-subtitle">
-                    Sign in into your <strong>{this.props.openid_name}</strong> account
+                    Sign in into your <strong>{this.props.name}</strong> account
                 </Small>
                 <div>
                     {/*Email input*/}
