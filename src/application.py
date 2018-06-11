@@ -20,9 +20,7 @@ class Application(ndb.Model):
 # Get an application by id
 def get(value):
     try:
-        # Convert the id to integer and return the application
-        value = int(value)
-        return Application.get_by_id(value)
+        return Application.get_by_id(int(value))
     except ValueError:
         return None
 
@@ -30,8 +28,7 @@ def get(value):
 # Extract all the applications from the database
 def get_all():
     try:
-        apps = Application.query().fetch()
-        return apps
+        return Application.query().fetch()
     except ValueError:
         return None
 
