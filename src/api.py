@@ -5,6 +5,7 @@ import logging
 import random
 import string
 import time
+import sys
 
 # Libs imports
 import webapp2
@@ -323,18 +324,20 @@ class RouteUserAuthorizations(webapp2.RequestHandler):
             return response.sendError(self, 401, 'Invalid authentication credentials')
         # Extract all the authorizations for this user
         try:
-            all_auths = authorizations.get_all(payload['id'])
+            all_auths = authorization.get_all(id=payload['id'])
             auths = []
             for i in range(0, len(all_auths)):
                 # Build the authorization object
-                obj = authorizations.to_json(all_auths[i])
+                obj = authorization.to_json(all_auths[i])
                 # Get and save the application information for this authorization
                 q = application.get(all_auts[i].app_id)
                 obj['application'] = application.to_json(a)
                 auths.append(obj)
             # Return the list with the applications registered
-            response.sendJson(self, {'authorizations': obj})
+            response.sendJson(self, {'authorizations': auths})
         except:
+            print "ERROR"
+            print "Unexpected error: ", sys.exc_info()[0]
             return response.sendError(self, 500, 'Authorizations could not be retrieved')
 
 
@@ -359,9 +362,9 @@ class RouteUserAuthorizationsById(webapp2.RequestHandler):
             return response.sendError(self, 404, 'User not found')
         # Get the authentication metadata
         try:
-            au = auth.get(app_id, payload['id'])
+            au = authorization.get(app_id, payload['id'])
             if au is None:
-                au = auth.Authorization(app_id=app_id, user_id=payload['id'])
+                au = authorization.Authorization(app_id=app_id, user_id=payload['id'])
                 au.grant_access = int(time.time())
             # Update the last access value and update the authorization in the database
             au.last_access = int(time.time())
