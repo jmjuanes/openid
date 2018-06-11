@@ -134,7 +134,7 @@ export default class Register extends React.Component {
                 <div className="pf-register-content">
                     <Heading type="h2" align="center">Register</Heading>
                     <Small className="pf-register-subtitle" align="center">
-                        Fill the following fields to create a new <b>{this.props.openid_name}</b> account. All of them are required.
+                        Fill the following fields to create a new <b>{this.props.name}</b> account. All of them are required.
                     </Small>
                     <div>
                         {/*Name input*/}
