@@ -27,11 +27,9 @@ def get(app_id, user_id):
 
 
 # Get all the applications authorized by the user
-def get_all(user_id):
+def get_all(id):
     try:
-        # Execute the query
-        query = Authorization.query(Authorization.user_id == int(user_id))
-        return query.get()
+        return Authorization.query(Authorization.user_id == int(id)).fetch()
     except:
         print "Unexpected error: ", sys.exc_info()[0]
         return None
