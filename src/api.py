@@ -531,7 +531,12 @@ class RouteApplications(webapp2.RequestHandler):
             all_apps = application.get_all()
             apps = []
             for i in range(0, len(all_apps)):
-                apps.append({'id': all_apps[i].key.id(), 'name': all_apps[i].name})
+                obj = {
+                    'id': all_apps[i].key.id(),
+                    'name': all_apps[i].name,
+                    'description': all_apps[i].description
+                }
+                apps.append(obj)
             # Return the list with the applications registered
             response.sendJson(self, {'applications': apps})
         except:
