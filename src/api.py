@@ -19,6 +19,8 @@ import user
 import captcha
 import token
 import response
+import resetpwd
+import mailbox
 
 
 # Home route
@@ -665,7 +667,7 @@ class RouteLogin(webapp2.RequestHandler):
         # Search the user in the db
         u = user.get(email=email)
         if u is None:
-            return response.sendError(self, 404, 'This user does not exist')
+            return response.sendError(self, 400, 'Invalid email or password')
         if u.is_active is False:
             return response.sendError(self, 401, 'This user is not active')
         # Check the password
@@ -674,7 +676,75 @@ class RouteLogin(webapp2.RequestHandler):
             user_token = token.encode(u, 'email', config.passfort_secret, config.token_algorithm, config.token_expiration)
             return response.sendJson(self, {'token': user_token})
         else:
-            return response.sendError(self, 400, 'Invalid password')
+            return response.sendError(self, 400, 'Invalid email or password')
+
+
+# ResetPwd route
+class RouteResetPwd(webapp2.RequestHandler):
+    def post(self):
+        # Parse the body to JSON
+        try:
+            data = json.loads(self.request.body)
+        except:
+            return response.sendError(self, 400, 'Bad request')
+        # Get the email of the user
+        email = data.get('email')
+        print "Email = ", email
+        if email is None:
+            return response.sendError(self, 400, 'No email provided')
+        # Get the user by the email
+        u = user.get(email=email)
+        if u is None:
+            # If the user does not exist, do nothing and send the confirmation message
+            print "User not found --> no email is sent"
+            return response.sendJson(self, {'status': 'ok'})
+        if u.is_active is False:
+            print "User is not active --> no email is sent"
+            return response.sendJson(self, {'status': 'ok'})
+        # Create the new resetpwd request
+        try: 
+            rpwd = resetpwd.ResetPwd(user_id=u.key.id(), sent_date=int(time.time()))
+            rpwd.put()
+        except:
+            print "Error generating the resetpwd request"
+            print "Unexpected error: ", sys.exc_info()[0]
+            return response.sendError(self, 500, 'Error saving the request to reset the password')
+        # Send the email with the steps to reset the password
+        mailbox.resetPwd(u.name, u.email, rpwd.key.id())
+        return response.sendJson(self, {'status': 'ok'})
+
+
+# ResetPwd by ID route
+class RouteResetPwdById(webapp2.RequestHandler):
+    def post(self, id):
+        # Parse the body to JSON
+        try:
+            data = json.loads(self.request.body)
+        except:
+            return response.sendError(self, 400, 'Bad request')
+        # Get the values
+        request_pwd = data.get('pwd')
+        #request_id = data.get('id')
+        if request_pwd is None:
+            return response.sendError(self, 400, 'Invalid request')
+        # Get the request info
+        r = resetpwd.get(id)
+        if r is None:
+            return response.sendError(self, 400, 'Request ID not found')
+        # Get the user
+        u = user.get(id=r.user_id)
+        if u is None:
+            return response.sendError(self, 400, 'The request ID is assigned to an user that does not exist')
+        # Change the user password
+        try:
+            u.pwd = pbkdf2_sha256.hash(request_pwd)
+            u.put()
+            # Delete the resetpwd request
+            r.key.delete()
+        except:
+            return response.sendError(self, 500, 'Error changing the password of the user')
+        # Password changed
+        return response.sendJson(self, {'status': 'ok'})
 
 
 
@@ -697,6 +767,9 @@ app = webapp2.WSGIApplication([
     webapp2.Route('/api/applications/<app_id>', handler=RouteApplicationsById),
     # Login route
     webapp2.Route('/api/login', handler=RouteLogin),
+    # Resetpwd route
+    webapp2.Route('/api/resetpwd', handler=RouteResetPwd),
+    webapp2.Route('/api/resetpwd/<id>', handler=RouteResetPwdById),
     # Error route
     webapp2.Route('/api/<:.*>', handler=RouteError)
 ], debug=True)
