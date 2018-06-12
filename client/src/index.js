@@ -6,6 +6,7 @@ import * as Router from "rouct";
 import Login from "./pages/login/index.js";
 import Authorize from "./pages/authorize/index.js";
 import Register from "./pages/register/index.js";
+import ResetPwd from "./pages/resetpwd/index.js";
 import {Spinner} from "neutrine";
 import Dashboard from "./pages/dashboard/index";
 
@@ -61,6 +62,7 @@ class Main extends React.Component {
                         <Router.Route exact path="/login" component={Login} props={config}/>
                         <Router.Route exact path="/authorize" component={Authorize} props={config}/>
                         <Router.Route exact path="/register" component={Register} props={config}/>
+                        <Router.Route path="/resetpwd" component={ResetPwd} props={config}/>
                         <Router.Route path="/dashboard" component={Dashboard} props={config}/>
                         <Router.Route path="/" component={Login} props={config}/>
                     </Router.Switch>
