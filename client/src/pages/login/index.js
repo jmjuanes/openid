@@ -24,7 +24,7 @@ export default class Login extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleCaptchaError = this.handleCaptchaError.bind(this);
         this.redirectToRegister = this.redirectToRegister.bind(this);
-        this.redirectToResetPwd = this.redirectToResetPwd.bind(this);
+        this.redirectToResetpwd = this.redirectToResetpwd.bind(this);
     }
 
     //Callback for the captcha in case of error
@@ -50,8 +50,8 @@ export default class Login extends React.Component {
     }
 
     //Redirect to the reset password screen
-    redirectToResetPwd() {
-        return this.redirectTo("/password");
+    redirectToResetpwd() {
+        return this.redirectTo("/resetpwd");
     }
 
     //Try to login with the information provided
@@ -114,7 +114,7 @@ export default class Login extends React.Component {
 
     //Display the register link
     renderRegister() {
-        if (this.props.allow_signup) {
+        if (this.props.allow_signup === true) {
             return (
                 <Field className="pf-login-register">
                     <FieldLabel align="center">New to {this.props.name}?</FieldLabel>
@@ -141,6 +141,17 @@ export default class Login extends React.Component {
         }
     }
 
+    //Render the reset password link
+    renderResetpwd() {
+        if (this.props.allow_resetpwd === true) {
+            return (
+                <Small className="pf-login-resetpwd" align="center" onClick={this.redirectToResetpwd}>
+                    Forgot your password?
+                </Small>
+            );
+        }
+    }
+
     render() {
         return (
             <div className="pf-login-content">
@@ -160,10 +171,8 @@ export default class Login extends React.Component {
                         <Input ref={this.ref.pwdInput} type="password" fluid/>
                     </Field>
                     {this.renderCaptcha()}
-                    <Small className="pf-login-privacy" align="center">
-                        Check that all the information is correct and click on <b>"Sign in"</b>
-                    </Small>
                     {this.renderSubmit()}
+                    {this.renderResetpwd()}
                     {this.renderRegister()}
                 </div>
             </div>
