@@ -114,7 +114,7 @@ export default class Login extends React.Component {
 
     //Display the register link
     renderRegister() {
-        if (this.props.openid_allow_signup) {
+        if (this.props.allow_signup) {
             return (
                 <Field className="pf-login-register">
                     <FieldLabel align="center">New to {this.props.name}?</FieldLabel>
@@ -153,7 +153,6 @@ export default class Login extends React.Component {
                     <Field>
                         <FieldLabel>Email</FieldLabel>
                         <Input ref={this.ref.emailInput} type="text" fluid/>
-                        <FieldHelper>Please enter a valid email</FieldHelper>
                     </Field>
                     {/*Password input*/}
                     <Field>
