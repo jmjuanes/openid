@@ -23,5 +23,15 @@
     &-register {
         margin-top: 30px !important;
     }
+    //Forgot password link
+    &-resetpwd {
+        display: block;
+        margin-top: 15px;
+        margin-bottom: 10px;
+        cursor: pointer !important;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 }
 
