@@ -710,7 +710,7 @@ class RouteResetPwd(webapp2.RequestHandler):
             print "Unexpected error: ", sys.exc_info()[0]
             return response.sendError(self, 500, 'Error saving the request to reset the password')
         # Send the email with the steps to reset the password
-        mailbox.resetPwd(u.name, u.email, rpwd.key.id())
+        mailbox.reset_pwd(u.name, u.email, rpwd.key.id())
         return response.sendJson(self, {'status': 'ok'})
 
 
