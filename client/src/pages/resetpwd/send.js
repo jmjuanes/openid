@@ -75,7 +75,7 @@ export default class ResetPwdSend extends React.Component {
         }
     }
 
-    render() {
+    renderForm() {
         if (this.state.sentEmail === true) {
             return (
                 <Alert color="warning">
@@ -94,12 +94,20 @@ export default class ResetPwdSend extends React.Component {
                         <Input type="text" ref={this.ref.email} fluid placeholder="Email address"/>
                     </Field>
                     {this.renderSubmit()}
-                    <Small className="pf-resetpwd-login" align="center" onClick={this.redirectToLogin}>
-                        Go back to login
-                    </Small>
                 </div>
             );
         }
+    }
+    
+    render() {
+        return (
+            <div>
+                {this.renderForm()}
+                <Small className="pf-resetpwd-login" align="center" onClick={this.redirectToLogin}>
+                    Go back to login
+                </Small>
+            </div>
+        );
     }
 }
 
