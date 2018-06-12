@@ -12,8 +12,7 @@ export default class ResetPwdSend extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            "loading": false,
-            "sentEmail": false
+            "loading": false
         };
         //Referenced elemente
         this.ref = {
@@ -21,7 +20,6 @@ export default class ResetPwdSend extends React.Component {
         };
         //Bind methods 
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.redirectToLogin = this.redirectToLogin.bind(this);
     }
 
     //Send the email to reset the password
@@ -52,17 +50,11 @@ export default class ResetPwdSend extends React.Component {
                     notification.error(body.message);
                     return self.setState({"loading": false});
                 }
-                //Display the sent message
-                return self.setState({"loading": false, "sentEmail": true});
+                //Done!
+                notification.success("We have sent you an email with the steps to reset your password");
+                return redirect("/login");
             });
         });
-    }
-
-    //Redirect to the login view
-    redirectToLogin() {
-        if (this.state.loading === false) {
-            return redirect("/login");
-        }
     }
 
     //Render the submit button 
@@ -75,37 +67,16 @@ export default class ResetPwdSend extends React.Component {
         }
     }
 
-    renderForm() {
-        if (this.state.sentEmail === true) {
-            return (
-                <Alert color="warning">
-                    We have sent you an email with the steps to reset your password. 
-                    If you don't receive an email, and it's not in your spam folder this could mean you signed up with a different address.
-                </Alert>
-            );
-        }
-        else {
-            return (
-                <div>
-                    <Small className="pf-resetpwd-subtitle" align="center">
-                        Enter your email address below and we'll send you a link to reset your password.
-                    </Small>
-                    <Field>
-                        <Input type="text" ref={this.ref.email} fluid placeholder="Email address"/>
-                    </Field>
-                    {this.renderSubmit()}
-                </div>
-            );
-        }
-    }
-    
     render() {
         return (
             <div>
-                {this.renderForm()}
-                <Small className="pf-resetpwd-login" align="center" onClick={this.redirectToLogin}>
-                    Go back to login
+                <Small className="pf-resetpwd-subtitle" align="center">
+                    Enter your email address below and we'll send you a link to reset your password.
                 </Small>
+                <Field>
+                    <Input type="text" ref={this.ref.email} fluid placeholder="Email address"/>
+                </Field>
+                {this.renderSubmit()}
             </div>
         );
     }
