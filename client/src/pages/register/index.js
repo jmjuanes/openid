@@ -141,22 +141,31 @@ export default class Register extends React.Component {
                         <Field>
                             <FieldLabel>Name</FieldLabel>
                             <Input ref={this.ref.nameInput} maxLength="16" type="text" fluid/>
+                            <FieldHelper>
+                                What should we call you?
+                            </FieldHelper>
                         </Field>
                         {/*Email input*/}
                         <Field>
                             <FieldLabel>Email</FieldLabel>
                             <Input ref={this.ref.emailInput} type="text" fluid/>
+                            <FieldHelper>
+                                We will never share your email address with anyone without your permission.
+                            </FieldHelper>
                         </Field>
                         {/*Password input*/}
                         <Field>
                             <FieldLabel>Password</FieldLabel>
                             <Input ref={this.ref.pwd1Input} type="password" fluid/>
-                            <FieldHelper>6 characters minimum</FieldHelper>
+                            <FieldHelper>Your password should contain at least 6 characters.</FieldHelper>
                         </Field>
                         {/*Password input*/}
                         <Field>
                             <FieldLabel>Repeat password</FieldLabel>
                             <Input ref={this.ref.pwd2Input} type="password" fluid/>
+                            <FieldHelper>
+                                For security reasons please type again your password.
+                            </FieldHelper>
                         </Field>
                         {/*Captcha*/}
                         {this.renderCaptcha()}
