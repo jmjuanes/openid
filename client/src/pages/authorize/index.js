@@ -111,7 +111,7 @@ export default class Authorize extends React.Component {
             );
         }
         //Build the permissions list
-        permissionsList = permissionsList.split(",").map(function (key, index) {
+        permissionsList = permissionsList.map(function (key, index) {
             //Get the permission information
             let item = permissions.get(key);
             let itemTitle = React.createElement(CardTitle, {"className": "pf-authorize-permissions-title"}, item.name);
