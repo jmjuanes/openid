@@ -103,7 +103,7 @@ export default class Register extends React.Component {
     }
 
     renderCaptcha() {
-        if (this.props.capthca_enabled === true) {
+        if (this.props.captcha_enabled === true) {
             return <Captcha sitekey={this.props.captcha_key} onError={this.handleCaptchaError} ref={this.ref.captcha}/>;
         }
     }
