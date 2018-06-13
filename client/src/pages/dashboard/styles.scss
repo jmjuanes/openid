@@ -7,6 +7,10 @@
         &-item .siimple-list-title {
             margin-bottom: 0px !important;
         }
+        &-item .siimple-small {
+            display: block;
+            line-height: 20px;
+        }
     }
     //Logout 
     &-logout {
