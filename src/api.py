@@ -28,11 +28,11 @@ class RouteHome(webapp2.RequestHandler):
     def get(self):
         # Build the configuration object
         obj = {
-            'name': config.passfort_name,
-            'allow_signup': config.passfort_allow_signup,
-            'allow_resetpwd': config.passfort_allow_resetpwd,
+            'name': config.global_name,
+            'allow_signup': config.signup_enabled,
+            'allow_resetpwd': config.resetpwd_enabled,
             'captcha_enabled': config.captcha_enabled,
-            'captcha_key': config.captcha_key
+            'captcha_key': config.captcha_public_key
         }
         # Send the configuration object
         return response.sendJson(self, obj)
@@ -63,14 +63,14 @@ class RouteUsers(webapp2.RequestHandler):
         t = token.extract(self.request.headers.get('Authorization'))
         payload = None
         if t is not None:
-            payload = token.decode(t, config.passfort_secret, config.token_algorithm)
+            payload = token.decode(t, config.global_secret_key, config.token_algorithm)
             # Only admins are allowed
             if payload is None:
                 return response.sendError(self, 401, 'Invalid authentication credentials')
             if payload.get('is_admin') is not True: 
                 return response.sendError(self, 401, 'Only administrators are allowed')
         # Check if signup is not allowed
-        if config.passfort_allow_signup is False and payload is None:
+        if config.signup_enabled is False and payload is None:
             return response.sendError(self, 403, 'No new signups are allowed')
         # Check if the captcha is enabled
         if config.captcha_enabled is True and payload is None:
@@ -82,9 +82,9 @@ class RouteUsers(webapp2.RequestHandler):
         u = user.User(biography='', company='', location='')
         u.name = data['name']
         u.email = data['email']
-        u.is_admin = False
+        u.is_admin = config.signup_default_admin
         u.is_owner = False
-        u.is_active = config.passfort_default_active
+        u.is_active = config.signup_default_active
         try:
             # Encrypt the password
             u.pwd = pbkdf2_sha256.hash(data['pwd'])
@@ -104,7 +104,7 @@ class RouteUsers(webapp2.RequestHandler):
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
-        payload = token.decode(t, config.passfort_secret, config.token_algorithm)
+        payload = token.decode(t, config.global_secret_key, config.token_algorithm)
         if payload is None:
             return response.sendError(self, 401, 'Invalid authentication credentials')
         # Check if is admin or owner
@@ -137,7 +137,7 @@ class RouteUsersById(webapp2.RequestHandler):
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
-        payload = token.decode(t, config.passfort_secret, config.token_algorithm)
+        payload = token.decode(t, config.global_secret_key, config.token_algorithm)
         if payload is None:
             return response.sendError(self, 401, 'Invalid authentication credentials')
         # Check if is admin or owner
@@ -162,7 +162,7 @@ class RouteUsersById(webapp2.RequestHandler):
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
-        payload = token.decode(t, config.passfort_secret, config.token_algorithm)
+        payload = token.decode(t, config.global_secret_key, config.token_algorithm)
         if payload is None:
             return response.sendError(self, 401, 'Invalid authentication credentials')
         # check if is admin or owner
@@ -196,7 +196,7 @@ class RouteUsersById(webapp2.RequestHandler):
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
-        payload = token.decode(t, config.passfort_secret, config.token_algorithm)
+        payload = token.decode(t, config.global_secret_key, config.token_algorithm)
         if payload is None:
             return response.sendError(self, 401, 'Invalid authentication credentials')
         # Check for administrators
@@ -237,7 +237,7 @@ class RouteUser(webapp2.RequestHandler):
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
-        payload = token.decode(t, config.passfort_secret, config.token_algorithm)
+        payload = token.decode(t, config.global_secret_key, config.token_algorithm)
         if payload is None:
             return response.sendError(self, 401, 'Invalid authentication credentials')
         # Get the user
@@ -283,7 +283,7 @@ class RouteUser(webapp2.RequestHandler):
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
-        payload = token.decode(t, config.passfort_secret, config.token_algorithm)
+        payload = token.decode(t, config.global_secret_key, config.token_algorithm)
         if payload is None:
             return response.sendError(self, 401, 'Invalid authentication credentials')
         # Get the user
@@ -306,7 +306,7 @@ class RouteUserDelete(webapp2.RequestHandler):
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
-        payload = token.decode(t, config.passfort_secret, config.token_algorithm)
+        payload = token.decode(t, config.global_secret_key, config.token_algorithm)
         if payload is None:
             return response.sendError(self, 401, 'Invalid authentication credentials')
         # Get the user
@@ -341,7 +341,7 @@ class RouteUserAuthorizations(webapp2.RequestHandler):
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
-        payload = token.decode(t, config.passfort_secret, config.token_algorithm)
+        payload = token.decode(t, config.global_secret_key, config.token_algorithm)
         if payload is None:
             return response.sendError(self, 401, 'Invalid authentication credentials')
         # Extract all the authorizations for this user
@@ -371,7 +371,7 @@ class RouteUserAuthorizationsById(webapp2.RequestHandler):
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
-        payload = token.decode(t, config.passfort_secret, config.token_algorithm)
+        payload = token.decode(t, config.global_secret_key, config.token_algorithm)
         if payload is None:
             return response.sendError(self, 401, 'Invalid authentication credentials')
         # Import the application data
@@ -405,7 +405,7 @@ class RouteUserAuthorizationsById(webapp2.RequestHandler):
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
-        payload = token.decode(t, config.passfort_secret, config.token_algorithm)
+        payload = token.decode(t, config.global_secret_key, config.token_algorithm)
         if payload is None:
             return response.sendError(self, 401, 'Invalid authentication credentials')
         # Get the authorization from the database
@@ -434,7 +434,7 @@ class RouteUserPassword(webapp2.RequestHandler):
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
-        payload = token.decode(t, config.passfort_secret, config.token_algorithm)
+        payload = token.decode(t, config.global_secret_key, config.token_algorithm)
         if payload is None:
             return response.sendError(self, 401, 'Invalid authentication credentials')
         # Check the 3 passwords
@@ -486,7 +486,7 @@ class RouteApplications(webapp2.RequestHandler):
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
-        payload = token.decode(t, config.passfort_secret, config.token_algorithm)
+        payload = token.decode(t, config.global_secret_key, config.token_algorithm)
         if payload is None:
             return response.sendError(self, 401, 'Invalid authentication credentials')
         # Check if user is an admin
@@ -522,7 +522,7 @@ class RouteApplications(webapp2.RequestHandler):
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
-        payload = token.decode(t, config.passfort_secret, config.token_algorithm)
+        payload = token.decode(t, config.global_secret_key, config.token_algorithm)
         if payload is None:
             return response.sendError(self, 401, 'Invalid authentication credentials')
         # Check if the user is admin
@@ -562,7 +562,7 @@ class RouteApplicationsById(webapp2.RequestHandler):
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
-        payload = token.decode(t, config.passfort_secret, config.token_algorithm)
+        payload = token.decode(t, config.global_secret_key, config.token_algorithm)
         if payload is None:
             return response.sendError(self, 401, 'Invalid authentication credentials')
         # Check if user is an administrator
@@ -596,7 +596,7 @@ class RouteApplicationsById(webapp2.RequestHandler):
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
-        payload = token.decode(t, config.passfort_secret, config.token_algorithm)
+        payload = token.decode(t, config.global_secret_key, config.token_algorithm)
         if payload is None:
             return response.sendError(self, 401, 'Invalid authentication credentials')
         # Check for administrators
@@ -630,7 +630,7 @@ class RouteApplicationsSecret(webapp2.RequestHandler):
         if t is None:
             return response.sendError(self, 400, 'Invalid authorization type')
         # Decode the token
-        payload = token.decode(t, config.passfort_secret, config.token_algorithm)
+        payload = token.decode(t, config.global_secret_key, config.token_algorithm)
         if payload is None:
             return response.sendError(self, 401, 'Invalid authentication credentials')
         # Check if is admin
@@ -673,8 +673,8 @@ class RouteLogin(webapp2.RequestHandler):
         # Check the password
         if pbkdf2_sha256.verify(pwd, u.pwd) is True:
             # Encode token and give it to the user
-            user_token = token.encode(u, 'email', config.passfort_secret, config.token_algorithm, config.token_expiration)
-            return response.sendJson(self, {'token': user_token})
+            t = token.encode(u, '', config.global_secret_key, config.token_algorithm, config.token_expiration)
+            return response.sendJson(self, {'token': t})
         else:
             return response.sendError(self, 400, 'Invalid email or password')
 
@@ -692,6 +692,19 @@ class RouteResetPwd(webapp2.RequestHandler):
         print "Email = ", email
         if email is None:
             return response.sendError(self, 400, 'No email provided')
+        # Extract the user token from the header 
+        t = token.extract(self.request.headers.get('Authorization'))
+        is_admin = False
+        if t is not None:
+            # Decode the token
+            payload = token.decode(t, config.global_secret_key, config.token_algorithm)
+            if payload is None:
+                return response.sendError(self, 401, 'Invalid authentication credentials')
+            # Save user is admin
+            is_admin = payload.get('is_admin') is True
+        # Check if resetpwd is not enabled or user is not admin
+        if config.resetpwd_enabled is False and is_admin is False:
+            return response.sendError(self, 401, 'Reset password is not allowed')
         # Get the user by the email
         u = user.get(email=email)
         if u is None:
@@ -701,8 +714,8 @@ class RouteResetPwd(webapp2.RequestHandler):
         if u.is_active is False:
             print "User is not active --> no email is sent"
             return response.sendJson(self, {'status': 'ok'})
-        # Create the new resetpwd request
         try: 
+            # Create the new resetpwd request
             rpwd = resetpwd.ResetPwd(user_id=u.key.id(), sent_date=int(time.time()))
             rpwd.put()
         except:
