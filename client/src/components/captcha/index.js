@@ -12,7 +12,7 @@ export default class Captcha extends React.Component {
         super(props);
         //Initial state 
         this.state = {
-            ready: recaptchaReady()
+            "ready": recaptchaReady()
         };
         //Referenced elements
         this.ref = {
@@ -107,10 +107,17 @@ export default class Captcha extends React.Component {
         let children = null;
         //Check if the captcha is ready 
         if (this.state.ready === false) {
-            children = React.createElement(Spinner, {color: "blue"});
+            children = React.createElement(Spinner, {"color": "blue"});
         }
         //Return the captcha div wrapper
-        return React.createElement("div", {ref: self.ref.wrapper, align: "center"}, children);
+        let wrapperProps = {
+            "ref": self.ref.wrapper,
+            "style": {
+                "marginBottom": "15px"
+            },
+            "align": "center"
+        };
+        return React.createElement("div", wrapperProps, children);
     }
 }
 
