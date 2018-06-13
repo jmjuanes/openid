@@ -4,8 +4,9 @@
 # Check the documentation at https://github.com/mgviz/passfort
 
 # PassFort gobal configuration
-global_name = 'PassFort' # Oauth name
-global_email = 'APP_ID@@appspot.gserviceaccount.com' # Authorized address to send emails
+global_name = 'PassFort' # Service name
+global_url = 'http://localhost:8080/' # Service url
+global_email = 'APP_ID@appspot.gserviceaccount.com' # Authorized address to send emails
 global_public_key = 'passfort' # Public key string
 global_secret_key = 'PASSFORT_SECRET_KEY' # Secret key string
 
