@@ -72,6 +72,7 @@ export default class Dashboard extends React.Component {
     handleLogout() {
         //Delete the token and redirect to the login page
         auth.deleteToken();
+        notification.success("Session successfully closed. See you!");
         return Router.redirectHashbang("/login");
     }
 
