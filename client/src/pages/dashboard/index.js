@@ -103,7 +103,7 @@ export default class Dashboard extends React.Component {
             let userProps = this.state.user;
             return (
                 <div>
-                    <Navbar size="medium" color="light">
+                    <Navbar size="medium" color="dark">
                         <NavbarTitle>{this.props.name}</NavbarTitle>
                         <NavbarSubtitle>Dashboard</NavbarSubtitle>
                         <NavbarItem className="pf-dashboard-logout" onClick={this.handleLogout}>Log out</NavbarItem>
