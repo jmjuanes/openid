@@ -80,9 +80,11 @@ export default class ResetPwdReset extends React.Component {
                 </Small>
                 <Field>
                     <Input type="password" ref={this.ref.pwd1} fluid placeholder="New password"/>
+                    <FieldHelper>Your password should contain at least 6 characters.</FieldHelper>
                 </Field>
                 <Field>
                     <Input type="password" ref={this.ref.pwd2} fluid placeholder="Confirm new password"/>
+                    <FieldHelper>For security reasos type again your password.</FieldHelper>
                 </Field>
                 {this.renderSubmit()}
             </div>
