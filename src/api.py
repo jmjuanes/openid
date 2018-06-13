@@ -74,7 +74,7 @@ class RouteUsers(webapp2.RequestHandler):
             return response.sendError(self, 403, 'No new signups are allowed')
         # Check if the captcha is enabled
         if config.captcha_enabled is True and payload is None:
-            if captcha.verify(data.get('recaptcha'), config.captcha_secret, config.captcha_url) is False:
+            if captcha.verify(data.get('recaptcha'), config.captcha_secret_key, config.captcha_url) is False:
                 return response.sendError(self, 400, 'Captcha answered incorrectly')
         # Initialize the user
         u = user.User(biography='', company='', location='')
@@ -476,7 +476,7 @@ class RouteApplications(webapp2.RequestHandler):
         # if config.captcha_enabled is True:
         #     # Get the captcha value and check if the captcha is valid
         #     captcha_value = data['recaptcha']
-        #     if captcha.verify(captcha_value, config.captcha_secret, config.captcha_url) is False:
+        #     if captcha.verify(captcha_value, config.captcha_secret_key, config.captcha_url) is False:
         #         return response.sendError(self, 400, 'Answer the captcha correctly')
         # Only administrators authorized
         # Extract the user token from the header
@@ -655,7 +655,7 @@ class RouteLogin(webapp2.RequestHandler):
         pwd = data['pwd']
         # Check if the captcha is enabled
         if config.captcha_enabled is True:
-            if captcha.verify(data.get('recaptcha'), config.captcha_secret, config.captcha_url) is False:
+            if captcha.verify(data.get('recaptcha'), config.captcha_secret_key, config.captcha_url) is False:
                 return response.sendError(self, 400, 'Answer the captcha correctly')
         # Empty information
         if not email or not pwd:
@@ -691,7 +691,7 @@ class RouteResetPwd(webapp2.RequestHandler):
         # Check if the captcha is enabled
         if config.captcha_enabled is True:
             # Get the captcha value and check if the captcha is valid
-            if captcha.verify(data.get('recaptcha'), config.captcha_secret, config.captcha_url) is False:
+            if captcha.verify(data.get('recaptcha'), config.captcha_secret_key, config.captcha_url) is False:
                 return response.sendError(self, 400, 'Answer the captcha correctly')
         # Extract the user token from the header 
         t = token.extract(self.request.headers.get('Authorization'))
@@ -744,7 +744,7 @@ class RouteResetPwdById(webapp2.RequestHandler):
         # Check if the captcha is enabled
         if config.captcha_enabled is True:
             # Get the captcha value and check if the captcha is valid
-            if captcha.verify(data.get('recaptcha'), config.captcha_secret, config.captcha_url) is False:
+            if captcha.verify(data.get('recaptcha'), config.captcha_secret_key, config.captcha_url) is False:
                 return response.sendError(self, 400, 'Answer the captcha correctly')
         # Get the request info
         r = resetpwd.get(id)
