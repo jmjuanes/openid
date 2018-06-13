@@ -4,6 +4,7 @@ import {Input, Btn, Small, Field, FieldLabel, FieldHelper, Spinner} from "neutri
 import {redirectHashbang as redirect} from "rouct";
 
 import * as notification from "../../commons/notification.js";
+import Captcha from "../../components/captcha/index.js";
 
 import "./styles.scss";
 
@@ -15,11 +16,18 @@ export default class ResetPwdReset extends React.Component {
             "loading": false
         };
         this.ref = {
+            "captcha": React.createRef(),
             "pwd1": React.createRef(),
             "pwd2": React.createRef()
         };
         //Bind methods 
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleCaptchaError = this.handleCaptchaError.bind(this);
+    }
+
+    //Callback for the captcha in case of error
+    handleCaptchaError() {
+        return notification.error("Captcha validation error");
     }
 
     //Submit the password change
@@ -36,6 +44,10 @@ export default class ResetPwdReset extends React.Component {
         //Check if both passwords are equal
         if (data.pwd !== this.ref.pwd2.current.value) {
             return notification.error("Passwords do not match");
+        }
+        //If the captcha is enabled get the response code 
+        if (this.props.captcha_enabled) {
+            data.recaptcha = this.ref.captcha.getResponse();
         }
         //Change to loading
         return this.setState({"loading": true}, function () {
@@ -62,6 +74,13 @@ export default class ResetPwdReset extends React.Component {
         });
     }
 
+    //Display the captcha
+    renderCaptcha() {
+        if (this.props.captcha_enabled === true) {
+            return <Captcha sitekey={this.props.caltcha_key} onError={this.handleCaptchaError} ref={this.ref.captcha}/>;
+        }
+    }
+
     //Render the submit button
     renderSubmit() {
         if (this.state.loading === true) {
@@ -86,6 +105,7 @@ export default class ResetPwdReset extends React.Component {
                     <Input type="password" ref={this.ref.pwd2} fluid placeholder="Confirm new password"/>
                     <FieldHelper>For security reasos type again your password.</FieldHelper>
                 </Field>
+                {this.renderCaptcha()}
                 {this.renderSubmit()}
             </div>
         );
