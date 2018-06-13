@@ -127,7 +127,7 @@ export default class Login extends React.Component {
     //Display the captcha
     renderCaptcha() {
         if (this.props.captcha_enabled === true) {
-            return <Captcha sitekey={this.props.caltcha_key} onError={this.handleCaptchaError} ref={this.ref.captcha}/>;
+            return <Captcha sitekey={this.props.captcha_key} onError={this.handleCaptchaError} ref={this.ref.captcha}/>;
         }
     }
 
