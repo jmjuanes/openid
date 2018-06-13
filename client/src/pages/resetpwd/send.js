@@ -4,6 +4,7 @@ import {Alert, Input, Btn, Small, Spinner, Field} from "neutrine";
 import {redirectHashbang as redirect} from "rouct";
 
 import * as notification from "../../commons/notification.js";
+import Captcha from "../../components/captcha/index.js";
 
 import "./styles.scss";
 
@@ -16,10 +17,17 @@ export default class ResetPwdSend extends React.Component {
         };
         //Referenced elemente
         this.ref = {
+            "captcha": React.createRef(),
             "email": React.createRef()
         };
         //Bind methods 
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleCaptchaError = this.handleCaptchaError.bind(this);
+    }
+
+    //Callback for the captcha in case of error
+    handleCaptchaError() {
+        return notification.error("Captcha validation error");
     }
 
     //Send the email to reset the password
@@ -31,6 +39,10 @@ export default class ResetPwdSend extends React.Component {
         //Check for empty or not valid email
         if (data.email.length === 0 || data.email.indexOf("@") === -1 || data.email.indexOf(".") === -1) {
             return notification.error("Invalid email provided");
+        }
+        //If the captcha is enabled get the response code 
+        if (this.props.captcha_enabled) {
+            data.recaptcha = this.ref.captcha.getResponse();
         }
         //Change the state to loading
         return this.setState({"loading": true}, function () {
@@ -57,6 +69,13 @@ export default class ResetPwdSend extends React.Component {
         });
     }
 
+    //Display the captcha
+    renderCaptcha() {
+        if (this.props.captcha_enabled === true) {
+            return <Captcha sitekey={this.props.caltcha_key} onError={this.handleCaptchaError} ref={this.ref.captcha}/>;
+        }
+    }
+
     //Render the submit button 
     renderSubmit() {
         if (this.state.loading === true) {
@@ -76,6 +95,7 @@ export default class ResetPwdSend extends React.Component {
                 <Field>
                     <Input type="text" ref={this.ref.email} fluid placeholder="Email address"/>
                 </Field>
+                {this.renderCaptcha()}
                 {this.renderSubmit()}
             </div>
         );
