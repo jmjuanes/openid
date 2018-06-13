@@ -46,7 +46,10 @@ export default class Register extends React.Component {
         //If the captcha is enabled check it
         if (this.props.captcha_enabled === true) {
             //data = Object.assign({recaptcha: this.ref.captcha.current.getResponse()}, data);
-            data.recaptcha = this.ref.captcha.getResponse();
+            data.recaptcha = this.ref.captcha.current.getResponse();
+            if (typeof data.recaptcha !== "string" || data.recaptcha.length === 0) {
+                return notification.error("Show that you are not a robot");
+            }
         }
         //Check if the email is valid
         if (data.email.indexOf("@") === -1) {

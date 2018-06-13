@@ -64,7 +64,10 @@ export default class Login extends React.Component {
         //If the captcha is enabled get the response code 
         if (this.props.captcha_enabled) {
             //credentials = Object.assign({recaptcha: this.ref.captcha.current.getResponse()}, credentials);
-            data.recaptcha = this.ref.captcha.getResponse();
+            data.recaptcha = this.ref.captcha.current.getResponse();
+            if (typeof data.recaptcha !== "string" || data.recaptcha.length === 0) {
+                return notification.error("Show that you are not a robot");
+            }
         }
         //Check for a valid email
         if (data.email.length === 0 || data.email.indexOf("@") === -1) {

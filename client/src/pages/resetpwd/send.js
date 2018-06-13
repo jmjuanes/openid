@@ -42,7 +42,10 @@ export default class ResetPwdSend extends React.Component {
         }
         //If the captcha is enabled get the response code 
         if (this.props.captcha_enabled) {
-            data.recaptcha = this.ref.captcha.getResponse();
+            data.recaptcha = this.ref.captcha.current.getResponse();
+            if (typeof data.recaptcha !== "string" || data.recaptcha.length === 0) {
+                return notification.error("Show that you are not a robot");
+            }
         }
         //Change the state to loading
         return this.setState({"loading": true}, function () {
@@ -72,7 +75,7 @@ export default class ResetPwdSend extends React.Component {
     //Display the captcha
     renderCaptcha() {
         if (this.props.captcha_enabled === true) {
-            return <Captcha sitekey={this.props.caltcha_key} onError={this.handleCaptchaError} ref={this.ref.captcha}/>;
+            return <Captcha sitekey={this.props.captcha_key} onError={this.handleCaptchaError} ref={this.ref.captcha}/>;
         }
     }
 
