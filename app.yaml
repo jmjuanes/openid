@@ -7,6 +7,7 @@ libraries:
   version: "2.5.2"
 
 skip_files:
+- node_modules/
 - client/node_modules/
 - client/src/
 - client/webpack.config.js
@@ -18,13 +19,14 @@ handlers:
 - url: /api/.*
   script: src.api.app
   secure: always
-
+- url: /legal/.*
+  script: src.legal.app
+  secure: always
 - url: /
   mime_type: text/html
   static_files: client/public/index.html
   secure: always
   upload: client/public/index.html
-
 - url: /
   static_dir: client/public/
   secure: always
