@@ -90,6 +90,7 @@ ENV/
 
 # IntellIJ project management files
 *.iml
+.idea/
 *.swp
 
 # Testing files
