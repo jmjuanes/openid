@@ -32,7 +32,10 @@ class RouteHome(webapp2.RequestHandler):
             'allow_signup': config.signup_enabled,
             'allow_resetpwd': config.resetpwd_enabled,
             'captcha_enabled': config.captcha_enabled,
-            'captcha_key': config.captcha_public_key
+            'captcha_key': config.captcha_public_key,
+            'support_url': config.support_url,
+            'privacy_url': config.privacy_url,
+            'terms_url': config.terms_url
         }
         # Send the configuration object
         return response.sendJson(self, obj)
