@@ -19,8 +19,8 @@ handlers:
 - url: /api/.*
   script: src.api.app
   secure: always
-- url: /legal/.*
-  script: src.legal.app
+- url: /statics
+  static_dir: statics
   secure: always
 - url: /
   mime_type: text/html
