@@ -66,7 +66,8 @@ export default class Email extends React.Component {
                 "url": "/api/user",
                 "method": "put",
                 "json": true,
-                "body": data
+                "body": data,
+                "auth": auth.generateAuth()
             };
             //Update the email preferences
             return request(requestOptions, function (error, response, body) {
