@@ -13,8 +13,9 @@ import "./styles.scss";
 export default class ResetPwd extends React.Component {
     render() {
         let props = {
-            "captcha_enabled": this.props.captcha_enabled,
-            "captcha_key": this.props.captcha_key
+            "name": this props.name,
+            "captcha": this.props.captcha,
+            "resetpwd": this.props.resetpwd
         };
         return (
             <div className="pf-resetpwd-content">
