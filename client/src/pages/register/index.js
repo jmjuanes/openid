@@ -44,7 +44,7 @@ export default class Register extends React.Component {
             "pwd": this.ref.pwd1Input.current.value
         };
         //If the captcha is enabled check it
-        if (this.props.captcha_enabled === true) {
+        if (this.props.captcha.enabled === true) {
             //data = Object.assign({recaptcha: this.ref.captcha.current.getResponse()}, data);
             data.recaptcha = this.ref.captcha.current.getResponse();
             if (typeof data.recaptcha !== "string" || data.recaptcha.length === 0) {
@@ -106,8 +106,8 @@ export default class Register extends React.Component {
     }
 
     renderCaptcha() {
-        if (this.props.captcha_enabled === true) {
-            return <Captcha sitekey={this.props.captcha_key} onError={this.handleCaptchaError} ref={this.ref.captcha}/>;
+        if (this.props.captcha.enabled === true) {
+            return <Captcha sitekey={this.props.captcha.key} onError={this.handleCaptchaError} ref={this.ref.captcha}/>;
         }
     }
 
@@ -126,7 +126,7 @@ export default class Register extends React.Component {
                 <div className="pf-register-content pf-register-success">
                     <Heading type="h2" align="center">Register completed</Heading>
                     <Small className="pf-register-subtitle" align="center">
-                        Thanks for creating an account in <b>{this.props.openid_name}</b>. You can now continue with your signup:
+                        Thanks for creating an account in <strong>{this.props.name}</strong>. You can now continue with your signup:
                     </Small>
                     <Btn color="green" onClick={this.redirectToLogin} fluid>Continue</Btn>
                 </div>
