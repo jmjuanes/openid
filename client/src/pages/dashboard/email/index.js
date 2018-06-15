@@ -80,7 +80,7 @@ export default class Email extends React.Component {
                     return self.setState({"loading": false});
                 }
                 //Save the email references
-                notifiaction.success("Email preferences saved");
+                notification.success("Email preferences saved");
                 return self.setState({"loading": false});
             });
         });
