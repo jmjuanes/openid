@@ -62,7 +62,7 @@ export default class Login extends React.Component {
             "pwd": this.ref.pwdInput.current.value
         };
         //If the captcha is enabled get the response code 
-        if (this.props.captcha_enabled) {
+        if (this.props.captcha.enabled) {
             //credentials = Object.assign({recaptcha: this.ref.captcha.current.getResponse()}, credentials);
             data.recaptcha = this.ref.captcha.current.getResponse();
             if (typeof data.recaptcha !== "string" || data.recaptcha.length === 0) {
@@ -117,7 +117,7 @@ export default class Login extends React.Component {
 
     //Display the register link
     renderRegister() {
-        if (this.props.allow_signup === true) {
+        if (this.props.signup.enabled === true) {
             return (
                 <Field className="pf-login-register">
                     <FieldLabel align="center">New to {this.props.name}?</FieldLabel>
@@ -129,8 +129,8 @@ export default class Login extends React.Component {
 
     //Display the captcha
     renderCaptcha() {
-        if (this.props.captcha_enabled === true) {
-            return <Captcha sitekey={this.props.captcha_key} onError={this.handleCaptchaError} ref={this.ref.captcha}/>;
+        if (this.props.captcha.enabled === true) {
+            return <Captcha sitekey={this.props.captcha.key} onError={this.handleCaptchaError} ref={this.ref.captcha}/>;
         }
     }
 
@@ -146,7 +146,7 @@ export default class Login extends React.Component {
 
     //Render the reset password link
     renderResetpwd() {
-        if (this.props.allow_resetpwd === true) {
+        if (this.props.resetpwd.enabled === true) {
             return (
                 <Small className="pf-login-resetpwd" align="center" onClick={this.redirectToResetpwd}>
                     Forgot your password?
