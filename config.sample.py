@@ -12,17 +12,21 @@ global_secret_key = 'PASSFORT_SECRET_KEY'  # Secret key string
 
 # Owner configuration
 owner_name = 'Owner'  # The owner name will be displayed in the privacy policy
-onwer_address = 'Fake address 123, Earth'  # The onwer address will be displayed in the privacy policy
+owner_address = 'Fake address 123, Earth'  # The onwer address will be displayed in the privacy policy
 owner_email = 'admin@email.com'  # An account registered with this email will be the owner of the website
 
-# Contact emails configuration
-support_email = 'support@email.com'  # Support email address
-privacy_email = 'privacy@email.com'  # Privacy email address
+# Available links
+links = {
+    'support': {'text': 'Support', 'url': 'mailto:support@email.com'},
+    'privacy': {'text': 'Privacy Policy', 'url': '/statics/privacy.html'}
+}
+
+# Footer configuration
+footer_links = ['support', 'privacy']  # Links to be displayed in the footer
 
 # Signup configuration
 signup_enabled = True  # Allow users to create a new account
-signup_accept_privacy = True  # New users must accept the privacy policy before creating the account
-signup_accept_terms = True  # New users must accept the terms of use before creating the account
+signup_must_agree = ['privacy']  # New user must agree with the links provided
 signup_default_active = True  # New user is active by default
 signup_default_admin = False  # New user is admin by default
 
