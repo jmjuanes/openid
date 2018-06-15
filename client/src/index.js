@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import {request} from "@kofijs/request";
+import {Footer, Link} from "neutrine";
 import * as Router from "rouct";
 
 import Login from "./pages/login/index.js";
@@ -42,10 +43,48 @@ class Main extends React.Component {
                 "captcha_enabled": body.captcha_enabled,
                 "captcha_key": body.captcha_key,
                 "allow_signup": body.allow_signup,
-                "allow_resetpwd": body.allow_resetpwd
+                "allow_resetpwd": body.allow_resetpwd,
+                "support_url": body.support_url,
+                "privacy_url": body.privacy_url,
+                "terms_url": body.terms_url
             };
             return self.setState({"config": config});
         });
+    }
+
+    //Render the links used in the footer
+    renderFooterLinks() {
+        let self = this;
+        let children = [];
+        let counter = 0;
+        let availableLinks = [
+            {"key": "privacy_url", "name": "Privacy Policy"},
+            {"key": "terms_url", "name": "Terms of Service"},
+            {"key": "support_url", "name": "Support"}
+        ];
+        availableLinks.forEach(function (item) {
+            if (typeof self.state.config[item.key] === "string" && self.state.config[item.key].length > 0) {
+                //Check if the children list is not empty to add the separator
+                if (children.length > 0) {
+                    children.push(React.createElement("div", {"key": counter, "className": "pf-footer-links-separator"}));
+                    counter = counter + 1;
+                }
+                //Add the link
+                let linkProps = {
+                    "key": counter,
+                    "className": "pf-footer-links-link",
+                    "href": self.state.config[item.key],
+                    "target": "_blank"
+                };
+                children.push(React.createElement(Link, linkProps, item.name));
+                //Increment the links counter
+                counter = counter + 1;
+            }
+        });
+        //Check the number of links added
+        if (children.length > 0) {
+            return React.createElement("div", {"className": "pf-footer-links"}, children);
+        }
     }
 
     render() {
@@ -57,16 +96,25 @@ class Main extends React.Component {
             //Save the configuration object
             let config = this.state.config;
             return (
-                <Router.HashbangRouter>
-                    <Router.Switch>
-                        <Router.Route exact path="/login" component={Login} props={config}/>
-                        <Router.Route exact path="/authorize" component={Authorize} props={config}/>
-                        <Router.Route exact path="/register" component={Register} props={config}/>
-                        <Router.Route path="/resetpwd" component={ResetPwd} props={config}/>
-                        <Router.Route path="/dashboard" component={Dashboard} props={config}/>
-                        <Router.Route path="/" component={Login} props={config}/>
-                    </Router.Switch>
-                </Router.HashbangRouter>
+                <div>
+                    <Router.HashbangRouter>
+                        <Router.Switch>
+                            <Router.Route exact path="/login" component={Login} props={config}/>
+                            <Router.Route exact path="/authorize" component={Authorize} props={config}/>
+                            <Router.Route exact path="/register" component={Register} props={config}/>
+                            <Router.Route path="/resetpwd" component={ResetPwd} props={config}/>
+                            <Router.Route path="/dashboard" component={Dashboard} props={config}/>
+                            <Router.Route path="/" component={Login} props={config}/>
+                        </Router.Switch>
+                    </Router.HashbangRouter>
+                    <Footer size="medium" className="pf-footer" align="center">
+                        {this.renderFooterLinks()}
+                        <div className="pf-footer-logo"></div>
+                        <div className="pf-footer-legal">
+                            Powered by <strong>PassFort</strong>
+                        </div>
+                    </Footer>
+                </div>
             );
         }
     }
