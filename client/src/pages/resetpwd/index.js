@@ -13,7 +13,7 @@ import "./styles.scss";
 export default class ResetPwd extends React.Component {
     render() {
         let props = {
-            "name": this props.name,
+            "name": this.props.name,
             "captcha": this.props.captcha,
             "resetpwd": this.props.resetpwd
         };
