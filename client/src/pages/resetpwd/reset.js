@@ -46,7 +46,7 @@ export default class ResetPwdReset extends React.Component {
             return notification.error("Passwords do not match");
         }
         //If the captcha is enabled get the response code 
-        if (this.props.captcha_enabled) {
+        if (this.props.captcha.enabled) {
             data.recaptcha = this.ref.captcha.current.getResponse();
             if (typeof data.recaptcha !== "string" || data.recaptcha.length === 0) {
                 return notification.error("Show that you are not a robot");
@@ -79,8 +79,8 @@ export default class ResetPwdReset extends React.Component {
 
     //Display the captcha
     renderCaptcha() {
-        if (this.props.captcha_enabled === true) {
-            return <Captcha sitekey={this.props.captcha_key} onError={this.handleCaptchaError} ref={this.ref.captcha}/>;
+        if (this.props.captcha.enabled === true) {
+            return <Captcha sitekey={this.props.captcha.key} onError={this.handleCaptchaError} ref={this.ref.captcha}/>;
         }
     }
 
