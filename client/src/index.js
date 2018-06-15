@@ -38,17 +38,7 @@ class Main extends React.Component {
                 return notification.error(body.message);
             }
             //New configuration object
-            let config = {
-                "name": body.name,
-                "captcha_enabled": body.captcha_enabled,
-                "captcha_key": body.captcha_key,
-                "allow_signup": body.allow_signup,
-                "allow_resetpwd": body.allow_resetpwd,
-                "support_url": body.support_url,
-                "privacy_url": body.privacy_url,
-                "terms_url": body.terms_url
-            };
-            return self.setState({"config": config});
+            return self.setState({"config": body});
         });
     }
 
@@ -57,13 +47,9 @@ class Main extends React.Component {
         let self = this;
         let children = [];
         let counter = 0;
-        let availableLinks = [
-            {"key": "privacy_url", "name": "Privacy Policy"},
-            {"key": "terms_url", "name": "Terms of Service"},
-            {"key": "support_url", "name": "Support"}
-        ];
-        availableLinks.forEach(function (item) {
-            if (typeof self.state.config[item.key] === "string" && self.state.config[item.key].length > 0) {
+        this.state.config.footer.links.forEach(function (key) {
+            let item = self.state.config.links[key];
+            if (typeof item !== "undefined" && item !== null) {
                 //Check if the children list is not empty to add the separator
                 if (children.length > 0) {
                     children.push(React.createElement("div", {"key": counter, "className": "pf-footer-links-separator"}));
@@ -73,10 +59,10 @@ class Main extends React.Component {
                 let linkProps = {
                     "key": counter,
                     "className": "pf-footer-links-link",
-                    "href": self.state.config[item.key],
+                    "href": item.url,
                     "target": "_blank"
                 };
-                children.push(React.createElement(Link, linkProps, item.name));
+                children.push(React.createElement(Link, linkProps, item.url));
                 //Increment the links counter
                 counter = counter + 1;
             }
