@@ -1,5 +1,6 @@
 import React from "react";
 import {Btn, Field, FieldHelper, FieldLabel, Heading, Input, Small, Spinner} from "neutrine";
+import {Link, Checkbox, Label} from "neutrine";
 import {request} from "@kofijs/request";
 import {redirectHashbang as redirect} from "rouct";
 
@@ -15,7 +16,8 @@ export default class Register extends React.Component {
         super(props);
         this.state = {
             "done": false,
-            "loading": false
+            "loading": false,
+            "checked": 0
         };
         this.ref = {
             "nameInput": React.createRef(),
@@ -24,8 +26,15 @@ export default class Register extends React.Component {
             "pwd2Input": React.createRef(),
             "captcha": React.createRef()
         };
+        //Register the checkboxes elements
+        let self = this;
+        this.props.signup.must_agree.forEach(function (key) {
+            console.log(key);
+            self.ref[key + "Checkbox"] = React.createRef();
+        });
         //Bind functions
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleCheckboxChange = this.handleCheckboxChange.bind(this);
         this.handleCaptchaError = this.handleCaptchaError.bind(this);
         this.redirectToLogin = this.redirectToLogin.bind(this);
     }
@@ -33,6 +42,19 @@ export default class Register extends React.Component {
     //Callback for the captcha in case of error
     handleCaptchaError() {
         return notification.error("Captcha validation error");
+    }
+
+    //Handle checkbox change
+    handleCheckboxChange(event) {
+        let checkedNum = this.state.checked;
+        if (event.nativeEvent.target.checked === true) {
+            checkedNum = checkedNum + 1;
+        }
+        else {
+            checkedNum = checkedNum - 1;
+        }
+        //Update the state
+        this.setState({"checked": checkedNum});
     }
 
     // Register the user with the provided info
@@ -43,6 +65,16 @@ export default class Register extends React.Component {
             "email": this.ref.emailInput.current.value,
             "pwd": this.ref.pwd1Input.current.value
         };
+        console.log(this.ref);
+        //Check if the uer has checked all the checkboxes
+        for (let i = 0; i < this.props.signup.must_agree.length; i++) {
+            let key = this.props.signup.must_agree[i];
+            if (this.ref[key + "Checkbox"].current.checked === false) {
+                //Display error and exit
+                let name = this.props.links[key].text;
+                return notification.error("You must agree our " + name + " before creating an account");
+            }
+        } 
         //If the captcha is enabled check it
         if (this.props.captcha.enabled === true) {
             //data = Object.assign({recaptcha: this.ref.captcha.current.getResponse()}, data);
@@ -105,18 +137,39 @@ export default class Register extends React.Component {
         return this.redirectTo("/login");
     }
 
+    //Render the captcha
     renderCaptcha() {
         if (this.props.captcha.enabled === true) {
             return <Captcha sitekey={this.props.captcha.key} onError={this.handleCaptchaError} ref={this.ref.captcha}/>;
         }
     }
 
+    //Render the checkboxes
+    renderCheckboxes() {
+        let self = this;
+        //Check the number of checkboxes
+        if (this.props.signup.must_agree.length > 0) {
+            let children = this.props.signup.must_agree.map(function (key, index) {
+                let item = self.props.links[key];
+                let ref = self.ref[key + "Checkbox"];
+                let itemCheckbox = React.createElement(Checkbox, {"ref": ref, "defaultChecked": false, "onChange": self.handleCheckboxChange})
+                let itemLink = React.createElement(Link, {"href": item.url, "target": "_blank"}, item.text);
+                let itemLabel = React.createElement(Label, {}, "I agree with the ", itemLink);
+                return React.createElement("div", {"key": index}, itemCheckbox, itemLabel);
+            });
+            //Return the card with the checkboxes
+            return React.createElement("div", {}, children);
+        }
+    }
+
+    //Render the submit button
     renderSubmit() {
         if (this.state.loading === true) {
             return <Spinner color="blue" className="pf-register-loading"/>;
         }
         else {
-            return <Btn color="blue" onClick={this.handleSubmit} fluid>Create account</Btn>;
+            let isDisabled = this.state.checked !== this.props.signup.must_agree.length;
+            return <Btn color="blue" onClick={this.handleSubmit} fluid disabled={isDisabled}>Create account</Btn>;
         }
     }
 
@@ -170,6 +223,8 @@ export default class Register extends React.Component {
                                 For security reasons please type again your password.
                             </FieldHelper>
                         </Field>
+                        {/*Checkboxes*/}
+                        {this.renderCheckboxes()}
                         {/*Captcha*/}
                         {this.renderCaptcha()}
                         {/*Notice*/}
