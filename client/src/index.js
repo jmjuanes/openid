@@ -62,7 +62,7 @@ class Main extends React.Component {
                     "href": item.url,
                     "target": "_blank"
                 };
-                children.push(React.createElement(Link, linkProps, item.url));
+                children.push(React.createElement(Link, linkProps, item.text));
                 //Increment the links counter
                 counter = counter + 1;
             }
