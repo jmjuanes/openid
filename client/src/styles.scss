@@ -1,10 +1,49 @@
-* {
+html {
     font-family: "Montserrat", serif;
 }
 
-.p-small {
+//Footer styles
+.pf-footer {
+    display: block;
+    //margin-top: 20px;
+    //margin-bottom: 100px;
     font-size: 13px;
     color: #879aab;
+    //vertical-align: top !important;
+    padding-top: 30px !important;
+    padding-bottom: 60px !important;
+    //Legal links
+    &-links {
+        display: block;
+        height: 26px;
+        margin-bottom: 25px;
+        //Links link
+        &-link {
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+        //Links separator
+        &-separator {
+            display: inline-block;
+            &::before {
+                content: "\00B7";
+            }
+        }
+    }
+    //Logo
+    &-logo {
+        display: block;
+        width: 26px;
+        height: 26px;
+        border-radius: 100px;
+        background-color: #396;
+        margin-bottom: 10px;
+    }
+    //Legal notice
+    &-legal {
+        display: block;;
+        height: 26px;
+    }
 }
 
 //Toast styles
