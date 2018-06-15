@@ -29,13 +29,22 @@ class RouteHome(webapp2.RequestHandler):
         # Build the configuration object
         obj = {
             'name': config.global_name,
-            'allow_signup': config.signup_enabled,
-            'allow_resetpwd': config.resetpwd_enabled,
-            'captcha_enabled': config.captcha_enabled,
-            'captcha_key': config.captcha_public_key,
-            'support_url': config.support_url,
-            'privacy_url': config.privacy_url,
-            'terms_url': config.terms_url
+            'key': config.global_public_key,
+            'signup': {
+                'enabled': config.signup_enabled,
+                'must_agree': config.signup_must_agree 
+            },
+            'resetpwd': {
+                'enabled': config.resetpwd_enabled
+            },
+            'captcha': {
+                'enabled': config.captcha_enabled,
+                'key': config.captcha_public_key
+            },
+            'links': config.links,
+            'footer': {
+                'links': config.footer_links
+            }
         }
         # Send the configuration object
         return response.sendJson(self, obj)
