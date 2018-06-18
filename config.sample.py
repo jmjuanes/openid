@@ -18,15 +18,16 @@ owner_email = 'admin@email.com'  # An account registered with this email will be
 # Available links
 links = {
     'support': {'text': 'Support', 'url': 'mailto:support@email.com'},
-    'privacy': {'text': 'Privacy Policy', 'url': '/statics/privacy.html'}
+    'privacy': {'text': 'Privacy Policy', 'url': '/statics/privacy.html'},
+    'terms': {'text': 'Terms of Service', 'url': '/statics/terms.html'}
 }
 
 # Footer configuration
-footer_links = ['support', 'privacy']  # Links to be displayed in the footer
+footer_links = ['support', 'privacy', 'terms']  # Links to be displayed in the footer
 
 # Signup configuration
 signup_enabled = True  # Allow users to create a new account
-signup_must_agree = ['privacy']  # New user must agree with the links provided
+signup_must_agree = ['privacy', 'terms']  # New user must agree with the links provided
 signup_default_active = True  # New user is active by default
 signup_default_admin = False  # New user is admin by default
 
