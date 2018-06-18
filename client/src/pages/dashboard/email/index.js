@@ -109,7 +109,7 @@ export default class Email extends React.Component {
                         <FieldLabel>Your email</FieldLabel>
                         <Input type="text" defaultValue={preferences.email} fluid ref={this.ref.email}/>
                         <FieldHelper>
-                            We will user your email only for account-related notifications.
+                            We will use your email only for account-related notifications.
                         </FieldHelper>
                     </Field>
                     {this.renderSubmit()}
