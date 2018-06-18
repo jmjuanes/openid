@@ -5,8 +5,8 @@ import {equal} from "@kofijs/utils";
 
 import Header from "../../../components/header/index.js"; 
 
-import * as notification from "../../../commons/notification.js";
 import * as auth from "../../../commons/auth.js";
+import * as notification from "../../../commons/notification.js";
 
 //User profile screen
 export default class Profile extends React.Component {
