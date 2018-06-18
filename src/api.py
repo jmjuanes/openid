@@ -270,6 +270,9 @@ class RouteUser(webapp2.RequestHandler):
                 return response.sendError(self, 400, 'Invalid old password')
             # Encrypt the new password
             u.pwd = pbkdf2_sha256.hash(data['new_pwd'])
+        # Update the email preferences
+        if data.get('email') is not None:
+            u.email = data['email']
         # Check to update the personal information
         if data.get('name') is not None:
             u.name = data['name']
