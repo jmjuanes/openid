@@ -15,6 +15,7 @@ import Profile from "./profile/index.js";
 import Applications from "./applications/index.js";
 import Authorizations from "./authorizations/index.js";
 import EditApp from "./applications/edit.js";
+import Email from "./email/index.js";
 import CreateApp from "./applications/create.js";
 import Users from "./users/index.js";
 import NewUser from "./users/new.js";
@@ -121,7 +122,7 @@ export default class Dashboard extends React.Component {
                                         <ListTitle>Account</ListTitle>
                                         <Small>Manage your account settings</Small>
                                     </ListItem>
-                                    <ListItem className="pf-dashboard-menu-item">
+                                    <ListItem className="pf-dashboard-menu-item" onClick={() => { this.redirectTo("email") }}>
                                         <ListTitle>Email</ListTitle>
                                         <Small>Edit your notifications settings</Small>
                                     </ListItem>
@@ -138,6 +139,7 @@ export default class Dashboard extends React.Component {
                                 <Router.Switch>
                                     <Router.Route exact path="/dashboard/" component={Profile} props={userProps}/>
                                     <Router.Route exact path="/dashboard/account" component={Account} props={userProps}/>
+                                    <Router.Route exact path="/dashboard/email" component={Email} props={userProps}/>
                                     <Router.Route exact path="/dashboard/authorizations" component={Authorizations} props={userProps}/>
                                     <Router.Route exact path="/dashboard/applications" component={Applications} props={userProps}/>
                                     <Router.Route exact path="/dashboard/applications/create" component={CreateApp} props={userProps}/>
