@@ -1,0 +1,72 @@
+/* Global style */
+html {
+    margin: 0px !important;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    color: #546778;
+    font-smooth: antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* Content style */
+.pf-content {
+    display: block;
+    max-width: 960px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Logo */
+.pf-logo {
+    display: block;
+}
+
+/* Paragraph style */
+.pf-paragraph {
+    display: block;
+    font-size: 15px;
+    line-height: 22px;
+    margin-bottom: 15px;
+}
+
+/* Headings common style */
+.pf-heading1,
+.pf-heading2,
+.pf-heading3 {
+    display: block;
+    font-weight: bold;
+    padding: 0px;
+    margin-bottom: 0.5em;
+}
+.pf-heading1 {
+    font-size: 40px;
+    line-height: 51px;
+}
+.pf-heading2 {
+    font-size: 25px;
+    line-height: 29px;
+    margin-top: 30px;
+}
+.pf-heading3 {
+    font-size: 20px;
+    line-height: 22px;
+    margin-top: 30px;
+}
+
+/* Links */
+.pf-link {
+    color: #4e91e4;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+.pf-link:hover {
+    color: #1b5eb1;
+    text-decoration: underline;
+}
