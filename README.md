@@ -1,8 +1,9 @@
-# OpenID
+# PassFort
 
-An open ID ------, hosted on [Google App Engine](https://cloud.google.com/appengine/). 
 
-## OpenID flow 
+
+## PassFort flow 
+
 
 
 ## Installation 
@@ -15,7 +16,7 @@ Also, you need the [Google Cloud SDK](https://cloud.google.com/sdk/docs/) instal
 Clone this repo on your working directory running the following command: 
 
 ```
-git clone https://github.com/mgviz/openid
+git clone https://github.com/siimple/passfort
 ```
 
 #### Step 2 - Install the dependencies
@@ -23,26 +24,38 @@ git clone https://github.com/mgviz/openid
 `cd` to the project folder and install python dependencies in the `lib` folder by running the following commands: 
 
 ```shell 
+# Install Node.js dependencies
+cd client && npm install
+
+# Install Python dependencies
 pip install -t lib -r requirements.txt
 ```
 
-#### Step 3 - Configure the OpenID
+#### Step 3 - Configure PassFort
 
-Rename the file `config.sample.py` to `config.py`. Then, edit it with your custom configuration. 
+Rename and move the file `config.sample.py` to `src/config.py` and edit it with your custom configuration. 
 
-#### Step 4 - Test it
+#### Step 4 - Build the client
 
-Now you can test the OpenID by running the following command: 
+Run the following command to build the client:
+
+```shell
+cd client && npm run build
+```
+
+#### Step 5 - Run and test
+
+Now you can test **PassFort** by running the following command: 
 
 ```
 dev_appserver.py app.yaml 
 ```
 
-Open a new browser window and navigate to `localhost:8080`. 
+Open a new browser window and navigate to `http://localhost:8080`. 
 
 
 ## License 
 
-[MIT LICENSE](./LICENSE) &copy; 2017 ----.
+[MIT LICENSE](./LICENSE) &copy; 2017-2018.
 
 
