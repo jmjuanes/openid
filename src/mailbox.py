@@ -10,9 +10,9 @@ import config
 def send_email(email_to, email_subject, email_body):
     # Generate the sender
     sender = ('{} Support <{}>'.format(config.global_name, config.global_email))
-    print "================================"
-    print email_body
-    print "================================"
+    #print "================================"
+    #print email_body
+    #print "================================"
     return mail.send_mail(sender, email_to, email_subject, email_body)
 
 
