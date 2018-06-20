@@ -3,3 +3,10 @@ indexes:
   properties:
   - name: email
     direction: asc
+- kind: Authorization
+  properties:
+  - name: app_id
+    direction: asc
+  - name: user_id
+    direction: asc
+
