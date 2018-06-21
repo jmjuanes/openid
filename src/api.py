@@ -272,6 +272,8 @@ class RouteUser(webapp2.RequestHandler):
             u.pwd = pbkdf2_sha256.hash(data['new_pwd'])
         # Update the email preferences
         if data.get('email') is not None:
+            if user.get(email=data['email']) is not None:
+                return response.sendError(self, 400, 'This email is already being used')
             u.email = data['email']
         # Check to update the personal information
         if data.get('name') is not None:
