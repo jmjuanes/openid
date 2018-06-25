@@ -23,11 +23,11 @@ links = {
 }
 
 # Footer configuration
-footer_links = ['support', 'privacy', 'terms']  # Links to be displayed in the footer
+footer_links = ['support', 'privacy']  # Links to be displayed in the footer
 
 # Signup configuration
 signup_enabled = True  # Allow users to create a new account
-signup_must_agree = ['privacy', 'terms']  # New user must agree with the links provided
+signup_must_agree = ['privacy']  # New user must agree with the links provided
 signup_default_active = True  # New user is active by default
 signup_default_admin = False  # New user is admin by default
 
