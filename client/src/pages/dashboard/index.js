@@ -104,14 +104,14 @@ export default class Dashboard extends React.Component {
             let userProps = this.state.user;
             return (
                 <div>
-                    <Navbar size="medium" color="dark">
+                    <Navbar size="large" color="dark">
                         <NavbarTitle>{this.props.name}</NavbarTitle>
                         <NavbarSubtitle>Dashboard</NavbarSubtitle>
                         <NavbarItem className="pf-dashboard-logout" onClick={this.handleLogout}>Log out</NavbarItem>
                     </Navbar>
-                    <Content size="medium">
+                    <Content size="large">
                         <GridRow>
-                            <GridCol className="pf-dashboard-menu" size={3} small={12}>
+                            <GridCol className="pf-dashboard-menu" size="3" extraSmall="12">
                                 {/*User panel*/}
                                 <List hover={true}>
                                     <ListItem className="pf-dashboard-menu-item" onClick={() => { this.redirectTo("") }}>
@@ -135,7 +135,7 @@ export default class Dashboard extends React.Component {
                                 {this.renderAdminPanel()}
                             </GridCol>
                             {/*Content*/}
-                            <GridCol className="pf-dashboard-content" size={9} small={12}>
+                            <GridCol className="pf-dashboard-content" size="9" extraSmall="12">
                                 <Router.Switch>
                                     <Router.Route exact path="/dashboard/" component={Profile} props={userProps}/>
                                     <Router.Route exact path="/dashboard/account" component={Account} props={userProps}/>
