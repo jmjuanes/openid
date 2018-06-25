@@ -2,6 +2,13 @@ html {
     font-family: "Montserrat", serif;
 }
 
+//Logo image
+.pf-logo {
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-image: url("../../media/logo-dark.svg");
+}
+
 //Footer styles
 .pf-footer {
     display: block;
@@ -33,15 +40,22 @@ html {
     //Logo
     &-logo {
         display: block;
-        width: 26px;
-        height: 26px;
-        border-radius: 100px;
-        background-color: #396;
+        width: 60px;
+        height: 60px;
+        //border-radius: 100px;
+        //background-color: #396;
         margin-bottom: 10px;
+        background-size: 60px 60px;
+        opacity: 0.6;
+        cursor: pointer;
+        transition: opacity 0.3s;
+        &:hover {
+            opacity: 1.0;
+        }
     }
     //Legal notice
     &-legal {
-        display: block;;
+        display: block;
         height: 26px;
     }
 }
