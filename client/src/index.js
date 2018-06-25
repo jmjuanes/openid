@@ -95,7 +95,7 @@ class Main extends React.Component {
                     </Router.HashbangRouter>
                     <Footer size="medium" className="pf-footer" align="center">
                         {this.renderFooterLinks()}
-                        <div className="pf-footer-logo"></div>
+                        <div className="pf-footer-logo pf-logo"></div>
                         <div className="pf-footer-legal">
                             Powered by <strong>PassFort</strong>
                         </div>
